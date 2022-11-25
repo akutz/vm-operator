@@ -1,9 +1,10 @@
 run:
   deadline: 5m
   skip-files:
-   - ".*generated.*\\.go"
-   - external/
-   - controllers/virtualmachineservice/utils/
+  - ".*generated.*\\.go"
+  skip-dirs:
+  - external
+  - controllers/virtualmachineservice/utils
 
 # override defaults
 linters-settings:
