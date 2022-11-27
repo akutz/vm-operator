@@ -31,12 +31,13 @@ KUSTOMIZE         := $(BIN_DIR)/kustomize
 GO_JUNIT_REPORT   := $(BIN_DIR)/go-junit-report
 GINKGO            := $(BIN_DIR)/ginkgo
 GOCOVMERGE        := $(BIN_DIR)/gocovmerge
-GOCOVER_COBERTURA := $(BIN_DIR)/gocover-cobertura
 KUBEBUILDER       := $(BIN_DIR)/kubebuilder
 ETCD              := $(BIN_DIR)/etcd
 KUBE_APISERVER    := $(BIN_DIR)/kube-apiserver
 KUBECTL           := $(BIN_DIR)/kubectl
 KIND              := $(BIN_DIR)/kind
+GOCOV             := $(BIN_DIR)/gocov
+GOCOV_XML         := $(BIN_DIR)/gocov-xml
 
 ## --------------------------------------
 ## Help
@@ -72,7 +73,7 @@ $(KUSTOMIZE):
 .PHONY: $(GO_JUNIT_REPORT)
 go-junit-report: $(GO_JUNIT_REPORT) ## Install go-junit-report
 $(GO_JUNIT_REPORT): go.mod
-	go build -tags=tools -o $@ github.com/jstemmer/go-junit-report
+	go build -tags=tools -o $@ github.com/jstemmer/go-junit-report/v2
 
 .PHONY: $(GINKGO)
 ginkgo: $(GINKGO) ## Install ginkgo
@@ -84,10 +85,15 @@ gocovmerge: $(GOCOVMERGE) ## Install gocovmerge
 $(GOCOVMERGE): go.mod
 	go build -tags=tools -o $@ github.com/wadey/gocovmerge
 
-.PHONY: $(GOCOVER_COBERTURA)
-gocover-cobertura: $(GOCOVER_COBERTURA) ## Install gocover-cobertura
-$(GOCOVER_COBERTURA): go.mod
-	go build -tags=tools -o $@ github.com/t-yuki/gocover-cobertura
+.PHONY: $(GOCOV)
+gocov: $(GOCOV) ## Install gocov
+$(GOCOV): go.mod
+	go build -tags=tools -o $@ github.com/axw/gocov/gocov
+
+.PHONY: $(GOCOV_XML)
+gocov-xml: $(GOCOV_XML) ## Install gocov-xml
+$(GOCOV_XML): go.mod
+	go build -tags=tools -o $@ github.com/AlekSi/gocov-xml
 
 .PHONY: $(KUBEBUILDER)
 kubebuilder: $(KUBEBUILDER) ## Install kubebuilder
