@@ -1,4 +1,5 @@
 // Copyright (c) 2022 VMware, Inc. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
 
 package v1alpha1
 
@@ -20,5 +21,5 @@ const (
 // Condition.Reasons related to ClusterContentLibraryItem or ContentLibraryItem API objects.
 const (
 	ClusterContentLibraryRefValidationFailedReason = "ClusterContentLibraryRefValidationFailed"
-	ContentLibraryRefValidationFailedReason = "ContentLibraryRefValidationFailed"
+	ContentLibraryRefValidationFailedReason        = "ContentLibraryRefValidationFailed"
 )
