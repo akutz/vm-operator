@@ -12,10 +12,10 @@ import (
 
 	"k8s.io/utils/pointer"
 
+	json "github.com/akutz/gdj"
 	"github.com/google/go-cmp/cmp"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/vmware/govmomi/vim25/json"
 	vimTypes "github.com/vmware/govmomi/vim25/types"
 	"github.com/vmware/govmomi/vim25/xml"
 
@@ -139,7 +139,7 @@ var _ = Describe("ConfigSpec Util", func() {
 
 			dec1 := json.NewDecoder(f)
 			dec1.SetDiscriminator(
-				"_typeName", "_value", "",
+				"_typeName", "_value",
 				json.DiscriminatorToTypeFunc(vimTypes.TypeFunc()),
 			)
 
@@ -154,13 +154,17 @@ var _ = Describe("ConfigSpec Util", func() {
 			var w bytes.Buffer
 			enc1 := json.NewEncoder(&w)
 			enc1.SetIndent("", "  ")
-			enc1.SetDiscriminator("_typeName", "_value", "")
+			enc1.SetDiscriminator(
+				"_typeName",
+				"_value",
+				json.DiscriminatorEncodeTypeNameRootValue|json.DiscriminatorEncodeTypeNameAllObjects,
+			)
 
 			Expect(enc1.Encode(cs1)).To(Succeed())
 
 			dec2 := json.NewDecoder(&w)
 			dec2.SetDiscriminator(
-				"_typeName", "_value", "",
+				"_typeName", "_value",
 				json.DiscriminatorToTypeFunc(vimTypes.TypeFunc()),
 			)
 

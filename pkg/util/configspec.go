@@ -7,8 +7,8 @@ import (
 	"bytes"
 	"reflect"
 
+	json "github.com/akutz/gdj"
 	"github.com/vmware/govmomi/vim25"
-	gdj "github.com/vmware/govmomi/vim25/json"
 	vimTypes "github.com/vmware/govmomi/vim25/types"
 	"github.com/vmware/govmomi/vim25/xml"
 )
@@ -87,8 +87,12 @@ func MarshalConfigSpecToJSON(
 	configSpec *vimTypes.VirtualMachineConfigSpec) ([]byte, error) {
 
 	var w bytes.Buffer
-	enc := gdj.NewEncoder(&w)
-	enc.SetDiscriminator("_typeName", "_value", "")
+	enc := json.NewEncoder(&w)
+	enc.SetDiscriminator(
+		"_typeName",
+		"_value",
+		json.DiscriminatorEncodeTypeNameRootValue|json.DiscriminatorEncodeTypeNameAllObjects,
+	)
 	if err := enc.Encode(configSpec); err != nil {
 		return nil, err
 	}
@@ -102,10 +106,10 @@ func UnmarshalConfigSpecFromJSON(
 
 	var configSpec vimTypes.VirtualMachineConfigSpec
 
-	dec := gdj.NewDecoder(bytes.NewReader(data))
+	dec := json.NewDecoder(bytes.NewReader(data))
 	dec.SetDiscriminator(
-		"_typeName", "_value", "",
-		gdj.DiscriminatorToTypeFunc(vimTypes.TypeFunc()),
+		"_typeName", "_value",
+		json.DiscriminatorToTypeFunc(vimTypes.TypeFunc()),
 	)
 	if err := dec.Decode(&configSpec); err != nil {
 		return nil, err

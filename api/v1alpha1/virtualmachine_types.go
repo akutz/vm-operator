@@ -10,16 +10,26 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-// See govmomi.vim25.types.VirtualMachinePowerState.
+// VirtualMachinePowerState refers to valid power states for a VirtualMachine.
+// Please see https://bit.ly/3GFrghB for more information.
+// +kubebuilder:validation:Enum=poweredOff;poweredOn;suspended
+type VirtualMachinePowerState string
+
 const (
 	VirtualMachinePoweredOff VirtualMachinePowerState = "poweredOff"
 	VirtualMachinePoweredOn  VirtualMachinePowerState = "poweredOn"
+	VirtualMachineSuspended  VirtualMachinePowerState = "suspended"
 )
 
-// VirtualMachinePowerState represents the power state of a VirtualMachine.
-// The value values are "poweredOn", and "poweredOff".
-// +kubebuilder:validation:Enum=poweredOff;poweredOn
-type VirtualMachinePowerState string
+// VirtualMachineFirmware refers to valid firmware types for a VirtualMachine.
+// Please see https://bit.ly/3khCnG9 for more information.
+// +kubebuilder:validation:Enum=bios;efi
+type VirtualMachineFirmware string
+
+const (
+	VirtualMachineBIOS VirtualMachineFirmware = "bios"
+	VirtualMachineEFI  VirtualMachineFirmware = "efi"
+)
 
 // VMStatusPhase is used to indicate the phase of a VirtualMachine's lifecycle.
 type VMStatusPhase string
@@ -312,8 +322,30 @@ type VirtualMachineSpec struct {
 	// instance.  See VirtualMachineClass for more description.
 	ClassName string `json:"className"`
 
-	// PowerState describes the desired power state of a VirtualMachine.  Valid power states are "poweredOff" and "poweredOn".
+	// PowerState describes the desired power state for the VirtualMachine.
 	PowerState VirtualMachinePowerState `json:"powerState"`
+
+	// Firmware describes the desired firmware type for the VirtualMachine.
+	// If omitted, the firmware defaults to the value specified by the VM Class.
+	// If the VM Class does not specify a firmware type, the value defaults to
+	// the firmware type specified by the VM Image.
+	// If the VM Image is not available or does not specify a firmware type, the
+	// value defaults to "bios".
+	// +optional
+	Firmware VirtualMachineFirmware `json:"firmware,omitempty"`
+
+	// HardwareVersion describes the desired hardware version for the
+	// VirtualMachine.
+	// If omitted, the hardware version defaults to the value specified by the
+	// VM Class.
+	// If the VM Class does not specify a hardware version, the value defaults
+	// to the hardware version specified by the VM Image.
+	// If the VM Image is not available or does not specify a hardware version,
+	// the value defaults to 17, the hardware version introduced with ESXi 7.0.
+	// Please see https://kb.vmware.com/s/article/1003746 for more information.
+	// +optional
+	// +kubebuilder:validation:Minimum=3
+	HardwareVersion int `json:"hardwareVersion,omitempty"`
 
 	// Ports is currently unused and can be considered deprecated.
 	// +optional

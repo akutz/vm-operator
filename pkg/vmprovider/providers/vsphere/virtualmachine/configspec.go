@@ -20,26 +20,31 @@ func CreateConfigSpec(
 	name string,
 	vmClassSpec *v1alpha1.VirtualMachineClassSpec,
 	minFreq uint64,
-	imageFirmware string,
-	vmClassConfigSpec *vimtypes.VirtualMachineConfigSpec) *vimtypes.VirtualMachineConfigSpec {
+	firmware string, hardwareVersion int,
+	baseConfigSpec *vimtypes.VirtualMachineConfigSpec,
+) vimtypes.VirtualMachineConfigSpec {
 
-	var configSpec *vimtypes.VirtualMachineConfigSpec
-	if vmClassConfigSpec != nil {
-		// Use VMClass ConfigSpec as the initial ConfigSpec.
-		t := *vmClassConfigSpec
-		configSpec = &t
-	} else {
-		configSpec = &vimtypes.VirtualMachineConfigSpec{}
+	var configSpec vimtypes.VirtualMachineConfigSpec
+	if baseConfigSpec != nil {
+		configSpec = *baseConfigSpec
 	}
 
 	configSpec.Name = name
-	configSpec.Annotation = constants.VCVMAnnotation
+
+	if configSpec.Annotation == "" {
+		configSpec.Annotation = constants.VCVMAnnotation
+	}
+
 	// CPU and Memory configurations specified in the VM Class spec.hardware
 	// takes precedence over values in the config spec
 	// TODO: might need revisiting to conform on a single way of consuming cpu and memory.
 	//  we prefer the vm class CR to have consistent values to reduce confusion.
-	configSpec.NumCPUs = int32(vmClassSpec.Hardware.Cpus)
-	configSpec.MemoryMB = MemoryQuantityToMb(vmClassSpec.Hardware.Memory)
+	if configSpec.NumCPUs == 0 {
+		configSpec.NumCPUs = int32(vmClassSpec.Hardware.Cpus)
+	}
+	if configSpec.MemoryMB == 0 {
+		configSpec.MemoryMB = MemoryQuantityToMb(vmClassSpec.Hardware.Memory)
+	}
 
 	// TODO: add constants for this key.
 	configSpec.ManagedBy = &vimtypes.ManagedByInfo{
@@ -47,43 +52,53 @@ func CreateConfigSpec(
 		Type:         "VirtualMachine",
 	}
 
-	configSpec.CpuAllocation = &vimtypes.ResourceAllocationInfo{
-		Shares: &vimtypes.SharesInfo{
-			Level: vimtypes.SharesLevelNormal,
-		},
-	}
-
-	if minFreq != 0 {
-		if !vmClassSpec.Policies.Resources.Requests.Cpu.IsZero() {
-			rsv := CPUQuantityToMhz(vmClassSpec.Policies.Resources.Requests.Cpu, minFreq)
-			configSpec.CpuAllocation.Reservation = &rsv
+	if minFreq > 0 {
+		cpuReq := vmClassSpec.Policies.Resources.Requests.Cpu
+		cpuLim := vmClassSpec.Policies.Resources.Limits.Cpu
+		if !cpuReq.IsZero() || !cpuLim.IsZero() {
+			if configSpec.CpuAllocation == nil {
+				configSpec.CpuAllocation = &vimtypes.ResourceAllocationInfo{}
+			}
+			if configSpec.CpuAllocation.Shares == nil {
+				configSpec.CpuAllocation.Shares = &vimtypes.SharesInfo{
+					Level: vimtypes.SharesLevelNormal,
+				}
+			}
+			if v := cpuReq; !v.IsZero() {
+				rsv := CPUQuantityToMhz(v, minFreq)
+				configSpec.CpuAllocation.Reservation = &rsv
+			}
+			if v := cpuLim; !v.IsZero() {
+				rsv := CPUQuantityToMhz(v, minFreq)
+				configSpec.CpuAllocation.Limit = &rsv
+			}
 		}
+	}
 
-		if !vmClassSpec.Policies.Resources.Limits.Cpu.IsZero() {
-			lim := CPUQuantityToMhz(vmClassSpec.Policies.Resources.Limits.Cpu, minFreq)
-			configSpec.CpuAllocation.Limit = &lim
+	memReq := vmClassSpec.Policies.Resources.Requests.Memory
+	memLim := vmClassSpec.Policies.Resources.Limits.Memory
+	if !memReq.IsZero() || !memLim.IsZero() {
+		if configSpec.MemoryAllocation == nil {
+			configSpec.MemoryAllocation = &vimtypes.ResourceAllocationInfo{}
+		}
+		if configSpec.MemoryAllocation.Shares == nil {
+			configSpec.MemoryAllocation.Shares = &vimtypes.SharesInfo{
+				Level: vimtypes.SharesLevelNormal,
+			}
+		}
+		if v := memReq; !v.IsZero() {
+			rsv := MemoryQuantityToMb(v)
+			configSpec.MemoryAllocation.Reservation = &rsv
+		}
+		if v := memLim; !v.IsZero() {
+			rsv := MemoryQuantityToMb(v)
+			configSpec.MemoryAllocation.Limit = &rsv
 		}
 	}
 
-	configSpec.MemoryAllocation = &vimtypes.ResourceAllocationInfo{
-		Shares: &vimtypes.SharesInfo{
-			Level: vimtypes.SharesLevelNormal,
-		},
-	}
-
-	if !vmClassSpec.Policies.Resources.Requests.Memory.IsZero() {
-		rsv := MemoryQuantityToMb(vmClassSpec.Policies.Resources.Requests.Memory)
-		configSpec.MemoryAllocation.Reservation = &rsv
-	}
-
-	if !vmClassSpec.Policies.Resources.Limits.Memory.IsZero() {
-		lim := MemoryQuantityToMb(vmClassSpec.Policies.Resources.Limits.Memory)
-		configSpec.MemoryAllocation.Limit = &lim
-	}
-
-	// Use firmware type from the image if config spec doesn't have it.
-	if configSpec.Firmware == "" && imageFirmware != "" {
-		configSpec.Firmware = imageFirmware
+	// Override the firmware with the provided firmware type.
+	if firmware != "" && configSpec.Firmware != firmware {
+		configSpec.Firmware = firmware
 	}
 
 	return configSpec

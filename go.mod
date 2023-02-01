@@ -38,6 +38,7 @@ require (
 
 require (
 	cloud.google.com/go v0.81.0 // indirect
+	github.com/akutz/gdj v0.0.0-20230109022746-c7e26b7d2ec4 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403 // indirect
