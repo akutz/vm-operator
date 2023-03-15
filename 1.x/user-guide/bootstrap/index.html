@@ -61,7 +61,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
     
     
@@ -134,7 +134,7 @@
       <form class="md-header__option" data-md-component="palette">
         
           
-          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
@@ -142,7 +142,7 @@
           
         
           
-          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
           
             <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
@@ -878,11 +878,11 @@
 </tr>
 </tbody>
 </table>
-<div class="admonition note">
-<p class="admonition-title"><code>ConfigMap</code> or <code>Secret</code></p>
-<p>When VM Operator was first released, the only way to store bootstrap data was via a <code>ConfigMap</code> resource. While this still works, it is not recommended as data stored in a <code>ConfigMap</code> is not encrypted at rest. Instead, it is recommended users switch to using <code>Secret</code> resources for storing bootstrap data.</p>
-<p>Please note that the choice of a <code>ConfigMap</code> or <code>Secret</code> <em>in no way</em> impacts the choice of the bootstrap provider. The two resources fulfill the same obligation -- they are simply a way to store the bootstrap data.</p>
-</div>
+<p>!!! note "<code>ConfigMap</code> or <code>Secret</code>"</p>
+<pre><code>When VM Operator was first released, the only way to store bootstrap data was via a `ConfigMap` resource. While this still works, it is not recommended as data stored in a `ConfigMap` is not encrypted at rest. Instead, it is recommended users switch to using `Secret` resources for storing bootstrap data.
+
+Please note that the choice of a `ConfigMap` or `Secret` _in no way_ impacts the choice of the bootstrap provider. The two resources fulfill the same obligation -- they are simply a way to store the bootstrap data.
+</code></pre>
 <h2 id="cloud-init">Cloud-Init</h2>
 <p><a href="https://cloudinit.readthedocs.io/en/latest/">Cloud-Init</a> is widely recognized as the de facto method for bootstrapping modern VM instances on hyperscalers, including Tanzu with VM Operator. For example, the following YAML provisions a new VM, using Cloud-Init to:</p>
 <ul>
@@ -929,10 +929,9 @@ stringData:
         Hello, world.
 </code></pre>
 <p>The data in the above <code>Secret</code> is called the Cloud-Init <em>Cloud Config</em>. For more information on the Cloud-Init Cloud Config format, please see its <a href="https://cloudinit.readthedocs.io/en/latest/reference/examples.html">official documentation</a>.</p>
-<div class="admonition note">
-<p class="admonition-title">Windows and Cloud-Init</p>
-<p>It is possible to use the Cloud-Init bootstrap provider to deploy a Windows image if it contains <a href="https://cloudbase.it/cloudbase-init/">Cloudbase-Init</a>, the Windows port of Cloud-Init.</p>
-</div>
+<p>!!! note "Windows and Cloud-Init"</p>
+<pre><code>It is possible to use the Cloud-Init bootstrap provider to deploy a Windows image if it contains [Cloudbase-Init](https://cloudbase.it/cloudbase-init/), the Windows port of Cloud-Init.
+</code></pre>
 <h2 id="vappconfig">vAppConfig</h2>
 <p>The vAppConfig bootstrap method is useful for legacy, VM images that rely on bespoke, boot-time processes that leverage vAppConfig properties for customizing a guest.</p>
 <h2 id="deprecated">Deprecated</h2>
