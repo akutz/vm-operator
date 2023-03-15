@@ -893,14 +893,16 @@
 <p><code>// TODO(akutz)</code></p>
 <h3 id="create-a-vm-on-supervisor">Create a VM on Supervisor</h3>
 <p>Let's deploy a VM with VM Operator on vSphere Supervisor:</p>
-<p>!!! note "note"</p>
-<pre><code>The example below assumes:
-
-* an available `VirtualMachineClass` named `small`
-* an available `VirtualMachineImage` named `ubuntu-22.10`
-* an available `StorageClass` named `iscsi`
-* the user has `Editor` permissions on the namespace `my-namespace`
-</code></pre>
+<div class="admonition note">
+<p class="admonition-title">note</p>
+<p>The example below assumes:</p>
+<ul>
+<li>an available <code>VirtualMachineClass</code> named <code>small</code></li>
+<li>an available <code>VirtualMachineImage</code> named <code>ubuntu-22.10</code></li>
+<li>an available <code>StorageClass</code> named <code>iscsi</code></li>
+<li>the user has <code>Editor</code> permissions on the namespace <code>my-namespace</code></li>
+</ul>
+</div>
 <pre><code class="language-shell">cat &lt;&lt;EOF | kubectl apply -f
 # TODO(akutz)
 EOF

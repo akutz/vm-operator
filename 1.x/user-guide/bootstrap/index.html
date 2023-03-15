@@ -878,11 +878,11 @@
 </tr>
 </tbody>
 </table>
-<p>!!! note "<code>ConfigMap</code> or <code>Secret</code>"</p>
-<pre><code>When VM Operator was first released, the only way to store bootstrap data was via a `ConfigMap` resource. While this still works, it is not recommended as data stored in a `ConfigMap` is not encrypted at rest. Instead, it is recommended users switch to using `Secret` resources for storing bootstrap data.
-
-Please note that the choice of a `ConfigMap` or `Secret` _in no way_ impacts the choice of the bootstrap provider. The two resources fulfill the same obligation -- they are simply a way to store the bootstrap data.
-</code></pre>
+<div class="admonition note">
+<p class="admonition-title"><code>ConfigMap</code> or <code>Secret</code></p>
+<p>When VM Operator was first released, the only way to store bootstrap data was via a <code>ConfigMap</code> resource. While this still works, it is not recommended as data stored in a <code>ConfigMap</code> is not encrypted at rest. Instead, it is recommended users switch to using <code>Secret</code> resources for storing bootstrap data.</p>
+<p>Please note that the choice of a <code>ConfigMap</code> or <code>Secret</code> <em>in no way</em> impacts the choice of the bootstrap provider. The two resources fulfill the same obligation -- they are simply a way to store the bootstrap data.</p>
+</div>
 <h2 id="cloud-init">Cloud-Init</h2>
 <p><a href="https://cloudinit.readthedocs.io/en/latest/">Cloud-Init</a> is widely recognized as the de facto method for bootstrapping modern VM instances on hyperscalers, including Tanzu with VM Operator. For example, the following YAML provisions a new VM, using Cloud-Init to:</p>
 <ul>
@@ -929,9 +929,10 @@ stringData:
         Hello, world.
 </code></pre>
 <p>The data in the above <code>Secret</code> is called the Cloud-Init <em>Cloud Config</em>. For more information on the Cloud-Init Cloud Config format, please see its <a href="https://cloudinit.readthedocs.io/en/latest/reference/examples.html">official documentation</a>.</p>
-<p>!!! note "Windows and Cloud-Init"</p>
-<pre><code>It is possible to use the Cloud-Init bootstrap provider to deploy a Windows image if it contains [Cloudbase-Init](https://cloudbase.it/cloudbase-init/), the Windows port of Cloud-Init.
-</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Windows and Cloud-Init</p>
+<p>It is possible to use the Cloud-Init bootstrap provider to deploy a Windows image if it contains <a href="https://cloudbase.it/cloudbase-init/">Cloudbase-Init</a>, the Windows port of Cloud-Init.</p>
+</div>
 <h2 id="vappconfig">vAppConfig</h2>
 <p>The vAppConfig bootstrap method is useful for legacy, VM images that rely on bespoke, boot-time processes that leverage vAppConfig properties for customizing a guest.</p>
 <h2 id="deprecated">Deprecated</h2>
