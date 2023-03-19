@@ -1,8 +1,8 @@
-# Deploying a VM
-
-Be our guest, be our guest...
-
 ---
+Title: Deploying a VM with Cloud-Init
+---
+
+# Deploy a VM with Cloud-Init
 
 ## Overview
 
