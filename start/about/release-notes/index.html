@@ -8,23 +8,25 @@
       
       
       
-        <link rel="canonical" href="https://github.com/vmware-tanzu/vm-operator/">
+        <link rel="canonical" href="https://github.com/vmware-tanzu/vm-operator/start/about/release-notes/">
       
       
+        <link rel="prev" href="../roadmap/">
       
-        <link rel="next" href="start/">
+      
+        <link rel="next" href="../license/">
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.2">
     
     
       
-        <title>VM Operator</title>
+        <title>Release Notes - VM Operator</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.d451bc0e.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.d451bc0e.min.css">
       
       
 
@@ -43,11 +45,11 @@
       
     
     
-      <link rel="stylesheet" href="www/css/vm-operator.css">
+      <link rel="stylesheet" href="../../../www/css/vm-operator.css">
     
-      <link rel="stylesheet" href="www/css/vm-operator-font.css">
+      <link rel="stylesheet" href="../../../www/css/vm-operator-font.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -69,7 +71,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#vm-operator" class="md-skip">
+        <a href="#release-notes" class="md-skip">
           Skip to content
         </a>
       
@@ -85,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="VM Operator" class="md-header__button md-logo" aria-label="VM Operator" data-md-component="logo">
+    <a href="../../.." title="VM Operator" class="md-header__button md-logo" aria-label="VM Operator" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -105,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Release Notes
             
           </span>
         </div>
@@ -180,9 +182,7 @@
           
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -191,7 +191,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="VM Operator" class="md-nav__button md-logo" aria-label="VM Operator" data-md-component="logo">
+    <a href="../../.." title="VM Operator" class="md-nav__button md-logo" aria-label="VM Operator" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -218,18 +218,9 @@
       
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -238,7 +229,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -247,18 +237,20 @@
       
   
   
+    
+  
   
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -272,7 +264,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Getting Started
@@ -285,7 +277,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -305,7 +297,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/quick/" class="md-nav__link">
+      <a href="../../quick/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -325,7 +317,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/help/" class="md-nav__link">
+      <a href="../../help/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -381,7 +373,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/" class="md-nav__link">
+      <a href="../../contrib/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -401,7 +393,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/suggest-change/" class="md-nav__link">
+      <a href="../../contrib/suggest-change/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -421,7 +413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/report-issue/" class="md-nav__link">
+      <a href="../../contrib/report-issue/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -441,7 +433,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/submit-change/" class="md-nav__link">
+      <a href="../../contrib/submit-change/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -467,18 +459,20 @@
                 
   
   
+    
+  
   
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" checked>
         
           
           <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
@@ -492,7 +486,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_5">
             <span class="md-nav__icon md-icon"></span>
             About
@@ -505,7 +499,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/about/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -525,7 +519,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/about/roadmap/" class="md-nav__link">
+      <a href="../roadmap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -543,9 +537,29 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="start/about/release-notes/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -554,6 +568,94 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v184-20230809" class="md-nav__link">
+    v1.8.4 (2023/08/09)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v183-20230809" class="md-nav__link">
+    v1.8.3 (2023/08/09)
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.8.3 (2023/08/09)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v182-20230728" class="md-nav__link">
+    v1.8.2 (2023/07/28)
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.8.2 (2023/07/28)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#coming-soon" class="md-nav__link">
+    Coming Soon
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-features" class="md-nav__link">
+    New Features
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes" class="md-nav__link">
+    Bug Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#known-issues" class="md-nav__link">
+    Known Issues
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -565,7 +667,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/about/license/" class="md-nav__link">
+      <a href="../license/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -636,7 +738,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/" class="md-nav__link">
+      <a href="../../../concepts/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -692,7 +794,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/" class="md-nav__link">
+      <a href="../../../concepts/workloads/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -712,7 +814,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/vm/" class="md-nav__link">
+      <a href="../../../concepts/workloads/vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -732,7 +834,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/vm-class/" class="md-nav__link">
+      <a href="../../../concepts/workloads/vm-class/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -752,7 +854,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/vm-web-console/" class="md-nav__link">
+      <a href="../../../concepts/workloads/vm-web-console/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -772,7 +874,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/guest/" class="md-nav__link">
+      <a href="../../../concepts/workloads/guest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -836,7 +938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/images/" class="md-nav__link">
+      <a href="../../../concepts/images/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -856,7 +958,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/images/vm-image/" class="md-nav__link">
+      <a href="../../../concepts/images/vm-image/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -876,7 +978,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/images/pub-vm-image/" class="md-nav__link">
+      <a href="../../../concepts/images/pub-vm-image/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -940,7 +1042,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/services-networking/" class="md-nav__link">
+      <a href="../../../concepts/services-networking/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -960,7 +1062,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/services-networking/vm-service/" class="md-nav__link">
+      <a href="../../../concepts/services-networking/vm-service/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -980,7 +1082,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/services-networking/guest-net-config/" class="md-nav__link">
+      <a href="../../../concepts/services-networking/guest-net-config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1051,7 +1153,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/" class="md-nav__link">
+      <a href="../../../tutorials/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1107,7 +1209,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-vm/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1127,7 +1229,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-vm/cloudinit/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-vm/cloudinit/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1147,7 +1249,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-vm/vappconfig/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-vm/vappconfig/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1211,7 +1313,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-apps/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-apps/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1231,7 +1333,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-apps/nfs-server-and-client/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-apps/nfs-server-and-client/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1295,7 +1397,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1315,7 +1417,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/get-console-session/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/get-console-session/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1335,7 +1437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/deploy-vm/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/deploy-vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1355,7 +1457,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/ip-assignment/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/ip-assignment/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1375,7 +1477,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/publish-vm/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/publish-vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1446,7 +1548,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/" class="md-nav__link">
+      <a href="../../../ref/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1502,7 +1604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/api/" class="md-nav__link">
+      <a href="../../../ref/api/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1522,7 +1624,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/api/v1alpha1/" class="md-nav__link">
+      <a href="../../../ref/api/v1alpha1/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1542,7 +1644,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/api/v1alpha2/" class="md-nav__link">
+      <a href="../../../ref/api/v1alpha2/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1606,7 +1708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/config/" class="md-nav__link">
+      <a href="../../../ref/config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1626,7 +1728,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/config/manager/" class="md-nav__link">
+      <a href="../../../ref/config/manager/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1690,7 +1792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/proj/" class="md-nav__link">
+      <a href="../../../ref/proj/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1710,7 +1812,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/proj/build/" class="md-nav__link">
+      <a href="../../../ref/proj/build/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1730,7 +1832,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/proj/release/" class="md-nav__link">
+      <a href="../../../ref/proj/release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1750,7 +1852,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/proj/docs/" class="md-nav__link">
+      <a href="../../../ref/proj/docs/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1787,9 +1889,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -1800,6 +1900,82 @@
   
     
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v184-20230809" class="md-nav__link">
+    v1.8.4 (2023/08/09)
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v183-20230809" class="md-nav__link">
+    v1.8.3 (2023/08/09)
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.8.3 (2023/08/09)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v182-20230728" class="md-nav__link">
+    v1.8.2 (2023/07/28)
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.8.2 (2023/07/28)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#coming-soon" class="md-nav__link">
+    Coming Soon
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#new-features" class="md-nav__link">
+    New Features
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bug-fixes" class="md-nav__link">
+    Bug Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#known-issues" class="md-nav__link">
+    Known Issues
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1817,24 +1993,44 @@
   
 
 
-<style>
-h1 {
-    text-align: center;
-}
-h1#vm-operator::after {
-    text-align: center;
-}
-article.md-content__inner {
-    text-align: center;
-}
-</style>
+<h1 id="release-notes">Release Notes</h1>
+<h2 id="v184-20230809">v1.8.4 (2023/08/09)</h2>
+<p>An addendum to the previous release to fix misaligned headings in the release notes.</p>
+<h2 id="v183-20230809">v1.8.3 (2023/08/09)</h2>
+<p>This release introduces several documentation updates.</p>
+<h3 id="documentation">Documentation</h3>
+<ul>
+<li>Deploying a VM with the vAppConfig bootstrap provider (<a href="https://github.com/vmware-tanzu/vm-operator/pull/175">#175</a>)</li>
+<li>Deploying a VM with the Cloud-Init bootstrap provider (<a href="https://github.com/vmware-tanzu/vm-operator/pull/183">#183</a>)</li>
+<li>Information about a VM resources such as CPU, memory, storage (<a href="https://github.com/vmware-tanzu/vm-operator/pull/189">#189</a>)</li>
+<li>A call-out to address the incomplete Sysprep state issue (<a href="https://github.com/vmware-tanzu/vm-operator/pull/186">#186</a>)</li>
+<li>How to use <code>kubectl vsphere vm web-console</code> (<a href="https://github.com/vmware-tanzu/vm-operator/pull/196">#196</a>)</li>
+</ul>
+<h2 id="v182-20230728">v1.8.2 (2023/07/28)</h2>
+<p>This release includes changes related to the upcoming v1alpha2 schema, power state enhancements, support for deploying Windows, and the ability for a <code>VirtualMachineClass</code> to contain all of a vSphere VM's hardware and configuration options.</p>
+<h3 id="coming-soon">Coming Soon</h3>
+<ul>
+<li>The not-yet-enabled-but-now-in-repo beginnings of the VM Operator v1alpha2 API (<a href="https://github.com/vmware-tanzu/vm-operator/pulls?q=is%3Apr+v1a2+v1alpha2">the changes so far...</a>)!</li>
+</ul>
+<h3 id="new-features">New Features</h3>
+<ul>
+<li>A <code>VirtualMachineClass</code> now supports all of the hardware and configuration options of a vSphere VM!</li>
+<li>Support for deploying Windows VMs using Sysprep (<a href="https://github.com/vmware-tanzu/vm-operator/pull/83">#83</a>, <a href="https://github.com/vmware-tanzu/vm-operator/pull/136">#136</a>, <a href="https://github.com/vmware-tanzu/vm-operator/pull/149">#149</a>).</li>
+<li>The ability to suspend a VM, either using suspend or standby, by setting the VM's <code>spec.powerState</code> field to <code>suspended</code> (<a href="https://github.com/vmware-tanzu/vm-operator/pull/152">#152</a>, <a href="https://github.com/vmware-tanzu/vm-operator/pull/154">#154</a>).</li>
+<li>Users can now gracefully shutdown a VM using VM tools instead of halting a VM, the equivalent of yanking a system's power cable, by setting <code>spec.powerOffMode</code> to <code>soft</code> or <code>trySoft</code> (<a href="https://github.com/vmware-tanzu/vm-operator/pull/152">#152</a>).</li>
+<li>Restart a VM or reboot its guest by setting <code>spec.nextRestartTime</code> to the value <code>now</code>. The VM will be power cycled exactly once until the next time <code>spec.nextRestartTime</code> is set to <code>now</code> (<a href="https://github.com/vmware-tanzu/vm-operator/pull/155">#155</a>).</li>
+<li>Support for multiple, concurrent controllers for reconciling a VirtualMachine resource via the new <code>spec.controllerName</code> field in a <code>VirtualMachineClass</code> (<a href="https://github.com/vmware-tanzu/vm-operator/pull/163">#163</a>).</li>
+</ul>
+<h3 id="bug-fixes">Bug Fixes</h3>
+<ul>
+<li>A <code>VirtualMachineService</code> with an empty selector no longer considers all <code>VirtualMachine</code> resources (<a href="https://github.com/vmware-tanzu/vm-operator/pull/137">#137</a>).</li>
+</ul>
+<h3 id="known-issues">Known Issues</h3>
+<ul>
+<li>Deploying a <code>VirtualMachine</code> with an encryption storage policy is not currently supported. This means it is not possible for a VM Service VM to have encrypted boot disks. However, using VM Class that has a vTPM will still result in a VM with encryption less its boot disks.</li>
+</ul>
 
-<h1 id="vm-operator">VM Operator</h1>
-<p>Self-service management of virtual machines (VM) via Kubernetes.</p>
 
-
-
-  
 
 
 
@@ -1870,10 +2066,10 @@ article.md-content__inner {
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.726fbb30.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.726fbb30.min.js"></script>
       
     
   </body>

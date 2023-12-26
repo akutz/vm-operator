@@ -1,0 +1,5839 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/vmware-tanzu/vm-operator/ref/api/v1alpha2/">
+      
+      
+        <link rel="prev" href="../v1alpha1/">
+      
+      
+        <link rel="next" href="../../config/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.2">
+    
+    
+      
+        <title>v1alpha2 - VM Operator</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.d451bc0e.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../www/css/vm-operator.css">
+    
+      <link rel="stylesheet" href="../../../www/css/vm-operator-font.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#v1alpha2" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="VM Operator" class="md-header__button md-logo" aria-label="VM Operator" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            VM Operator
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              v1alpha2
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/vmware-tanzu/vm-operator" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="VM Operator" class="md-nav__button md-logo" aria-label="VM Operator" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    VM Operator
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/vmware-tanzu/vm-operator" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../start/quick/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quickstart
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../start/help/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Talk to Us
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Contribute
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Contribute
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../start/contrib/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contribute
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../start/contrib/suggest-change/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Suggest a Change
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../start/contrib/report-issue/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Report an Issue
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../start/contrib/submit-change/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Submit a Change
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            About
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../start/about/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    About
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../start/about/roadmap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Roadmap
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../start/about/release-notes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release Notes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../start/about/license/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    License
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Concepts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Workloads
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Workloads
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/workloads/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Workloads
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/workloads/vm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VirtualMachine
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/workloads/vm-class/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VirtualMachineClass
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/workloads/vm-web-console/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    WebConsoleRequest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/workloads/guest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Guest Customization
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Images
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Images
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/images/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Images
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/images/vm-image/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VirtualMachineImage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/images/pub-vm-image/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Publish a VM Image
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Services & Networking
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            Services & Networking
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/services-networking/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Services & Networking
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/services-networking/vm-service/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VirtualMachineService
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../concepts/services-networking/guest-net-config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Guest Network Config
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tutorials
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Deploy VM
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            Deploy VM
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/deploy-vm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deploy a VM
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/deploy-vm/cloudinit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    With Cloud-Init
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/deploy-vm/vappconfig/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    With vAppConfig
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Deploy apps
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            Deploy apps
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/deploy-apps/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deploy applications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/deploy-apps/nfs-server-and-client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    NFS server and client
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
+            <span class="md-nav__icon md-icon"></span>
+            Troubleshooting
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/troubleshooting/get-console-session/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Get a Console Session
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/troubleshooting/deploy-vm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VM Deployment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/troubleshooting/ip-assignment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    IP Assignment
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorials/troubleshooting/publish-vm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    VM Publish
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    API
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../v1alpha1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    v1alpha1
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    v1alpha2
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    v1alpha2
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kinds" class="md-nav__link">
+    Kinds
+  </a>
+  
+    <nav class="md-nav" aria-label="Kinds">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clustervirtualmachineimage" class="md-nav__link">
+    ClusterVirtualMachineImage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachine" class="md-nav__link">
+    VirtualMachine
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclass" class="md-nav__link">
+    VirtualMachineClass
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineimage" class="md-nav__link">
+    VirtualMachineImage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequest" class="md-nav__link">
+    VirtualMachinePublishRequest
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineservice" class="md-nav__link">
+    VirtualMachineService
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinesetresourcepolicy" class="md-nav__link">
+    VirtualMachineSetResourcePolicy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinewebconsolerequest" class="md-nav__link">
+    VirtualMachineWebConsoleRequest
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#types" class="md-nav__link">
+    Types
+  </a>
+  
+    <nav class="md-nav" aria-label="Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dynamicdirectpathiodevice" class="md-nav__link">
+    DynamicDirectPathIODevice
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guestheartbeataction" class="md-nav__link">
+    GuestHeartbeatAction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guestheartbeatstatus" class="md-nav__link">
+    GuestHeartbeatStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guestinfoaction" class="md-nav__link">
+    GuestInfoAction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instancestorage" class="md-nav__link">
+    InstanceStorage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instancestoragevolume" class="md-nav__link">
+    InstanceStorageVolume
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instancevolumeclaimvolumesource" class="md-nav__link">
+    InstanceVolumeClaimVolumeSource
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loadbalanceringress" class="md-nav__link">
+    LoadBalancerIngress
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loadbalancerstatus" class="md-nav__link">
+    LoadBalancerStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#networkdevicestatus" class="md-nav__link">
+    NetworkDeviceStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#networkstatus" class="md-nav__link">
+    NetworkStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ovfproperty" class="md-nav__link">
+    OVFProperty
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persistentvolumeclaimvolumesource" class="md-nav__link">
+    PersistentVolumeClaimVolumeSource
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resourcepoolspec" class="md-nav__link">
+    ResourcePoolSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tcpsocketaction" class="md-nav__link">
+    TCPSocketAction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vgpudevice" class="md-nav__link">
+    VGPUDevice
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vsphereclustermodulestatus" class="md-nav__link">
+    VSphereClusterModuleStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualdevices" class="md-nav__link">
+    VirtualDevices
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineadvancedspec" class="md-nav__link">
+    VirtualMachineAdvancedSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinebootstrapcloudinitspec" class="md-nav__link">
+    VirtualMachineBootstrapCloudInitSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinebootstraplinuxprepspec" class="md-nav__link">
+    VirtualMachineBootstrapLinuxPrepSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinebootstrapspec" class="md-nav__link">
+    VirtualMachineBootstrapSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinebootstrapsysprepspec" class="md-nav__link">
+    VirtualMachineBootstrapSysprepSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinebootstrapvappconfigspec" class="md-nav__link">
+    VirtualMachineBootstrapVAppConfigSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclasshardware" class="md-nav__link">
+    VirtualMachineClassHardware
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclasspolicies" class="md-nav__link">
+    VirtualMachineClassPolicies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclassresources" class="md-nav__link">
+    VirtualMachineClassResources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclassspec" class="md-nav__link">
+    VirtualMachineClassSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclassstatus" class="md-nav__link">
+    VirtualMachineClassStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineimageosinfo" class="md-nav__link">
+    VirtualMachineImageOSInfo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineimageproductinfo" class="md-nav__link">
+    VirtualMachineImageProductInfo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineimagespec" class="md-nav__link">
+    VirtualMachineImageSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineimagestatus" class="md-nav__link">
+    VirtualMachineImageStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkdhcpoptionsstatus" class="md-nav__link">
+    VirtualMachineNetworkDHCPOptionsStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkdhcpstatus" class="md-nav__link">
+    VirtualMachineNetworkDHCPStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkdnsstatus" class="md-nav__link">
+    VirtualMachineNetworkDNSStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkiproutegatewaystatus" class="md-nav__link">
+    VirtualMachineNetworkIPRouteGatewayStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkiproutestatus" class="md-nav__link">
+    VirtualMachineNetworkIPRouteStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkipstackstatus" class="md-nav__link">
+    VirtualMachineNetworkIPStackStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkinterfaceipaddrstatus" class="md-nav__link">
+    VirtualMachineNetworkInterfaceIPAddrStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkinterfaceipstatus" class="md-nav__link">
+    VirtualMachineNetworkInterfaceIPStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkinterfacespec" class="md-nav__link">
+    VirtualMachineNetworkInterfaceSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkinterfacestatus" class="md-nav__link">
+    VirtualMachineNetworkInterfaceStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkroutespec" class="md-nav__link">
+    VirtualMachineNetworkRouteSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkspec" class="md-nav__link">
+    VirtualMachineNetworkSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkstatus" class="md-nav__link">
+    VirtualMachineNetworkStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequestsource" class="md-nav__link">
+    VirtualMachinePublishRequestSource
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequestspec" class="md-nav__link">
+    VirtualMachinePublishRequestSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequeststatus" class="md-nav__link">
+    VirtualMachinePublishRequestStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequesttarget" class="md-nav__link">
+    VirtualMachinePublishRequestTarget
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequesttargetitem" class="md-nav__link">
+    VirtualMachinePublishRequestTargetItem
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequesttargetlocation" class="md-nav__link">
+    VirtualMachinePublishRequestTargetLocation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinereadinessgate" class="md-nav__link">
+    VirtualMachineReadinessGate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinereadinessprobespec" class="md-nav__link">
+    VirtualMachineReadinessProbeSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinereservedspec" class="md-nav__link">
+    VirtualMachineReservedSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineresourcespec" class="md-nav__link">
+    VirtualMachineResourceSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineserviceport" class="md-nav__link">
+    VirtualMachineServicePort
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineservicespec" class="md-nav__link">
+    VirtualMachineServiceSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineservicestatus" class="md-nav__link">
+    VirtualMachineServiceStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinesetresourcepolicyspec" class="md-nav__link">
+    VirtualMachineSetResourcePolicySpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinesetresourcepolicystatus" class="md-nav__link">
+    VirtualMachineSetResourcePolicyStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinespec" class="md-nav__link">
+    VirtualMachineSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinestatus" class="md-nav__link">
+    VirtualMachineStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinevolume" class="md-nav__link">
+    VirtualMachineVolume
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinevolumesource" class="md-nav__link">
+    VirtualMachineVolumeSource
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinevolumestatus" class="md-nav__link">
+    VirtualMachineVolumeStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinewebconsolerequestspec" class="md-nav__link">
+    VirtualMachineWebConsoleRequestSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinewebconsolerequeststatus" class="md-nav__link">
+    VirtualMachineWebConsoleRequestStatus
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            Configuration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../config/manager/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manager Pod
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Project
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            Project
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proj/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Project
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proj/build/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Build from Source
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proj/release/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create a Release
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proj/docs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Writing Documentation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#kinds" class="md-nav__link">
+    Kinds
+  </a>
+  
+    <nav class="md-nav" aria-label="Kinds">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clustervirtualmachineimage" class="md-nav__link">
+    ClusterVirtualMachineImage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachine" class="md-nav__link">
+    VirtualMachine
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclass" class="md-nav__link">
+    VirtualMachineClass
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineimage" class="md-nav__link">
+    VirtualMachineImage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequest" class="md-nav__link">
+    VirtualMachinePublishRequest
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineservice" class="md-nav__link">
+    VirtualMachineService
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinesetresourcepolicy" class="md-nav__link">
+    VirtualMachineSetResourcePolicy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinewebconsolerequest" class="md-nav__link">
+    VirtualMachineWebConsoleRequest
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#types" class="md-nav__link">
+    Types
+  </a>
+  
+    <nav class="md-nav" aria-label="Types">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dynamicdirectpathiodevice" class="md-nav__link">
+    DynamicDirectPathIODevice
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guestheartbeataction" class="md-nav__link">
+    GuestHeartbeatAction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guestheartbeatstatus" class="md-nav__link">
+    GuestHeartbeatStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#guestinfoaction" class="md-nav__link">
+    GuestInfoAction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instancestorage" class="md-nav__link">
+    InstanceStorage
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instancestoragevolume" class="md-nav__link">
+    InstanceStorageVolume
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#instancevolumeclaimvolumesource" class="md-nav__link">
+    InstanceVolumeClaimVolumeSource
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loadbalanceringress" class="md-nav__link">
+    LoadBalancerIngress
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loadbalancerstatus" class="md-nav__link">
+    LoadBalancerStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#networkdevicestatus" class="md-nav__link">
+    NetworkDeviceStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#networkstatus" class="md-nav__link">
+    NetworkStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ovfproperty" class="md-nav__link">
+    OVFProperty
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#persistentvolumeclaimvolumesource" class="md-nav__link">
+    PersistentVolumeClaimVolumeSource
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#resourcepoolspec" class="md-nav__link">
+    ResourcePoolSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tcpsocketaction" class="md-nav__link">
+    TCPSocketAction
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vgpudevice" class="md-nav__link">
+    VGPUDevice
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#vsphereclustermodulestatus" class="md-nav__link">
+    VSphereClusterModuleStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualdevices" class="md-nav__link">
+    VirtualDevices
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineadvancedspec" class="md-nav__link">
+    VirtualMachineAdvancedSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinebootstrapcloudinitspec" class="md-nav__link">
+    VirtualMachineBootstrapCloudInitSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinebootstraplinuxprepspec" class="md-nav__link">
+    VirtualMachineBootstrapLinuxPrepSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinebootstrapspec" class="md-nav__link">
+    VirtualMachineBootstrapSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinebootstrapsysprepspec" class="md-nav__link">
+    VirtualMachineBootstrapSysprepSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinebootstrapvappconfigspec" class="md-nav__link">
+    VirtualMachineBootstrapVAppConfigSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclasshardware" class="md-nav__link">
+    VirtualMachineClassHardware
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclasspolicies" class="md-nav__link">
+    VirtualMachineClassPolicies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclassresources" class="md-nav__link">
+    VirtualMachineClassResources
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclassspec" class="md-nav__link">
+    VirtualMachineClassSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineclassstatus" class="md-nav__link">
+    VirtualMachineClassStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineimageosinfo" class="md-nav__link">
+    VirtualMachineImageOSInfo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineimageproductinfo" class="md-nav__link">
+    VirtualMachineImageProductInfo
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineimagespec" class="md-nav__link">
+    VirtualMachineImageSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineimagestatus" class="md-nav__link">
+    VirtualMachineImageStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkdhcpoptionsstatus" class="md-nav__link">
+    VirtualMachineNetworkDHCPOptionsStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkdhcpstatus" class="md-nav__link">
+    VirtualMachineNetworkDHCPStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkdnsstatus" class="md-nav__link">
+    VirtualMachineNetworkDNSStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkiproutegatewaystatus" class="md-nav__link">
+    VirtualMachineNetworkIPRouteGatewayStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkiproutestatus" class="md-nav__link">
+    VirtualMachineNetworkIPRouteStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkipstackstatus" class="md-nav__link">
+    VirtualMachineNetworkIPStackStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkinterfaceipaddrstatus" class="md-nav__link">
+    VirtualMachineNetworkInterfaceIPAddrStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkinterfaceipstatus" class="md-nav__link">
+    VirtualMachineNetworkInterfaceIPStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkinterfacespec" class="md-nav__link">
+    VirtualMachineNetworkInterfaceSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkinterfacestatus" class="md-nav__link">
+    VirtualMachineNetworkInterfaceStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkroutespec" class="md-nav__link">
+    VirtualMachineNetworkRouteSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkspec" class="md-nav__link">
+    VirtualMachineNetworkSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinenetworkstatus" class="md-nav__link">
+    VirtualMachineNetworkStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequestsource" class="md-nav__link">
+    VirtualMachinePublishRequestSource
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequestspec" class="md-nav__link">
+    VirtualMachinePublishRequestSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequeststatus" class="md-nav__link">
+    VirtualMachinePublishRequestStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequesttarget" class="md-nav__link">
+    VirtualMachinePublishRequestTarget
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequesttargetitem" class="md-nav__link">
+    VirtualMachinePublishRequestTargetItem
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinepublishrequesttargetlocation" class="md-nav__link">
+    VirtualMachinePublishRequestTargetLocation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinereadinessgate" class="md-nav__link">
+    VirtualMachineReadinessGate
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinereadinessprobespec" class="md-nav__link">
+    VirtualMachineReadinessProbeSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinereservedspec" class="md-nav__link">
+    VirtualMachineReservedSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineresourcespec" class="md-nav__link">
+    VirtualMachineResourceSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineserviceport" class="md-nav__link">
+    VirtualMachineServicePort
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineservicespec" class="md-nav__link">
+    VirtualMachineServiceSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachineservicestatus" class="md-nav__link">
+    VirtualMachineServiceStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinesetresourcepolicyspec" class="md-nav__link">
+    VirtualMachineSetResourcePolicySpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinesetresourcepolicystatus" class="md-nav__link">
+    VirtualMachineSetResourcePolicyStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinespec" class="md-nav__link">
+    VirtualMachineSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinestatus" class="md-nav__link">
+    VirtualMachineStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinevolume" class="md-nav__link">
+    VirtualMachineVolume
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinevolumesource" class="md-nav__link">
+    VirtualMachineVolumeSource
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinevolumestatus" class="md-nav__link">
+    VirtualMachineVolumeStatus
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinewebconsolerequestspec" class="md-nav__link">
+    VirtualMachineWebConsoleRequestSpec
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#virtualmachinewebconsolerequeststatus" class="md-nav__link">
+    VirtualMachineWebConsoleRequestStatus
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="v1alpha2">v1alpha2</h1>
+<hr />
+<h2 id="kinds">Kinds</h2>
+<h3 id="clustervirtualmachineimage">ClusterVirtualMachineImage</h3>
+<p>ClusterVirtualMachineImage is the schema for the clustervirtualmachineimages API.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apiVersion</code> <em>string</em></td>
+<td><code>vmoperator.vmware.com/v1alpha2</code></td>
+</tr>
+<tr>
+<td><code>kind</code> <em>string</em></td>
+<td><code>ClusterVirtualMachineImage</code></td>
+</tr>
+<tr>
+<td><code>metadata</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#objectmeta-v1-meta">ObjectMeta</a></em></td>
+<td>Refer to Kubernetes API documentation for fields of <code>metadata</code>.</td>
+</tr>
+<tr>
+<td><code>spec</code> <em><a href="#virtualmachineimagespec">VirtualMachineImageSpec</a></em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>status</code> <em><a href="#virtualmachineimagestatus">VirtualMachineImageStatus</a></em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachine">VirtualMachine</h3>
+<p>VirtualMachine is the schema for the virtualmachines API and represents the desired state and observed status of a virtualmachines resource.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinetemplate">VirtualMachineTemplate</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apiVersion</code> <em>string</em></td>
+<td><code>vmoperator.vmware.com/v1alpha2</code></td>
+</tr>
+<tr>
+<td><code>kind</code> <em>string</em></td>
+<td><code>VirtualMachine</code></td>
+</tr>
+<tr>
+<td><code>metadata</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#objectmeta-v1-meta">ObjectMeta</a></em></td>
+<td>Refer to Kubernetes API documentation for fields of <code>metadata</code>.</td>
+</tr>
+<tr>
+<td><code>spec</code> <em><a href="#virtualmachinespec">VirtualMachineSpec</a></em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>status</code> <em><a href="#virtualmachinestatus">VirtualMachineStatus</a></em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineclass">VirtualMachineClass</h3>
+<p>VirtualMachineClass is the schema for the virtualmachineclasses API and represents the desired state and observed status of a virtualmachineclasses resource.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apiVersion</code> <em>string</em></td>
+<td><code>vmoperator.vmware.com/v1alpha2</code></td>
+</tr>
+<tr>
+<td><code>kind</code> <em>string</em></td>
+<td><code>VirtualMachineClass</code></td>
+</tr>
+<tr>
+<td><code>metadata</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#objectmeta-v1-meta">ObjectMeta</a></em></td>
+<td>Refer to Kubernetes API documentation for fields of <code>metadata</code>.</td>
+</tr>
+<tr>
+<td><code>spec</code> <em><a href="#virtualmachineclassspec">VirtualMachineClassSpec</a></em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>status</code> <em><a href="#virtualmachineclassstatus">VirtualMachineClassStatus</a></em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineimage">VirtualMachineImage</h3>
+<p>VirtualMachineImage is the schema for the virtualmachineimages API.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apiVersion</code> <em>string</em></td>
+<td><code>vmoperator.vmware.com/v1alpha2</code></td>
+</tr>
+<tr>
+<td><code>kind</code> <em>string</em></td>
+<td><code>VirtualMachineImage</code></td>
+</tr>
+<tr>
+<td><code>metadata</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#objectmeta-v1-meta">ObjectMeta</a></em></td>
+<td>Refer to Kubernetes API documentation for fields of <code>metadata</code>.</td>
+</tr>
+<tr>
+<td><code>spec</code> <em><a href="#virtualmachineimagespec">VirtualMachineImageSpec</a></em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>status</code> <em><a href="#virtualmachineimagestatus">VirtualMachineImageStatus</a></em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinepublishrequest">VirtualMachinePublishRequest</h3>
+<p>VirtualMachinePublishRequest defines the information necessary to publish a VirtualMachine as a VirtualMachineImage to an image registry.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apiVersion</code> <em>string</em></td>
+<td><code>vmoperator.vmware.com/v1alpha2</code></td>
+</tr>
+<tr>
+<td><code>kind</code> <em>string</em></td>
+<td><code>VirtualMachinePublishRequest</code></td>
+</tr>
+<tr>
+<td><code>metadata</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#objectmeta-v1-meta">ObjectMeta</a></em></td>
+<td>Refer to Kubernetes API documentation for fields of <code>metadata</code>.</td>
+</tr>
+<tr>
+<td><code>spec</code> <em><a href="#virtualmachinepublishrequestspec">VirtualMachinePublishRequestSpec</a></em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>status</code> <em><a href="#virtualmachinepublishrequeststatus">VirtualMachinePublishRequestStatus</a></em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineservice">VirtualMachineService</h3>
+<p>VirtualMachineService is the Schema for the virtualmachineservices API.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apiVersion</code> <em>string</em></td>
+<td><code>vmoperator.vmware.com/v1alpha2</code></td>
+</tr>
+<tr>
+<td><code>kind</code> <em>string</em></td>
+<td><code>VirtualMachineService</code></td>
+</tr>
+<tr>
+<td><code>metadata</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#objectmeta-v1-meta">ObjectMeta</a></em></td>
+<td>Refer to Kubernetes API documentation for fields of <code>metadata</code>.</td>
+</tr>
+<tr>
+<td><code>spec</code> <em><a href="#virtualmachineservicespec">VirtualMachineServiceSpec</a></em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>status</code> <em><a href="#virtualmachineservicestatus">VirtualMachineServiceStatus</a></em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinesetresourcepolicy">VirtualMachineSetResourcePolicy</h3>
+<p>VirtualMachineSetResourcePolicy is the Schema for the virtualmachinesetresourcepolicies API.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apiVersion</code> <em>string</em></td>
+<td><code>vmoperator.vmware.com/v1alpha2</code></td>
+</tr>
+<tr>
+<td><code>kind</code> <em>string</em></td>
+<td><code>VirtualMachineSetResourcePolicy</code></td>
+</tr>
+<tr>
+<td><code>metadata</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#objectmeta-v1-meta">ObjectMeta</a></em></td>
+<td>Refer to Kubernetes API documentation for fields of <code>metadata</code>.</td>
+</tr>
+<tr>
+<td><code>spec</code> <em><a href="#virtualmachinesetresourcepolicyspec">VirtualMachineSetResourcePolicySpec</a></em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>status</code> <em><a href="#virtualmachinesetresourcepolicystatus">VirtualMachineSetResourcePolicyStatus</a></em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinewebconsolerequest">VirtualMachineWebConsoleRequest</h3>
+<p>VirtualMachineWebConsoleRequest allows the creation of a one-time, web console connection to a VM.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apiVersion</code> <em>string</em></td>
+<td><code>vmoperator.vmware.com/v1alpha2</code></td>
+</tr>
+<tr>
+<td><code>kind</code> <em>string</em></td>
+<td><code>VirtualMachineWebConsoleRequest</code></td>
+</tr>
+<tr>
+<td><code>metadata</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#objectmeta-v1-meta">ObjectMeta</a></em></td>
+<td>Refer to Kubernetes API documentation for fields of <code>metadata</code>.</td>
+</tr>
+<tr>
+<td><code>spec</code> <em><a href="#virtualmachinewebconsolerequestspec">VirtualMachineWebConsoleRequestSpec</a></em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>status</code> <em><a href="#virtualmachinewebconsolerequeststatus">VirtualMachineWebConsoleRequestStatus</a></em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="types">Types</h2>
+<h3 id="dynamicdirectpathiodevice">DynamicDirectPathIODevice</h3>
+<p>DynamicDirectPathIODevice contains the configuration corresponding to a Dynamic DirectPath I/O device.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualdevices">VirtualDevices</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vendorID</code> <em>integer</em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>deviceID</code> <em>integer</em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>customLabel</code> <em>string</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="guestheartbeataction">GuestHeartbeatAction</h3>
+<p>GuestHeartbeatAction describes an action based on the guest heartbeat.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinereadinessprobespec">VirtualMachineReadinessProbeSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>thresholdStatus</code> <em><a href="#guestheartbeatstatus">GuestHeartbeatStatus</a></em></td>
+<td>ThresholdStatus is the value that the guest heartbeat status must be at or above to be considered successful.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="guestheartbeatstatus">GuestHeartbeatStatus</h3>
+<p><em>Underlying type:</em> <code>string</code></p>
+<p>GuestHeartbeatStatus is the guest heartbeat status.</p>
+<p><em>Appears in:</em>
+- <a href="#guestheartbeataction">GuestHeartbeatAction</a></p>
+<h3 id="guestinfoaction">GuestInfoAction</h3>
+<p>GuestInfoAction describes a key from GuestInfo that must match the associated value expression.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinereadinessprobespec">VirtualMachineReadinessProbeSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>key</code> <em>string</em></td>
+<td>Key is the name of the GuestInfo key.</td>
+</tr>
+<tr>
+<td>Values are automatically prefixed with "guestinfo." before being evaluated. Thus if the key "guestinfo.mykey" is provided, it will be evaluated as "guestinfo.guestinfo.mykey".</td>
+<td></td>
+</tr>
+<tr>
+<td><code>value</code> <em>string</em></td>
+<td>Value is a regular expression that is matched against the value of the specified key.</td>
+</tr>
+<tr>
+<td>An empty value is the equivalent of "match any" or ".*".</td>
+<td></td>
+</tr>
+<tr>
+<td>All values must adhere to the RE2 regular expression syntax as documented at https://golang.org/s/re2syntax. Invalid values may be rejected or ignored depending on the implementation of this API. Either way, invalid values will not be considered when evaluating the ready state of a VM.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="instancestorage">InstanceStorage</h3>
+<p>InstanceStorage provides information used to configure instance storage volumes for a VirtualMachine.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineclasshardware">VirtualMachineClassHardware</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>storageClass</code> <em>string</em></td>
+<td>StorageClass refers to the name of a StorageClass resource used to provide the storage for the configured instance storage volumes. The value of this field has no relationship to or bearing on the field virtualMachine.spec.storageClass. Please note the referred StorageClass must be available in the same namespace as the VirtualMachineClass that uses it for configuring instance storage.</td>
+</tr>
+<tr>
+<td><code>volumes</code> <em><a href="#instancestoragevolume">InstanceStorageVolume</a> array</em></td>
+<td>Volumes describes instance storage volumes created for a VirtualMachine instance that use this VirtualMachineClass.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="instancestoragevolume">InstanceStorageVolume</h3>
+<p>InstanceStorageVolume contains information required to create an instance storage volume on a VirtualMachine.</p>
+<p><em>Appears in:</em>
+- <a href="#instancestorage">InstanceStorage</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>size</code> <em>Quantity</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="instancevolumeclaimvolumesource">InstanceVolumeClaimVolumeSource</h3>
+<p>InstanceVolumeClaimVolumeSource contains information about the instance storage volume claimed as a PVC.</p>
+<p><em>Appears in:</em>
+- <a href="#persistentvolumeclaimvolumesource">PersistentVolumeClaimVolumeSource</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>storageClass</code> <em>string</em></td>
+<td>StorageClass is the name of the Kubernetes StorageClass that provides the backing storage for this instance storage volume.</td>
+</tr>
+<tr>
+<td><code>size</code> <em>Quantity</em></td>
+<td>Size is the size of the requested instance storage volume.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="loadbalanceringress">LoadBalancerIngress</h3>
+<p>LoadBalancerIngress represents the status of a load balancer ingress point: traffic intended for the service should be sent to an ingress point. IP or Hostname may both be set in this structure. It is up to the consumer to determine which field should be used when accessing this LoadBalancer.</p>
+<p><em>Appears in:</em>
+- <a href="#loadbalancerstatus">LoadBalancerStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ip</code> <em>string</em></td>
+<td>IP is set for load balancer ingress points that are specified by an IP address.</td>
+</tr>
+<tr>
+<td><code>hostname</code> <em>string</em></td>
+<td>Hostname is set for load balancer ingress points that are specified by a DNS address.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="loadbalancerstatus">LoadBalancerStatus</h3>
+<p>LoadBalancerStatus represents the status of a load balancer.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineservicestatus">VirtualMachineServiceStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ingress</code> <em><a href="#loadbalanceringress">LoadBalancerIngress</a> array</em></td>
+<td>Ingress is a list containing ingress addresses for the load balancer. Traffic intended for the service should be sent to any of these ingress points.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="networkdevicestatus">NetworkDeviceStatus</h3>
+<p>NetworkDeviceStatus defines the network interface IP configuration including gateway, subnet mask and IP address as seen by OVF properties.</p>
+<p><em>Appears in:</em>
+- <a href="#networkstatus">NetworkStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Gateway4</code> <em>string</em></td>
+<td>Gateway4 is the gateway for the IPv4 address family for this device.</td>
+</tr>
+<tr>
+<td><code>MacAddress</code> <em>string</em></td>
+<td>MacAddress is the MAC address of the network device.</td>
+</tr>
+<tr>
+<td><code>IPAddresses</code> <em>string array</em></td>
+<td>IpAddresses represents one or more IP addresses assigned to the network device in CIDR notation, ex. "192.0.2.1/16".</td>
+</tr>
+</tbody>
+</table>
+<h3 id="networkstatus">NetworkStatus</h3>
+<p>NetworkStatus describes the observed state of the VM's network configuration.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinetemplate">VirtualMachineTemplate</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Devices</code> <em><a href="#networkdevicestatus">NetworkDeviceStatus</a> array</em></td>
+<td>Devices describe a list of current status information for each network interface that is desired to be attached to the VirtualMachineTemplate.</td>
+</tr>
+<tr>
+<td><code>Nameservers</code> <em>string array</em></td>
+<td>Nameservers describe a list of the DNS servers accessible by one of the VM's configured network devices.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ovfproperty">OVFProperty</h3>
+<p>OVFProperty describes an OVF property associated with an image. OVF properties may be used in conjunction with the vAppConfig bootstrap provider to customize a VM during its creation.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineimagestatus">VirtualMachineImageStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>key</code> <em>string</em></td>
+<td>Key describes the OVF property's key.</td>
+</tr>
+<tr>
+<td><code>type</code> <em>string</em></td>
+<td>Type describes the OVF property's type.</td>
+</tr>
+<tr>
+<td><code>default</code> <em>string</em></td>
+<td>Default describes the OVF property's default value.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="persistentvolumeclaimvolumesource">PersistentVolumeClaimVolumeSource</h3>
+<p>PersistentVolumeClaimVolumeSource is a composite for the Kubernetes corev1.PersistentVolumeClaimVolumeSource and instance storage options.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinevolumesource">VirtualMachineVolumeSource</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>claimName</code> <em>string</em></td>
+<td>claimName is the name of a PersistentVolumeClaim in the same namespace as the pod using this volume. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims</td>
+</tr>
+<tr>
+<td><code>readOnly</code> <em>boolean</em></td>
+<td>readOnly Will force the ReadOnly setting in VolumeMounts. Default false.</td>
+</tr>
+<tr>
+<td><code>instanceVolumeClaim</code> <em><a href="#instancevolumeclaimvolumesource">InstanceVolumeClaimVolumeSource</a></em></td>
+<td>InstanceVolumeClaim is set if the PVC is backed by instance storage.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="resourcepoolspec">ResourcePoolSpec</h3>
+<p>ResourcePoolSpec defines a Logical Grouping of workloads that share resource policies.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinesetresourcepolicyspec">VirtualMachineSetResourcePolicySpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> <em>string</em></td>
+<td>Name describes the name of the ResourcePool grouping.</td>
+</tr>
+<tr>
+<td><code>reservations</code> <em><a href="#virtualmachineresourcespec">VirtualMachineResourceSpec</a></em></td>
+<td>Reservations describes the guaranteed resources reserved for the ResourcePool.</td>
+</tr>
+<tr>
+<td><code>limits</code> <em><a href="#virtualmachineresourcespec">VirtualMachineResourceSpec</a></em></td>
+<td>Limits describes the limit to resources available to the ResourcePool.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tcpsocketaction">TCPSocketAction</h3>
+<p>TCPSocketAction describes an action based on opening a socket.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinereadinessprobespec">VirtualMachineReadinessProbeSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>port</code> <em>IntOrString</em></td>
+<td>Port specifies a number or name of the port to access on the VM. If the format of port is a number, it must be in the range 1 to 65535. If the format of name is a string, it must be an IANA_SVC_NAME.</td>
+</tr>
+<tr>
+<td><code>host</code> <em>string</em></td>
+<td>Host is an optional host name to connect to. Host defaults to the VM IP.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="vgpudevice">VGPUDevice</h3>
+<p>VGPUDevice contains the configuration corresponding to a vGPU device.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualdevices">VirtualDevices</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>profileName</code> <em>string</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="vsphereclustermodulestatus">VSphereClusterModuleStatus</h3>
+<p>VSphereClusterModuleStatus describes the observed state of a vSphere cluster module.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinesetresourcepolicystatus">VirtualMachineSetResourcePolicyStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>groupName</code> <em>string</em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>moduleUUID</code> <em>string</em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>clusterMoID</code> <em>string</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualdevices">VirtualDevices</h3>
+<p>VirtualDevices contains information about the virtual devices associated with a VirtualMachineClass.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineclasshardware">VirtualMachineClassHardware</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>vgpuDevices</code> <em><a href="#vgpudevice">VGPUDevice</a> array</em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>dynamicDirectPathIODevices</code> <em><a href="#dynamicdirectpathiodevice">DynamicDirectPathIODevice</a> array</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineadvancedspec">VirtualMachineAdvancedSpec</h3>
+<p>VirtualMachineAdvancedSpec describes a set of optional, advanced VM configuration options.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinespec">VirtualMachineSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bootDiskCapacity</code> <em>Quantity</em></td>
+<td>BootDiskCapacity is the capacity of the VM's boot disk -- the first disk from the VirtualMachineImage from which the VM was deployed.</td>
+</tr>
+<tr>
+<td>Please note it is not advised to change this value while the VM is running. Also, resizing the VM's boot disk may require actions inside of the guest to take advantage of the additional capacity. Finally, changing the size of the VM's boot disk, even increasing it, could adversely affect the VM.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>defaultVolumeProvisioningMode</code> <em>VirtualMachineVolumeProvisioningMode</em></td>
+<td>DefaultVolumeProvisioningMode specifies the default provisioning mode for persistent volumes managed by this VM.</td>
+</tr>
+<tr>
+<td><code>changeBlockTracking</code> <em>boolean</em></td>
+<td>ChangeBlockTracking is a flag that enables incremental backup support for this VM, a feature utilized by external backup systems such as VMware Data Recovery.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinebootstrapcloudinitspec">VirtualMachineBootstrapCloudInitSpec</h3>
+<p>VirtualMachineBootstrapCloudInitSpec describes the CloudInit configuration used to bootstrap the VM.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinebootstrapspec">VirtualMachineBootstrapSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cloudConfig</code> <em><a href="#cloudconfig">CloudConfig</a></em></td>
+<td>CloudConfig describes a subset of a Cloud-Init CloudConfig, used to bootstrap the VM.</td>
+</tr>
+<tr>
+<td>Please note this field and RawCloudConfig are mutually exclusive.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>rawCloudConfig</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#secretkeyselector-v1-core">SecretKeySelector</a></em></td>
+<td>RawCloudConfig describes a key in a Secret resource that contains the CloudConfig data used to bootstrap the VM.</td>
+</tr>
+<tr>
+<td>The CloudConfig data specified by the key may be plain-text, base64-encoded, or gzipped and base64-encoded.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field and CloudConfig are mutually exclusive.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>sshAuthorizedKeys</code> <em>string array</em></td>
+<td>SSHAuthorizedKeys is a list of public keys that CloudInit will apply to the guest's default user.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinebootstraplinuxprepspec">VirtualMachineBootstrapLinuxPrepSpec</h3>
+<p>VirtualMachineBootstrapLinuxPrepSpec describes the LinuxPrep configuration used to bootstrap the VM.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinebootstrapspec">VirtualMachineBootstrapSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hardwareClockIsUTC</code> <em>boolean</em></td>
+<td>HardwareClockIsUTC specifies whether the hardware clock is in UTC or local time.</td>
+</tr>
+<tr>
+<td><code>timeZone</code> <em>string</em></td>
+<td>TimeZone is a case-sensitive timezone, such as Europe/Sofia.</td>
+</tr>
+<tr>
+<td>Valid values are based on the tz (timezone) database used by Linux and other Unix systems. The values are strings in the form of "Area/Location," in which Area is a continent or ocean name, and Location is the city, island, or other regional designation.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please see https://kb.vmware.com/s/article/2145518 for a list of valid time zones for Linux systems.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinebootstrapspec">VirtualMachineBootstrapSpec</h3>
+<p>VirtualMachineBootstrapSpec defines the desired state of a VM's bootstrap configuration.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinespec">VirtualMachineSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cloudInit</code> <em><a href="#virtualmachinebootstrapcloudinitspec">VirtualMachineBootstrapCloudInitSpec</a></em></td>
+<td>CloudInit may be used to bootstrap Linux guests with Cloud-Init or Windows guests that support Cloudbase-Init.</td>
+</tr>
+<tr>
+<td>The guest's networking stack is configured by Cloud-Init on Linux guests and Cloudbase-Init on Windows guests.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this bootstrap provider may not be used in conjunction with the other bootstrap providers.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>linuxPrep</code> <em><a href="#virtualmachinebootstraplinuxprepspec">VirtualMachineBootstrapLinuxPrepSpec</a></em></td>
+<td>LinuxPrep may be used to bootstrap Linux guests.</td>
+</tr>
+<tr>
+<td>The guest's networking stack is configured by Guest OS Customization (GOSC).</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this bootstrap provider may be used in conjunction with the VAppConfig bootstrap provider when wanting to configure the guest's network with GOSC but also send vApp/OVF properties into the guest.</td>
+<td></td>
+</tr>
+<tr>
+<td>This bootstrap provider may not be used in conjunction with the CloudInit or Sysprep bootstrap providers.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>sysprep</code> <em><a href="#virtualmachinebootstrapsysprepspec">VirtualMachineBootstrapSysprepSpec</a></em></td>
+<td>Sysprep may be used to bootstrap Windows guests.</td>
+</tr>
+<tr>
+<td>The guest's networking stack is configured by Guest OS Customization (GOSC).</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this bootstrap provider may be used in conjunction with the VAppConfig bootstrap provider when wanting to configure the guest's network with GOSC but also send vApp/OVF properties into the guest.</td>
+<td></td>
+</tr>
+<tr>
+<td>This bootstrap provider may not be used in conjunction with the CloudInit or LinuxPrep bootstrap providers.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>vAppConfig</code> <em><a href="#virtualmachinebootstrapvappconfigspec">VirtualMachineBootstrapVAppConfigSpec</a></em></td>
+<td>VAppConfig may be used to bootstrap guests that rely on vApp properties (how VMware surfaces OVF properties on guests) to transport data into the guest.</td>
+</tr>
+<tr>
+<td>The guest's networking stack may be configured using either vApp properties or GOSC.</td>
+<td></td>
+</tr>
+<tr>
+<td>Many OVFs define one or more properties that are used by the guest to bootstrap its networking stack. If the VirtualMachineImage defines one or more properties like this, then they can be configured to use the network data provided for this VM at runtime by setting these properties to Go template strings.</td>
+<td></td>
+</tr>
+<tr>
+<td>It is also possible to use GOSC to bootstrap this VM's network stack by configuring either the LinuxPrep or Sysprep bootstrap providers.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note the VAppConfig bootstrap provider in conjunction with the LinuxPrep bootstrap provider is the equivalent of setting the v1alpha1 VM metadata transport to "OvfEnv".</td>
+<td></td>
+</tr>
+<tr>
+<td>This bootstrap provider may not be used in conjunction with the CloudInit bootstrap provider.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinebootstrapsysprepspec">VirtualMachineBootstrapSysprepSpec</h3>
+<p>VirtualMachineBootstrapSysprepSpec describes the Sysprep configuration used to bootstrap the VM.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinebootstrapspec">VirtualMachineBootstrapSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sysprep</code> <em><a href="#sysprep">Sysprep</a></em></td>
+<td>Sysprep is an object representation of a Windows sysprep.xml answer file.</td>
+</tr>
+<tr>
+<td>This field encloses all the individual keys listed in a sysprep.xml file.</td>
+<td></td>
+</tr>
+<tr>
+<td>For more detailed information please see https://technet.microsoft.com/en-us/library/cc771830(v=ws.10).aspx.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field and RawSysprep are mutually exclusive.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>rawSysprep</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#secretkeyselector-v1-core">SecretKeySelector</a></em></td>
+<td>RawSysprep describes a key in a Secret resource that contains an XML string of the Sysprep text used to bootstrap the VM.</td>
+</tr>
+<tr>
+<td>The data specified by the Secret key may be plain-text, base64-encoded, or gzipped and base64-encoded.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field and Sysprep are mutually exclusive.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinebootstrapvappconfigspec">VirtualMachineBootstrapVAppConfigSpec</h3>
+<p>VirtualMachineBootstrapVAppConfigSpec describes the vApp configuration used to bootstrap the VM.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinebootstrapspec">VirtualMachineBootstrapSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>properties</code> <em><a href="#keyvalueorsecretkeyselectorpair">KeyValueOrSecretKeySelectorPair</a> array</em></td>
+<td>Properties is a list of vApp/OVF property key/value pairs.</td>
+</tr>
+<tr>
+<td>Please note this field and RawProperties are mutually exclusive.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>rawProperties</code> <em>string</em></td>
+<td>RawProperties is the name of a Secret resource in the same Namespace as this VM where each key/value pair from the Secret is used as a vApp key/value pair.</td>
+</tr>
+<tr>
+<td>Please note this field and Properties are mutually exclusive.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineclasshardware">VirtualMachineClassHardware</h3>
+<p>VirtualMachineClassHardware describes a virtual hardware resource specification.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineclassspec">VirtualMachineClassSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cpus</code> <em>integer</em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>memory</code> <em>Quantity</em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>devices</code> <em><a href="#virtualdevices">VirtualDevices</a></em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>instanceStorage</code> <em><a href="#instancestorage">InstanceStorage</a></em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineclasspolicies">VirtualMachineClassPolicies</h3>
+<p>VirtualMachineClassPolicies describes the policy configuration to be used by a VirtualMachineClass.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineclassspec">VirtualMachineClassSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resources</code> <em><a href="#virtualmachineclassresources">VirtualMachineClassResources</a></em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineclassresources">VirtualMachineClassResources</h3>
+<p>VirtualMachineClassResources describes the virtual hardware resource reservations and limits configuration to be used by a VirtualMachineClass.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineclasspolicies">VirtualMachineClassPolicies</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>requests</code> <em><a href="#virtualmachineresourcespec">VirtualMachineResourceSpec</a></em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>limits</code> <em><a href="#virtualmachineresourcespec">VirtualMachineResourceSpec</a></em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineclassspec">VirtualMachineClassSpec</h3>
+<p>VirtualMachineClassSpec defines the desired state of VirtualMachineClass.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineclass">VirtualMachineClass</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>controllerName</code> <em>string</em></td>
+<td>ControllerName describes the name of the controller responsible for reconciling VirtualMachine resources that are realized from this VirtualMachineClass.</td>
+</tr>
+<tr>
+<td>When omitted, controllers reconciling VirtualMachine resources determine the default controller name from the environment variable DEFAULT_VM_CLASS_CONTROLLER_NAME. If this environment variable is not defined or empty, it defaults to vmoperator.vmware.com/vsphere.</td>
+<td></td>
+</tr>
+<tr>
+<td>Once a non-empty value is assigned to this field, attempts to set this field to an empty value will be silently ignored.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>hardware</code> <em><a href="#virtualmachineclasshardware">VirtualMachineClassHardware</a></em></td>
+<td>Hardware describes the configuration of the VirtualMachineClass attributes related to virtual hardware. The configuration specified in this field is used to customize the virtual hardware characteristics of any VirtualMachine associated with this VirtualMachineClass.</td>
+</tr>
+<tr>
+<td><code>policies</code> <em><a href="#virtualmachineclasspolicies">VirtualMachineClassPolicies</a></em></td>
+<td>Policies describes the configuration of the VirtualMachineClass attributes related to virtual infrastructure policy. The configuration specified in this field is used to customize various policies related to infrastructure resource consumption.</td>
+</tr>
+<tr>
+<td><code>description</code> <em>string</em></td>
+<td>Description describes the configuration of the VirtualMachineClass which is not related to virtual hardware or infrastructure policy. This field is used to address remaining specs about this VirtualMachineClass.</td>
+</tr>
+<tr>
+<td><code>configSpec</code> <em><a href="https://pkg.go.dev/encoding/json#RawMessage">json.RawMessage</a></em></td>
+<td>ConfigSpec describes additional configuration information for a VirtualMachine. The contents of this field are the VirtualMachineConfigSpec data object (https://bit.ly/3HDtiRu) marshaled to JSON using the discriminator field "_typeName" to preserve type information.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineclassstatus">VirtualMachineClassStatus</h3>
+<p>VirtualMachineClassStatus defines the observed state of VirtualMachineClass.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineclass">VirtualMachineClass</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>capabilities</code> <em>string array</em></td>
+<td>Capabilities describes the class's observed capabilities.</td>
+</tr>
+<tr>
+<td>The capabilities are discerned when VM Operator reconciles a class and inspects its specification. Well-known capabilities include:</td>
+<td></td>
+</tr>
+<tr>
+<td>* instance-storage * nvidia-gpu * sriov-net</td>
+<td></td>
+</tr>
+<tr>
+<td>In addition to "nvidia-gpu", a capability is added for every nVidia profile name associated with the class.</td>
+<td></td>
+</tr>
+<tr>
+<td>Every capability is also added to the resource's labels as VirtualMachineClassCapabilityLabel + Value. For example, if the capability is "nvidia-gpu" then the following label will be added to the resource: capability.class.vmoperator.vmware.com/nvidia-gpu.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>conditions</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#condition-v1-meta">Condition</a> array</em></td>
+<td>Conditions describes the observed conditions of the VirtualMachineClass.</td>
+</tr>
+<tr>
+<td><code>ready</code> <em>boolean</em></td>
+<td>Ready describes whether the class's hardware can be realized in the cluster.</td>
+</tr>
+<tr>
+<td>This field is only set to true if all of the class resource's conditions have Status=True.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineimageosinfo">VirtualMachineImageOSInfo</h3>
+<p>VirtualMachineImageOSInfo describes the image's guest operating system.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineimagestatus">VirtualMachineImageStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code> <em>string</em></td>
+<td>ID describes the operating system ID.</td>
+</tr>
+<tr>
+<td>This value is also added to the image resource's labels as VirtualMachineImageOSIDLabel.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>type</code> <em>string</em></td>
+<td>Type describes the operating system type.</td>
+</tr>
+<tr>
+<td>This value is also added to the image resource's labels as VirtualMachineImageOSTypeLabel.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>version</code> <em>string</em></td>
+<td>Version describes the operating system version.</td>
+</tr>
+<tr>
+<td>This value is also added to the image resource's labels as VirtualMachineImageOSVersionLabel.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineimageproductinfo">VirtualMachineImageProductInfo</h3>
+<p>VirtualMachineImageProductInfo describes product information for an image.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineimagestatus">VirtualMachineImageStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>product</code> <em>string</em></td>
+<td>Product is a general descriptor for the image.</td>
+</tr>
+<tr>
+<td><code>vendor</code> <em>string</em></td>
+<td>Vendor describes the organization/user that produced the image.</td>
+</tr>
+<tr>
+<td><code>version</code> <em>string</em></td>
+<td>Version describes the short-form version of the image.</td>
+</tr>
+<tr>
+<td><code>fullVersion</code> <em>string</em></td>
+<td>FullVersion describes the long-form version of the image.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineimagespec">VirtualMachineImageSpec</h3>
+<p>VirtualMachineImageSpec defines the desired state of VirtualMachineImage.</p>
+<p><em>Appears in:</em>
+- <a href="#clustervirtualmachineimage">ClusterVirtualMachineImage</a>
+- <a href="#virtualmachineimage">VirtualMachineImage</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>providerRef</code> <em><a href="#localobjectref">LocalObjectRef</a></em></td>
+<td>ProviderRef is a reference to the resource that contains the source of this image's information.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineimagestatus">VirtualMachineImageStatus</h3>
+<p>VirtualMachineImageStatus defines the observed state of VirtualMachineImage.</p>
+<p><em>Appears in:</em>
+- <a href="#clustervirtualmachineimage">ClusterVirtualMachineImage</a>
+- <a href="#virtualmachineimage">VirtualMachineImage</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> <em>string</em></td>
+<td>Name describes the display name of this image.</td>
+</tr>
+<tr>
+<td><code>capabilities</code> <em>string array</em></td>
+<td>Capabilities describes the image's observed capabilities.</td>
+</tr>
+<tr>
+<td>The capabilities are discerned when VM Operator reconciles an image. If the source of an image is an OVF in Content Library, then the capabilities are parsed from the OVF property capabilities.image.vmoperator.vmware.com as a comma-separated list of values. Well-known capabilities include:</td>
+<td></td>
+</tr>
+<tr>
+<td>* cloud-init * nvidia-gpu * sriov-net</td>
+<td></td>
+</tr>
+<tr>
+<td>Every capability is also added to the resource's labels as VirtualMachineImageCapabilityLabel + Value. For example, if the capability is "cloud-init" then the following label will be added to the resource: capability.image.vmoperator.vmware.com/cloud-init.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>firmware</code> <em>string</em></td>
+<td>Firmware describe the firmware type used by this image, ex. BIOS, EFI.</td>
+</tr>
+<tr>
+<td><code>hardwareVersion</code> <em>integer</em></td>
+<td>HardwareVersion describes the observed hardware version of this image.</td>
+</tr>
+<tr>
+<td><code>osInfo</code> <em><a href="#virtualmachineimageosinfo">VirtualMachineImageOSInfo</a></em></td>
+<td>OSInfo describes the observed operating system information for this image.</td>
+</tr>
+<tr>
+<td>The OS information is also added to the image resource's labels. Please refer to VirtualMachineImageOSInfo for more information.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>ovfProperties</code> <em><a href="#ovfproperty">OVFProperty</a> array</em></td>
+<td>OVFProperties describes the observed OVF properties defined for this image.</td>
+</tr>
+<tr>
+<td><code>productInfo</code> <em><a href="#virtualmachineimageproductinfo">VirtualMachineImageProductInfo</a></em></td>
+<td>ProductInfo describes the observed product information for this image.</td>
+</tr>
+<tr>
+<td><code>providerContentVersion</code> <em>string</em></td>
+<td>ProviderContentVersion describes the content version from the provider item that this image corresponds to. If the provider of this image is a Content Library, this will be the version of the corresponding Content Library item.</td>
+</tr>
+<tr>
+<td><code>providerItemID</code> <em>string</em></td>
+<td>ProviderItemID describes the ID of the provider item that this image corresponds to. If the provider of this image is a Content Library, this ID will be that of the corresponding Content Library item.</td>
+</tr>
+<tr>
+<td><code>conditions</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#condition-v1-meta">Condition</a> array</em></td>
+<td>Conditions describes the observed conditions for this image.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkdhcpoptionsstatus">VirtualMachineNetworkDHCPOptionsStatus</h3>
+<p>VirtualMachineNetworkDHCPOptionsStatus describes the observed state of DHCP options.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinenetworkdhcpstatus">VirtualMachineNetworkDHCPStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config</code> <em><a href="#keyvaluepair">KeyValuePair</a> array</em></td>
+<td>Config describes platform-dependent settings for the DHCP client.</td>
+</tr>
+<tr>
+<td>The key part is a unique number while the value part is the platform specific configuration command. For example on Linux and BSD systems using the file dhclient.conf output would be reported at system scope: key='1', value='timeout 60;' key='2', value='reboot 10;'. The output reported per interface would be: key='1', value='prepend domain-name-servers 192.0.2.1;' key='2', value='require subnet-mask, domain-name-servers;'.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>enabled</code> <em>boolean</em></td>
+<td>Enabled reports the status of the DHCP client services.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkdhcpstatus">VirtualMachineNetworkDHCPStatus</h3>
+<p>VirtualMachineNetworkDHCPStatus describes the observed state of the client-side, system-wide DHCP settings for IP4 and IP6.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinenetworkipstackstatus">VirtualMachineNetworkIPStackStatus</a>
+- <a href="#virtualmachinenetworkinterfaceipstatus">VirtualMachineNetworkInterfaceIPStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ip4</code> <em><a href="#virtualmachinenetworkdhcpoptionsstatus">VirtualMachineNetworkDHCPOptionsStatus</a></em></td>
+<td>IP4 describes the observed state of the IP4 DHCP client settings.</td>
+</tr>
+<tr>
+<td><code>ip6</code> <em><a href="#virtualmachinenetworkdhcpoptionsstatus">VirtualMachineNetworkDHCPOptionsStatus</a></em></td>
+<td>IP6 describes the observed state of the IP6 DHCP client settings.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkdnsstatus">VirtualMachineNetworkDNSStatus</h3>
+<p>VirtualMachineNetworkDNSStatus describes the observed state of the guest's RFC 1034 client-side DNS settings.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinenetworkipstackstatus">VirtualMachineNetworkIPStackStatus</a>
+- <a href="#virtualmachinenetworkinterfacestatus">VirtualMachineNetworkInterfaceStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dhcp</code> <em>boolean</em></td>
+<td>DHCP indicates whether or not dynamic host control protocol (DHCP) was used to configure DNS configuration.</td>
+</tr>
+<tr>
+<td><code>domainName</code> <em>string</em></td>
+<td>DomainName is the domain name portion of the DNS name. For example, the "domain.local" part of "my-vm.domain.local".</td>
+</tr>
+<tr>
+<td><code>hostName</code> <em>string</em></td>
+<td>HostName is the host name portion of the DNS name. For example, the "my-vm" part of "my-vm.domain.local".</td>
+</tr>
+<tr>
+<td><code>nameservers</code> <em>string array</em></td>
+<td>Nameservers is a list of the IP addresses for the DNS servers to use.</td>
+</tr>
+<tr>
+<td>IP4 addresses are specified using dotted decimal notation. For example, "192.0.2.1".</td>
+<td></td>
+</tr>
+<tr>
+<td>IP6 addresses are 128-bit addresses represented as eight fields of up to four hexadecimal digits. A colon separates each field (:). For example, 2001:DB8:101::230:6eff:fe04:d9ff. The address can also consist of the symbol '::' to represent multiple 16-bit groups of contiguous 0's only once in an address as described in RFC 2373.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>searchDomains</code> <em>string array</em></td>
+<td>SearchDomains is a list of domains in which to search for hosts, in the order of preference.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkiproutegatewaystatus">VirtualMachineNetworkIPRouteGatewayStatus</h3>
+<p>VirtualMachineNetworkIPRouteGatewayStatus describes the observed state of a guest network's IP route's next hop gateway.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinenetworkiproutestatus">VirtualMachineNetworkIPRouteStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>device</code> <em>string</em></td>
+<td>Device is the name of the device in the guest for which this gateway applies.</td>
+</tr>
+<tr>
+<td><code>address</code> <em>string</em></td>
+<td>Address is the IP4 or IP6 address of the gateway.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkiproutestatus">VirtualMachineNetworkIPRouteStatus</h3>
+<p>VirtualMachineNetworkIPRouteStatus describes the observed state of a guest network's IP routes.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinenetworkipstackstatus">VirtualMachineNetworkIPStackStatus</a>
+- <a href="#virtualmachinenetworkroutestatus">VirtualMachineNetworkRouteStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gateway</code> <em><a href="#virtualmachinenetworkiproutegatewaystatus">VirtualMachineNetworkIPRouteGatewayStatus</a></em></td>
+<td>Gateway describes where to send the packets to next.</td>
+</tr>
+<tr>
+<td><code>networkAddress</code> <em>string</em></td>
+<td>NetworkAddress is the IP4 or IP6 address of the destination network.</td>
+</tr>
+<tr>
+<td>Addresses include the network's prefix length, ex. 192.168.0.0/24 or 2001:DB8:101::230:6eff:fe04:d9ff::/64.</td>
+<td></td>
+</tr>
+<tr>
+<td>IP6 addresses are 128-bit addresses represented as eight fields of up to four hexadecimal digits. A colon separates each field (:). For example, 2001:DB8:101::230:6eff:fe04:d9ff. The address can also consist of symbol '::' to represent multiple 16-bit groups of contiguous 0's only once in an address as described in RFC 2373.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkipstackstatus">VirtualMachineNetworkIPStackStatus</h3>
+<p>VirtualMachineNetworkIPStackStatus describes the observed state of a VM's IP stack.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinenetworkstatus">VirtualMachineNetworkStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dhcp</code> <em><a href="#virtualmachinenetworkdhcpstatus">VirtualMachineNetworkDHCPStatus</a></em></td>
+<td>DHCP describes the VM's observed, client-side, system-wide DHCP options.</td>
+</tr>
+<tr>
+<td><code>dns</code> <em><a href="#virtualmachinenetworkdnsstatus">VirtualMachineNetworkDNSStatus</a></em></td>
+<td>DNS describes the VM's observed, client-side DNS configuration.</td>
+</tr>
+<tr>
+<td><code>ipRoutes</code> <em><a href="#virtualmachinenetworkiproutestatus">VirtualMachineNetworkIPRouteStatus</a> array</em></td>
+<td>IPRoutes contain the VM's routing tables for all address families.</td>
+</tr>
+<tr>
+<td><code>kernelConfig</code> <em><a href="#keyvaluepair">KeyValuePair</a> array</em></td>
+<td>KernelConfig describes the observed state of the VM's kernel IP configuration settings.</td>
+</tr>
+<tr>
+<td>The key part contains a unique number while the value part contains the 'key=value' as provided by the underlying provider. For example, on Linux and/or BSD, the systcl -a output would be reported as: key='5', value='net.ipv4.tcp_keepalive_time = 7200'.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkinterfaceipaddrstatus">VirtualMachineNetworkInterfaceIPAddrStatus</h3>
+<p>VirtualMachineNetworkInterfaceIPAddrStatus describes information about a specific IP address.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinenetworkinterfaceipstatus">VirtualMachineNetworkInterfaceIPStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>address</code> <em>string</em></td>
+<td>Address is an IP4 or IP6 address and their network prefix length.</td>
+</tr>
+<tr>
+<td>An IP4 address is specified using dotted decimal notation. For example, "192.0.2.1".</td>
+<td></td>
+</tr>
+<tr>
+<td>IP6 addresses are 128-bit addresses represented as eight fields of up to four hexadecimal digits. A colon separates each field (:). For example, 2001:DB8:101::230:6eff:fe04:d9ff. The address can also consist of the symbol '::' to represent multiple 16-bit groups of contiguous 0's only once in an address as described in RFC 2373.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>lifetime</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#time-v1-meta">Time</a></em></td>
+<td>Lifetime describes when this address will expire.</td>
+</tr>
+<tr>
+<td><code>origin</code> <em>string</em></td>
+<td>Origin describes how this address was configured.</td>
+</tr>
+<tr>
+<td><code>state</code> <em>string</em></td>
+<td>State describes the state of this IP address.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkinterfaceipstatus">VirtualMachineNetworkInterfaceIPStatus</h3>
+<p>VirtualMachineNetworkInterfaceIPStatus describes the observed state of a VM's network interface's IP configuration.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinenetworkinterfacestatus">VirtualMachineNetworkInterfaceStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>autoConfigurationEnabled</code> <em>boolean</em></td>
+<td>AutoConfigurationEnabled describes whether or not ICMPv6 router solicitation requests are enabled or disabled from a given interface.</td>
+</tr>
+<tr>
+<td>These requests acquire an IP6 address and default gateway route from zero-to-many routers on the connected network.</td>
+<td></td>
+</tr>
+<tr>
+<td>If not set then ICMPv6 is not available on this VM.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>dhcp</code> <em><a href="#virtualmachinenetworkdhcpstatus">VirtualMachineNetworkDHCPStatus</a></em></td>
+<td>DHCP describes the VM's observed, client-side, interface-specific DHCP options.</td>
+</tr>
+<tr>
+<td><code>addresses</code> <em><a href="#virtualmachinenetworkinterfaceipaddrstatus">VirtualMachineNetworkInterfaceIPAddrStatus</a> array</em></td>
+<td>Addresses describes observed IP addresses for this interface.</td>
+</tr>
+<tr>
+<td><code>macAddr</code> <em>string</em></td>
+<td>MACAddr describes the observed MAC address for this interface.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkinterfacespec">VirtualMachineNetworkInterfaceSpec</h3>
+<p>VirtualMachineNetworkInterfaceSpec describes the desired state of a VM's network interface.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinenetworkspec">VirtualMachineNetworkSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> <em>string</em></td>
+<td>Name describes the unique name of this network interface, used to distinguish it from other network interfaces attached to this VM.</td>
+</tr>
+<tr>
+<td>This value is also used to rename the device inside the guest when the bootstrap provider is CloudInit. Please note it is up to the user to ensure the provided device name does not conflict with any other devices inside the guest, ex. dvd, cdrom, sda, etc.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>network</code> <em><a href="#partialobjectref">PartialObjectRef</a></em></td>
+<td>Network is the name of the network resource to which this interface is connected.</td>
+</tr>
+<tr>
+<td>If no network is provided, then this interface will be connected to the Namespace's default network.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>addresses</code> <em>string array</em></td>
+<td>Addresses is an optional list of IP4 or IP6 addresses to assign to this interface.</td>
+</tr>
+<tr>
+<td>Please note this field is only supported if the connected network supports manual IP allocation.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note IP4 and IP6 addresses must include the network prefix length, ex. 192.168.0.10/24 or 2001:db8:101::a/64.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field may not contain IP4 addresses if DHCP4 is set to true or IP6 addresses if DHCP6 is set to true.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored and should be specified on the elements in the Interfaces list.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>dhcp4</code> <em>boolean</em></td>
+<td>DHCP4 indicates whether or not this interface uses DHCP for IP4 networking.</td>
+</tr>
+<tr>
+<td>Please note this field is only supported if the network connection supports DHCP.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field is mutually exclusive with IP4 addresses in the Addresses field and the Gateway4 field.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>dhcp6</code> <em>boolean</em></td>
+<td>DHCP6 indicates whether or not this interface uses DHCP for IP6 networking.</td>
+</tr>
+<tr>
+<td>Please note this field is only supported if the network connection supports DHCP.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field is mutually exclusive with IP4 addresses in the Addresses field and the Gateway6 field.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gateway4</code> <em>string</em></td>
+<td>Gateway4 is the default, IP4 gateway for this interface.</td>
+</tr>
+<tr>
+<td>Please note this field is only supported if the network connection supports manual IP allocation.</td>
+<td></td>
+</tr>
+<tr>
+<td>If the network connection supports manual IP allocation and the Addresses field includes at least one IP4 address, then this field is required.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note the IP address must include the network prefix length, ex. 192.168.0.1/24.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field is mutually exclusive with DHCP4.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gateway6</code> <em>string</em></td>
+<td>Gateway6 is the primary IP6 gateway for this interface.</td>
+</tr>
+<tr>
+<td>Please note this field is only supported if the network connection supports manual IP allocation.</td>
+<td></td>
+</tr>
+<tr>
+<td>If the network connection supports manual IP allocation and the Addresses field includes at least one IP4 address, then this field is required.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note the IP address must include the network prefix length, ex. 2001:db8:101::1/64.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field is mutually exclusive with DHCP6.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>mtu</code> <em>integer</em></td>
+<td>MTU is the Maximum Transmission Unit size in bytes.</td>
+</tr>
+<tr>
+<td>Please note this feature is available only with the following bootstrap providers: CloudInit.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>nameservers</code> <em>string array</em></td>
+<td>Nameservers is a list of IP4 and/or IP6 addresses used as DNS nameservers.</td>
+</tr>
+<tr>
+<td>Please note this feature is available only with the following bootstrap providers: CloudInit, LinuxPrep, and Sysprep (except for RawSysprep).</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note that Linux allows only three nameservers (https://linux.die.net/man/5/resolv.conf).</td>
+<td></td>
+</tr>
+<tr>
+<td><code>routes</code> <em><a href="#virtualmachinenetworkroutespec">VirtualMachineNetworkRouteSpec</a> array</em></td>
+<td>Routes is a list of optional, static routes.</td>
+</tr>
+<tr>
+<td>Please note this feature is available only with the following bootstrap providers: CloudInit.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>searchDomains</code> <em>string array</em></td>
+<td>SearchDomains is a list of search domains used when resolving IP addresses with DNS.</td>
+</tr>
+<tr>
+<td>Please note this feature is available only with the following bootstrap providers: CloudInit, LinuxPrep, and Sysprep (except for RawSysprep).</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkinterfacestatus">VirtualMachineNetworkInterfaceStatus</h3>
+<p>VirtualMachineNetworkInterfaceStatus describes the observed state of a VM's network interface.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinenetworkstatus">VirtualMachineNetworkStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> <em>string</em></td>
+<td>Name describes the unique name of this network interface, used to distinguish it from other network interfaces attached to this VM.</td>
+</tr>
+<tr>
+<td>Please note this name is not related to the name of the device as it is surfaced inside of the guest.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>ip</code> <em><a href="#virtualmachinenetworkinterfaceipstatus">VirtualMachineNetworkInterfaceIPStatus</a></em></td>
+<td>IP describes the observed state of the interface's IP configuration.</td>
+</tr>
+<tr>
+<td><code>dns</code> <em><a href="#virtualmachinenetworkdnsstatus">VirtualMachineNetworkDNSStatus</a></em></td>
+<td>DNS describes the observed state of the interface's DNS configuration.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkroutespec">VirtualMachineNetworkRouteSpec</h3>
+<p>VirtualMachineNetworkRouteSpec defines a static route for a guest.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinenetworkinterfacespec">VirtualMachineNetworkInterfaceSpec</a>
+- <a href="#virtualmachinenetworkspec">VirtualMachineNetworkSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>to</code> <em>string</em></td>
+<td>To is an IP4 or IP6 address.</td>
+</tr>
+<tr>
+<td><code>via</code> <em>string</em></td>
+<td>Via is an IP4 or IP6 address.</td>
+</tr>
+<tr>
+<td><code>metric</code> <em>integer</em></td>
+<td>Metric is the weight/priority of the route.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkspec">VirtualMachineNetworkSpec</h3>
+<p>VirtualMachineNetworkSpec defines a VM's desired network configuration.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinespec">VirtualMachineSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>network</code> <em><a href="#partialobjectref">PartialObjectRef</a></em></td>
+<td>Network is the optional name of the network resource to which this VM is connected.</td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored.</td>
+<td></td>
+</tr>
+<tr>
+<td>If networking is not disabled, no interfaces are defined, and this value is omitted, then the VM will be provided a single virtual network interface and connected to the Namespace's default network.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>disabled</code> <em>boolean</em></td>
+<td>Disabled is a flag that indicates whether or not to disable networking for this VM.</td>
+</tr>
+<tr>
+<td>When set to true, the VM is not configured with a default interface nor any specified from the Interfaces field.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>hostName</code> <em>string</em></td>
+<td>HostName is the value the guest uses as its host name. If omitted then the name of the VM will be used.</td>
+</tr>
+<tr>
+<td>Please note this feature is available only with the following bootstrap providers: CloudInit, LinuxPrep, and Sysprep (except for RawSysprep).</td>
+<td></td>
+</tr>
+<tr>
+<td><code>interfaces</code> <em><a href="#virtualmachinenetworkinterfacespec">VirtualMachineNetworkInterfaceSpec</a> array</em></td>
+<td>Interfaces is the list of network interfaces used by this VM.</td>
+</tr>
+<tr>
+<td>Please note this field is mutually exclusive with the following fields: DeviceName, Network, Addresses, DHCP4, DHCP6, Gateway4, Gateway6, MTU, Nameservers, Routes, and SearchDomains.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>deviceName</code> <em>string</em></td>
+<td>DeviceName describes the unique name of this network interface, used to distinguish it from other network interfaces attached to this VM.</td>
+</tr>
+<tr>
+<td>This value is also used to rename the device inside the guest when the bootstrap provider is CloudInit. Please note it is up to the user to ensure the provided device name does not conflict with any other devices inside the guest, ex. dvd, cdrom, sda, etc.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored and should be specified on the elements in the Interfaces list.</td>
+<td></td>
+</tr>
+<tr>
+<td>If the Interfaces field is empty and this field is not specified, then the default interface's name will be eth0.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>addresses</code> <em>string array</em></td>
+<td>Addresses is an optional list of IP4 or IP6 addresses to assign to the VM.</td>
+</tr>
+<tr>
+<td>Please note this field is only supported if the connected network supports manual IP allocation.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note IP4 and IP6 addresses must include the network prefix length, ex. 192.168.0.10/24 or 2001:db8:101::a/64.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field may not contain IP4 addresses if DHCP4 is set to true or IP6 addresses if DHCP6 is set to true.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored and should be specified on the elements in the Interfaces list.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>dhcp4</code> <em>boolean</em></td>
+<td>DHCP4 indicates whether or not to use DHCP for IP4 networking.</td>
+</tr>
+<tr>
+<td>Please note this field is only supported if the network connection supports DHCP.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field is mutually exclusive with IP4 addresses in the Addresses field and the Gateway4 field.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored and should be specified on the elements in the Interfaces list.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>dhcp6</code> <em>boolean</em></td>
+<td>DHCP6 indicates whether or not to use DHCP for IP6 networking.</td>
+</tr>
+<tr>
+<td>Please note this field is only supported if the network connection supports DHCP.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field is mutually exclusive with IP4 addresses in the Addresses field and the Gateway6 field.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored and should be specified on the elements in the Interfaces list.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gateway4</code> <em>string</em></td>
+<td>Gateway4 is the default, IP4 gateway for this VM.</td>
+</tr>
+<tr>
+<td>Please note this field is only supported if the network connection supports manual IP allocation.</td>
+<td></td>
+</tr>
+<tr>
+<td>If the network connection supports manual IP allocation and the Addresses field includes at least one IP4 address, then this field is required.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field is mutually exclusive with DHCP4.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored and should be specified on the elements in the Interfaces list.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gateway6</code> <em>string</em></td>
+<td>Gateway6 is the primary IP6 gateway for this VM.</td>
+</tr>
+<tr>
+<td>Please note this field is only supported if the network connection supports manual IP allocation.</td>
+<td></td>
+</tr>
+<tr>
+<td>If the network connection supports manual IP allocation and the Addresses field includes at least one IP4 address, then this field is required.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note this field is mutually exclusive with DHCP6.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored and should be specified on the elements in the Interfaces list.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>mtu</code> <em>integer</em></td>
+<td>MTU is the Maximum Transmission Unit size in bytes.</td>
+</tr>
+<tr>
+<td>Please note this feature is available only with the following bootstrap providers: CloudInit.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored and should be specified on the elements in the Interfaces list.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>nameservers</code> <em>string array</em></td>
+<td>Nameservers is a list of IP4 and/or IP6 addresses used as DNS nameservers.</td>
+</tr>
+<tr>
+<td>Please note this feature is available only with the following bootstrap providers: CloudInit, LinuxPrep, and Sysprep (except for RawSysprep).</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note that Linux allows only three nameservers (https://linux.die.net/man/5/resolv.conf).</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored and should be specified on the elements in the Interfaces list.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>routes</code> <em><a href="#virtualmachinenetworkroutespec">VirtualMachineNetworkRouteSpec</a> array</em></td>
+<td>Routes is a list of optional, static routes.</td>
+</tr>
+<tr>
+<td>Please note this feature is available only with the following bootstrap providers: CloudInit.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored and should be specified on the elements in the Interfaces list.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>searchDomains</code> <em>string array</em></td>
+<td>SearchDomains is a list of search domains used when resolving IP addresses with DNS.</td>
+</tr>
+<tr>
+<td>Please note this feature is available only with the following bootstrap providers: CloudInit, LinuxPrep, and Sysprep (except for RawSysprep).</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note if the Interfaces field is non-empty then this field is ignored and should be specified on the elements in the Interfaces list.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinenetworkstatus">VirtualMachineNetworkStatus</h3>
+<p>VirtualMachineNetworkStatus defines the observed state of a VM's network configuration.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinestatus">VirtualMachineStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>interfaces</code> <em><a href="#virtualmachinenetworkinterfacestatus">VirtualMachineNetworkInterfaceStatus</a> array</em></td>
+<td>Interfaces describes the status of the VM's network interfaces.</td>
+</tr>
+<tr>
+<td><code>primaryIP4</code> <em>string</em></td>
+<td>PrimaryIP4 describes the VM's primary IP4 address.</td>
+</tr>
+<tr>
+<td>If the bootstrap provider is CloudInit then this value is set to the value of the VM's "guestinfo.local-ipv4" property. Please see https://bit.ly/3NJB534 for more information on how this value is calculated.</td>
+<td></td>
+</tr>
+<tr>
+<td>If the bootstrap provider is anything else then this field is set to the value of the infrastructure VM's "guest.ipAddress" field. Please see https://bit.ly/3Au0jM4 for more information.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>primaryIP6</code> <em>string</em></td>
+<td>PrimaryIP6 describes the VM's primary IP6 address.</td>
+</tr>
+<tr>
+<td>If the bootstrap provider is CloudInit then this value is set to the value of the VM's "guestinfo.local-ipv6" property. Please see https://bit.ly/3NJB534 for more information on how this value is calculated.</td>
+<td></td>
+</tr>
+<tr>
+<td>If the bootstrap provider is anything else then this field is set to the value of the infrastructure VM's "guest.ipAddress" field. Please see https://bit.ly/3Au0jM4 for more information.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>dhcp</code> <em><a href="#virtualmachinenetworkdhcpstatus">VirtualMachineNetworkDHCPStatus</a></em></td>
+<td>DHCP describes the VM's observed, client-side, system-wide DHCP options.</td>
+</tr>
+<tr>
+<td><code>dns</code> <em><a href="#virtualmachinenetworkdnsstatus">VirtualMachineNetworkDNSStatus</a></em></td>
+<td>DNS describes the VM's observed, client-side DNS configuration.</td>
+</tr>
+<tr>
+<td><code>ipRoutes</code> <em><a href="#virtualmachinenetworkiproutestatus">VirtualMachineNetworkIPRouteStatus</a> array</em></td>
+<td>IPRoutes contain the VM's routing tables for all address families.</td>
+</tr>
+<tr>
+<td><code>kernelConfig</code> <em><a href="#keyvaluepair">KeyValuePair</a> array</em></td>
+<td>KernelConfig describes the observed state of the VM's kernel IP configuration settings.</td>
+</tr>
+<tr>
+<td>The key part contains a unique number while the value part contains the 'key=value' as provided by the underlying provider. For example, on Linux and/or BSD, the systcl -a output would be reported as: key='5', value='net.ipv4.tcp_keepalive_time = 7200'.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinepublishrequestsource">VirtualMachinePublishRequestSource</h3>
+<p>VirtualMachinePublishRequestSource is the source of a publication request, typically a VirtualMachine resource.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinepublishrequestspec">VirtualMachinePublishRequestSpec</a>
+- <a href="#virtualmachinepublishrequeststatus">VirtualMachinePublishRequestStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> <em>string</em></td>
+<td>Name is the name of the referenced object.</td>
+</tr>
+<tr>
+<td>If omitted this value defaults to the name of the VirtualMachinePublishRequest resource.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>apiVersion</code> <em>string</em></td>
+<td>APIVersion is the API version of the referenced object.</td>
+</tr>
+<tr>
+<td><code>kind</code> <em>string</em></td>
+<td>Kind is the kind of referenced object.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinepublishrequestspec">VirtualMachinePublishRequestSpec</h3>
+<p>VirtualMachinePublishRequestSpec defines the desired state of a VirtualMachinePublishRequest. 
+ All the fields in this spec are optional. This is especially useful when a DevOps persona wants to publish a VM without doing anything more than applying a VirtualMachinePublishRequest resource that has the same name as said VM in the same namespace as said VM.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinepublishrequest">VirtualMachinePublishRequest</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source</code> <em><a href="#virtualmachinepublishrequestsource">VirtualMachinePublishRequestSource</a></em></td>
+<td>Source is the source of the publication request, ex. a VirtualMachine resource.</td>
+</tr>
+<tr>
+<td>If this value is omitted then the publication controller checks to see if there is a resource with the same name as this VirtualMachinePublishRequest resource, an API version equal to spec.source.apiVersion, and a kind equal to spec.source.kind. If such a resource exists, then it is the source of the publication.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>target</code> <em><a href="#virtualmachinepublishrequesttarget">VirtualMachinePublishRequestTarget</a></em></td>
+<td>Target is the target of the publication request, ex. item information and a ContentLibrary resource.</td>
+</tr>
+<tr>
+<td>If this value is omitted, the controller uses spec.source.name + "-image" as the name of the published item. Additionally, when omitted the controller attempts to identify the target location by matching a resource with an API version equal to spec.target.location.apiVersion, a kind equal to spec.target.location.kind, w/ the label "imageregistry.vmware.com/default".</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note that while optional, if a VirtualMachinePublishRequest sans target information is applied to a namespace without a default publication target, then the VirtualMachinePublishRequest resource will be marked in error.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>ttlSecondsAfterFinished</code> <em>integer</em></td>
+<td>TTLSecondsAfterFinished is the time-to-live duration for how long this resource will be allowed to exist once the publication operation completes. After the TTL expires, the resource will be automatically deleted without the user having to take any direct action.</td>
+</tr>
+<tr>
+<td>If this field is unset then the request resource will not be automatically deleted. If this field is set to zero then the request resource is eligible for deletion immediately after it finishes.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinepublishrequeststatus">VirtualMachinePublishRequestStatus</h3>
+<p>VirtualMachinePublishRequestStatus defines the observed state of a VirtualMachinePublishRequest.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinepublishrequest">VirtualMachinePublishRequest</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sourceRef</code> <em><a href="#virtualmachinepublishrequestsource">VirtualMachinePublishRequestSource</a></em></td>
+<td>SourceRef is the reference to the source of the publication request, ex. a VirtualMachine resource.</td>
+</tr>
+<tr>
+<td><code>targetRef</code> <em><a href="#virtualmachinepublishrequesttarget">VirtualMachinePublishRequestTarget</a></em></td>
+<td>TargetRef is the reference to the target of the publication request, ex. item information and a ContentLibrary resource.</td>
+</tr>
+<tr>
+<td><code>completionTime</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#time-v1-meta">Time</a></em></td>
+<td>CompletionTime represents time when the request was completed. It is not guaranteed to be set in happens-before order across separate operations. It is represented in RFC3339 form and is in UTC.</td>
+</tr>
+<tr>
+<td>The value of this field should be equal to the value of the LastTransitionTime for the status condition Type=Complete.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>startTime</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#time-v1-meta">Time</a></em></td>
+<td>StartTime represents time when the request was acknowledged by the controller. It is not guaranteed to be set in happens-before order across separate operations. It is represented in RFC3339 form and is in UTC.</td>
+</tr>
+<tr>
+<td><code>attempts</code> <em>integer</em></td>
+<td>Attempts represents the number of times the request to publish the VM has been attempted.</td>
+</tr>
+<tr>
+<td><code>lastAttemptTime</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#time-v1-meta">Time</a></em></td>
+<td>LastAttemptTime represents the time when the latest request was sent.</td>
+</tr>
+<tr>
+<td><code>imageName</code> <em>string</em></td>
+<td>ImageName is the name of the VirtualMachineImage resource that is eventually realized in the same namespace as the VM and publication request after the publication operation completes.</td>
+</tr>
+<tr>
+<td>This field will not be set until the VirtualMachineImage resource is realized.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>ready</code> <em>boolean</em></td>
+<td>Ready is set to true only when the VM has been published successfully and the new VirtualMachineImage resource is ready.</td>
+</tr>
+<tr>
+<td>Readiness is determined by waiting until there is status condition Type=Complete and ensuring it and all other status conditions present have a Status=True. The conditions present will be:</td>
+<td></td>
+</tr>
+<tr>
+<td>* SourceValid * TargetValid * Uploaded * ImageAvailable * Complete</td>
+<td></td>
+</tr>
+<tr>
+<td><code>conditions</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#condition-v1-meta">Condition</a> array</em></td>
+<td>Conditions is a list of the latest, available observations of the request's current state.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinepublishrequesttarget">VirtualMachinePublishRequestTarget</h3>
+<p>VirtualMachinePublishRequestTarget is the target of a publication request, typically a ContentLibrary resource.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinepublishrequestspec">VirtualMachinePublishRequestSpec</a>
+- <a href="#virtualmachinepublishrequeststatus">VirtualMachinePublishRequestStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>item</code> <em><a href="#virtualmachinepublishrequesttargetitem">VirtualMachinePublishRequestTargetItem</a></em></td>
+<td>Item contains information about the name of the object to which the VM is published.</td>
+</tr>
+<tr>
+<td>Please note this value is optional and if omitted, the controller will use spec.source.name + "-image" as the name of the published item.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>location</code> <em><a href="#virtualmachinepublishrequesttargetlocation">VirtualMachinePublishRequestTargetLocation</a></em></td>
+<td>Location contains information about the location to which to publish the VM.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinepublishrequesttargetitem">VirtualMachinePublishRequestTargetItem</h3>
+<p>VirtualMachinePublishRequestTargetItem is the item part of a publication request's target.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinepublishrequesttarget">VirtualMachinePublishRequestTarget</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> <em>string</em></td>
+<td>Name is the name of the published object.</td>
+</tr>
+<tr>
+<td>If the spec.target.location.apiVersion equals imageregistry.vmware.com/v1alpha1 and the spec.target.location.kind equals ContentLibrary, then this should be the name that will show up in vCenter Content Library, not the custom resource name in the namespace.</td>
+<td></td>
+</tr>
+<tr>
+<td>If omitted then the controller will use spec.source.name + "-image".</td>
+<td></td>
+</tr>
+<tr>
+<td><code>description</code> <em>string</em></td>
+<td>Description is the description to assign to the published object.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinepublishrequesttargetlocation">VirtualMachinePublishRequestTargetLocation</h3>
+<p>VirtualMachinePublishRequestTargetLocation is the location part of a publication request's target.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinepublishrequesttarget">VirtualMachinePublishRequestTarget</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> <em>string</em></td>
+<td>Name is the name of the referenced object.</td>
+</tr>
+<tr>
+<td>Please note an error will be returned if this field is not set in a namespace that lacks a default publication target.</td>
+<td></td>
+</tr>
+<tr>
+<td>A default publication target is a resource with an API version equal to spec.target.location.apiVersion, a kind equal to spec.target.location.kind, and has the label "imageregistry.vmware.com/default".</td>
+<td></td>
+</tr>
+<tr>
+<td><code>apiVersion</code> <em>string</em></td>
+<td>APIVersion is the API version of the referenced object.</td>
+</tr>
+<tr>
+<td><code>kind</code> <em>string</em></td>
+<td>Kind is the kind of referenced object.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinereadinessgate">VirtualMachineReadinessGate</h3>
+<p>VirtualMachineReadinessGate contains the reference to a VM condition.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinespec">VirtualMachineSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>conditionType</code> <em>string</em></td>
+<td>ConditionType refers to a condition in the VM's condition list with matching type.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinereadinessprobespec">VirtualMachineReadinessProbeSpec</h3>
+<p>VirtualMachineReadinessProbeSpec describes a probe used to determine if a VM is in a ready state. All probe actions are mutually exclusive.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinespec">VirtualMachineSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tcpSocket</code> <em><a href="#tcpsocketaction">TCPSocketAction</a></em></td>
+<td>TCPSocket specifies an action involving a TCP port.</td>
+</tr>
+<tr>
+<td><code>guestHeartbeat</code> <em><a href="#guestheartbeataction">GuestHeartbeatAction</a></em></td>
+<td>GuestHeartbeat specifies an action involving the guest heartbeat status.</td>
+</tr>
+<tr>
+<td><code>guestInfo</code> <em><a href="#guestinfoaction">GuestInfoAction</a> array</em></td>
+<td>GuestInfo specifies an action involving key/value pairs from GuestInfo.</td>
+</tr>
+<tr>
+<td>The elements are evaluated with the logical AND operator, meaning all expressions must evaluate as true for the probe to succeed.</td>
+<td></td>
+</tr>
+<tr>
+<td>For example, a VM resource's probe definition could be specified as the following:</td>
+<td></td>
+</tr>
+<tr>
+<td>guestInfo: - key:   ready value: true</td>
+<td></td>
+</tr>
+<tr>
+<td>With the above configuration in place, the VM would not be considered ready until the GuestInfo key "ready" was set to the value "true".</td>
+<td></td>
+</tr>
+<tr>
+<td>From within the guest operating system it is possible to set GuestInfo key/value pairs using the program "vmware-rpctool," which is included with VM Tools. For example, the following command will set the key "guestinfo.ready" to the value "true":</td>
+<td></td>
+</tr>
+<tr>
+<td>vmware-rpctool "info-set guestinfo.ready true"</td>
+<td></td>
+</tr>
+<tr>
+<td>Once executed, the VM's readiness probe will be signaled and the VM resource will be marked as ready.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>timeoutSeconds</code> <em>integer</em></td>
+<td>TimeoutSeconds specifies a number of seconds after which the probe times out. Defaults to 10 seconds. Minimum value is 1.</td>
+</tr>
+<tr>
+<td><code>periodSeconds</code> <em>integer</em></td>
+<td>PeriodSeconds specifics how often (in seconds) to perform the probe. Defaults to 10 seconds. Minimum value is 1.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinereservedspec">VirtualMachineReservedSpec</h3>
+<p>VirtualMachineReservedSpec describes a set of VM configuration options reserved for system use. Modification attempts by DevOps users will result in a validation error.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinespec">VirtualMachineSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resourcePolicyName</code> <em>string</em></td>
+<td>ResourcePolicyName describes the name of a VirtualMachineSetResourcePolicy resource used to configure the VM's resource policy.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineresourcespec">VirtualMachineResourceSpec</h3>
+<p>VirtualMachineResourceSpec describes a virtual hardware policy specification.</p>
+<p><em>Appears in:</em>
+- <a href="#resourcepoolspec">ResourcePoolSpec</a>
+- <a href="#virtualmachineclassresources">VirtualMachineClassResources</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cpu</code> <em>Quantity</em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>memory</code> <em>Quantity</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineserviceport">VirtualMachineServicePort</h3>
+<p>VirtualMachineServicePort describes the specification of a service port to be exposed by a VirtualMachineService. This VirtualMachineServicePort specification includes attributes that define the external and internal representation of the service port.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineservicespec">VirtualMachineServiceSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> <em>string</em></td>
+<td>Name describes the name to be used to identify this VirtualMachineServicePort.</td>
+</tr>
+<tr>
+<td><code>protocol</code> <em>string</em></td>
+<td>Protocol describes the Layer 4 transport protocol for this port. Supports "TCP", "UDP", and "SCTP".</td>
+</tr>
+<tr>
+<td><code>port</code> <em>integer</em></td>
+<td>Port describes the external port that will be exposed by the service.</td>
+</tr>
+<tr>
+<td><code>targetPort</code> <em>integer</em></td>
+<td>TargetPort describes the internal port open on a VirtualMachine that should be mapped to the external Port.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineservicespec">VirtualMachineServiceSpec</h3>
+<p>VirtualMachineServiceSpec defines the desired state of VirtualMachineService.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineservice">VirtualMachineService</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code> <em>VirtualMachineServiceType</em></td>
+<td>Type specifies a desired VirtualMachineServiceType for this VirtualMachineService. Supported types are ClusterIP, LoadBalancer, ExternalName.</td>
+</tr>
+<tr>
+<td><code>ports</code> <em><a href="#virtualmachineserviceport">VirtualMachineServicePort</a> array</em></td>
+<td>Ports specifies a list of VirtualMachineServicePort to expose with this VirtualMachineService. Each of these ports will be an accessible network entry point to access this service by.</td>
+</tr>
+<tr>
+<td><code>selector</code> <em>object (keys:string, values:string)</em></td>
+<td>Selector specifies a map of key-value pairs, also known as a Label Selector, that is used to match this VirtualMachineService with the set of VirtualMachines that should back this VirtualMachineService.</td>
+</tr>
+<tr>
+<td><code>loadBalancerIP</code> <em>string</em></td>
+<td>Only applies to VirtualMachineService Type: LoadBalancer LoadBalancer will get created with the IP specified in this field. This feature depends on whether the underlying load balancer provider supports specifying the loadBalancerIP when a load balancer is created. This field will be ignored if the provider does not support the feature.</td>
+</tr>
+<tr>
+<td><code>loadBalancerSourceRanges</code> <em>string array</em></td>
+<td>LoadBalancerSourceRanges is an array of IP addresses in the format of CIDRs, for example: 103.21.244.0/22 and 10.0.0.0/24. If specified and supported by the load balancer provider, this will restrict ingress traffic to the specified client IPs. This field will be ignored if the provider does not support the feature.</td>
+</tr>
+<tr>
+<td><code>clusterIp</code> <em>string</em></td>
+<td>clusterIP is the IP address of the service and is usually assigned randomly by the master. If an address is specified manually and is not in use by others, it will be allocated to the service; otherwise, creation of the service will fail. This field can not be changed through updates. Valid values are "None", empty string (""), or a valid IP address. "None" can be specified for headless services when proxying is not required. Only applies to types ClusterIP and LoadBalancer. Ignored if type is ExternalName. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies</td>
+</tr>
+<tr>
+<td><code>externalName</code> <em>string</em></td>
+<td>externalName is the external reference that kubedns or equivalent will return as a CNAME record for this service. No proxying will be involved. Must be a valid RFC-1123 hostname (https://tools.ietf.org/html/rfc1123) and requires Type to be ExternalName.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachineservicestatus">VirtualMachineServiceStatus</h3>
+<p>VirtualMachineServiceStatus defines the observed state of VirtualMachineService.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachineservice">VirtualMachineService</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>loadBalancer</code> <em><a href="#loadbalancerstatus">LoadBalancerStatus</a></em></td>
+<td>LoadBalancer contains the current status of the load balancer, if one is present.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinesetresourcepolicyspec">VirtualMachineSetResourcePolicySpec</h3>
+<p>VirtualMachineSetResourcePolicySpec defines the desired state of VirtualMachineSetResourcePolicy.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinesetresourcepolicy">VirtualMachineSetResourcePolicy</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>resourcePool</code> <em><a href="#resourcepoolspec">ResourcePoolSpec</a></em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>folder</code> <em>string</em></td>
+<td></td>
+</tr>
+<tr>
+<td><code>clusterModuleGroups</code> <em>string array</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinesetresourcepolicystatus">VirtualMachineSetResourcePolicyStatus</h3>
+<p>VirtualMachineSetResourcePolicyStatus defines the observed state of VirtualMachineSetResourcePolicy.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinesetresourcepolicy">VirtualMachineSetResourcePolicy</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>clustermodules</code> <em><a href="#vsphereclustermodulestatus">VSphereClusterModuleStatus</a> array</em></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinespec">VirtualMachineSpec</h3>
+<p>VirtualMachineSpec defines the desired state of a VirtualMachine.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachine">VirtualMachine</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>imageName</code> <em>string</em></td>
+<td>ImageName describes the name of the image resource used to deploy this VM.</td>
+</tr>
+<tr>
+<td>This field may be used to specify the name of a VirtualMachineImage or ClusterVirtualMachineImage resource. The resolver first checks to see if there is a ClusterVirtualMachineImage with the specified name. If no such resource exists, the resolver then checks to see if there is a VirtualMachineImage resource with the specified name in the same Namespace as the VM being deployed.</td>
+<td></td>
+</tr>
+<tr>
+<td>This field is optional in the cases where there exists a sensible default value, such as when there is a single VirtualMachineImage resource available in the same Namespace as the VM being deployed.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>className</code> <em>string</em></td>
+<td>Class describes the name of the VirtualMachineClass resource used to deploy this VM.</td>
+</tr>
+<tr>
+<td>This field is optional in the cases where there exists a sensible default value, such as when there is a single VirtualMachineClass resource available in the same Namespace as the VM being deployed.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>storageClass</code> <em>string</em></td>
+<td>StorageClass describes the name of a Kubernetes StorageClass resource used to configure this VM's storage-related attributes.</td>
+</tr>
+<tr>
+<td>Please see https://kubernetes.io/docs/concepts/storage/storage-classes/ for more information on Kubernetes storage classes.</td>
+<td></td>
+</tr>
+<tr>
+<td>This field is optional in the cases where there exists a sensible default value, such as when there is a single StorageClass resource available in the same Namespace as the VM being deployed.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>bootstrap</code> <em><a href="#virtualmachinebootstrapspec">VirtualMachineBootstrapSpec</a></em></td>
+<td>Bootstrap describes the desired state of the guest's bootstrap configuration.</td>
+</tr>
+<tr>
+<td>If omitted, then the bootstrap method is determined based on the guest identifier from the VirtualMachineImage. If the image's guest OS type is Windows, then the Sysprep bootstrap method is used; if Linux, the LinuxPrep method is used.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note that defaulting to Sysprep for Windows images only works if the image uses a volume license key, otherwise the image's product ID is required.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>network</code> <em><a href="#virtualmachinenetworkspec">VirtualMachineNetworkSpec</a></em></td>
+<td>Network describes the desired network configuration for the VM.</td>
+</tr>
+<tr>
+<td>Please note this value may be omitted entirely and the VM will be assigned a single, virtual network interface that is connected to the Namespace's default network.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>powerState</code> <em>VirtualMachinePowerState</em></td>
+<td>PowerState describes the desired power state of a VirtualMachine.</td>
+</tr>
+<tr>
+<td>Please note this field may be omitted when creating a new VM and will default to "PoweredOn." However, once the field is set to a non-empty value, it may no longer be set to an empty value.</td>
+<td></td>
+</tr>
+<tr>
+<td>Additionally, setting this value to "Suspended" is not supported when creating a new VM. The valid values when creating a new VM are "PoweredOn" and "PoweredOff." An empty value is also allowed on create since this value defaults to "PoweredOn" for new VMs.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>powerOffMode</code> <em>VirtualMachinePowerOpMode</em></td>
+<td>PowerOffMode describes the desired behavior when powering off a VM.</td>
+</tr>
+<tr>
+<td>There are three, supported power off modes: Hard, Soft, and TrySoft. The first mode, Hard, is the equivalent of a physical system's power cord being ripped from the wall. The Soft mode requires the VM's guest to have VM Tools installed and attempts to gracefully shutdown the VM. Its variant, TrySoft, first attempts a graceful shutdown, and if that fails or the VM is not in a powered off state after five minutes, the VM is halted.</td>
+<td></td>
+</tr>
+<tr>
+<td>If omitted, the mode defaults to TrySoft.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>suspendMode</code> <em>VirtualMachinePowerOpMode</em></td>
+<td>SuspendMode describes the desired behavior when suspending a VM.</td>
+</tr>
+<tr>
+<td>There are three, supported suspend modes: Hard, Soft, and TrySoft. The first mode, Hard, is where vSphere suspends the VM to disk without any interaction inside of the guest. The Soft mode requires the VM's guest to have VM Tools installed and attempts to gracefully suspend the VM. Its variant, TrySoft, first attempts a graceful suspend, and if that fails or the VM is not in a put into standby by the guest after five minutes, the VM is suspended.</td>
+<td></td>
+</tr>
+<tr>
+<td>If omitted, the mode defaults to TrySoft.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>nextRestartTime</code> <em>string</em></td>
+<td>NextRestartTime may be used to restart the VM, in accordance with RestartMode, by setting the value of this field to "now" (case-insensitive).</td>
+</tr>
+<tr>
+<td>A mutating webhook changes this value to the current time (UTC), which the VM controller then uses to determine the VM should be restarted by comparing the value to the timestamp of the last time the VM was restarted.</td>
+<td></td>
+</tr>
+<tr>
+<td>Please note it is not possible to schedule future restarts using this field. The only value that users may set is the string "now" (case-insensitive).</td>
+<td></td>
+</tr>
+<tr>
+<td><code>restartMode</code> <em>VirtualMachinePowerOpMode</em></td>
+<td>RestartMode describes the desired behavior for restarting a VM when spec.nextRestartTime is set to "now" (case-insensitive).</td>
+</tr>
+<tr>
+<td>There are three, supported suspend modes: Hard, Soft, and TrySoft. The first mode, Hard, is where vSphere resets the VM without any interaction inside of the guest. The Soft mode requires the VM's guest to have VM Tools installed and asks the guest to restart the VM. Its variant, TrySoft, first attempts a soft restart, and if that fails or does not complete within five minutes, the VM is hard reset.</td>
+<td></td>
+</tr>
+<tr>
+<td>If omitted, the mode defaults to TrySoft.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>volumes</code> <em><a href="#virtualmachinevolume">VirtualMachineVolume</a> array</em></td>
+<td>Volumes describes a list of volumes that can be mounted to the VM.</td>
+</tr>
+<tr>
+<td><code>readinessProbe</code> <em><a href="#virtualmachinereadinessprobespec">VirtualMachineReadinessProbeSpec</a></em></td>
+<td>ReadinessProbe describes a probe used to determine the VM's ready state.</td>
+</tr>
+<tr>
+<td><code>readinessGates</code> <em><a href="#virtualmachinereadinessgate">VirtualMachineReadinessGate</a> array</em></td>
+<td>ReadinessGates, if specified, will be evaluated to determine the VM's readiness.</td>
+</tr>
+<tr>
+<td>A VM is ready when its readiness probe, if specified, is true AND all of the conditions specified by the readiness gates have a status equal to "True".</td>
+<td></td>
+</tr>
+<tr>
+<td><code>advanced</code> <em><a href="#virtualmachineadvancedspec">VirtualMachineAdvancedSpec</a></em></td>
+<td>Advanced describes a set of optional, advanced VM configuration options.</td>
+</tr>
+<tr>
+<td><code>reserved</code> <em><a href="#virtualmachinereservedspec">VirtualMachineReservedSpec</a></em></td>
+<td>Reserved describes a set of VM configuration options reserved for system use.</td>
+</tr>
+<tr>
+<td>Please note attempts to modify the value of this field by a DevOps user will result in a validation error.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinestatus">VirtualMachineStatus</h3>
+<p>VirtualMachineStatus defines the observed state of a VirtualMachine instance.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachine">VirtualMachine</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>image</code> <em>LocalObjectRef</em></td>
+<td>Image is a reference to the VirtualMachineImage resource used to deploy this VM.</td>
+</tr>
+<tr>
+<td><code>class</code> <em><a href="#localobjectref">LocalObjectRef</a></em></td>
+<td>Class is a reference to the VirtualMachineClass resource used to deploy this VM.</td>
+</tr>
+<tr>
+<td><code>host</code> <em>string</em></td>
+<td>Host describes the hostname or IP address of the infrastructure host where the VM is executed.</td>
+</tr>
+<tr>
+<td><code>powerState</code> <em>VirtualMachinePowerState</em></td>
+<td>PowerState describes the observed power state of the VirtualMachine.</td>
+</tr>
+<tr>
+<td><code>conditions</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#condition-v1-meta">Condition</a> array</em></td>
+<td>Conditions describes the observed conditions of the VirtualMachine.</td>
+</tr>
+<tr>
+<td><code>network</code> <em><a href="#virtualmachinenetworkstatus">VirtualMachineNetworkStatus</a></em></td>
+<td>Network describes the observed state of the VM's network configuration. Please note much of the network status information is only available if the guest has VM Tools installed.</td>
+</tr>
+<tr>
+<td><code>uniqueID</code> <em>string</em></td>
+<td>UniqueID describes a unique identifier that is provided by the underlying infrastructure provider, such as vSphere.</td>
+</tr>
+<tr>
+<td><code>biosUUID</code> <em>string</em></td>
+<td>BiosUUID describes a unique identifier provided by the underlying infrastructure provider that is exposed to the Guest OS BIOS as a unique hardware identifier.</td>
+</tr>
+<tr>
+<td><code>instanceUUID</code> <em>string</em></td>
+<td>InstanceUUID describes the unique instance UUID provided by the underlying infrastructure provider, such as vSphere.</td>
+</tr>
+<tr>
+<td><code>volumes</code> <em><a href="#virtualmachinevolumestatus">VirtualMachineVolumeStatus</a> array</em></td>
+<td>Volumes describes a list of current status information for each Volume that is desired to be attached to the VM.</td>
+</tr>
+<tr>
+<td><code>changeBlockTracking</code> <em>boolean</em></td>
+<td>ChangeBlockTracking describes the CBT enablement status on the VM.</td>
+</tr>
+<tr>
+<td><code>zone</code> <em>string</em></td>
+<td>Zone describes the availability zone where the VirtualMachine has been scheduled.</td>
+</tr>
+<tr>
+<td>Please note this field may be empty when the cluster is not zone-aware.</td>
+<td></td>
+</tr>
+<tr>
+<td><code>lastRestartTime</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#time-v1-meta">Time</a></em></td>
+<td>LastRestartTime describes the last time the VM was restarted.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinevolume">VirtualMachineVolume</h3>
+<p>VirtualMachineVolume represents a named volume in a VM.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinespec">VirtualMachineSpec</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> <em>string</em></td>
+<td>Name represents the volume's name. Must be a DNS_LABEL and unique within the VM.</td>
+</tr>
+<tr>
+<td><code>persistentVolumeClaim</code> <em><a href="#persistentvolumeclaimvolumesource">PersistentVolumeClaimVolumeSource</a></em></td>
+<td>PersistentVolumeClaim represents a reference to a PersistentVolumeClaim in the same namespace.</td>
+</tr>
+<tr>
+<td>More information is available at https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinevolumesource">VirtualMachineVolumeSource</h3>
+<p>VirtualMachineVolumeSource represents the source location of a volume to mount. Only one of its members may be specified.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinevolume">VirtualMachineVolume</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>persistentVolumeClaim</code> <em><a href="#persistentvolumeclaimvolumesource">PersistentVolumeClaimVolumeSource</a></em></td>
+<td>PersistentVolumeClaim represents a reference to a PersistentVolumeClaim in the same namespace.</td>
+</tr>
+<tr>
+<td>More information is available at https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinevolumestatus">VirtualMachineVolumeStatus</h3>
+<p>VirtualMachineVolumeStatus defines the observed state of a VirtualMachineVolume instance.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinestatus">VirtualMachineStatus</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> <em>string</em></td>
+<td>Name is the name of the attached volume.</td>
+</tr>
+<tr>
+<td><code>attached</code> <em>boolean</em></td>
+<td>Attached represents whether a volume has been successfully attached to the VirtualMachine or not.</td>
+</tr>
+<tr>
+<td><code>diskUUID</code> <em>string</em></td>
+<td>DiskUUID represents the underlying virtual disk UUID and is present when attachment succeeds.</td>
+</tr>
+<tr>
+<td><code>error</code> <em>string</em></td>
+<td>Error represents the last error seen when attaching or detaching a volume.  Error will be empty if attachment succeeds.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinewebconsolerequestspec">VirtualMachineWebConsoleRequestSpec</h3>
+<p>VirtualMachineWebConsoleRequestSpec describes the desired state for a web console request to a VM.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinewebconsolerequest">VirtualMachineWebConsoleRequest</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code> <em>string</em></td>
+<td>Name is the name of a VM in the same Namespace as this web console request.</td>
+</tr>
+<tr>
+<td><code>publicKey</code> <em>string</em></td>
+<td>PublicKey is used to encrypt the status.response. This is expected to be a RSA OAEP public key in X.509 PEM format.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="virtualmachinewebconsolerequeststatus">VirtualMachineWebConsoleRequestStatus</h3>
+<p>VirtualMachineWebConsoleRequestStatus describes the observed state of the request.</p>
+<p><em>Appears in:</em>
+- <a href="#virtualmachinewebconsolerequest">VirtualMachineWebConsoleRequest</a></p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>response</code> <em>string</em></td>
+<td>Response will be the authenticated ticket corresponding to this web console request.</td>
+</tr>
+<tr>
+<td><code>expiryTime</code> <em><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.24/#time-v1-meta">Time</a></em></td>
+<td>ExpiryTime is the time at which access via this request will expire.</td>
+</tr>
+<tr>
+<td><code>proxyAddr</code> <em>string</em></td>
+<td>ProxyAddr describes the host address and optional port used to access the VM's web console.</td>
+</tr>
+<tr>
+<td>The value could be a DNS entry, IPv4, or IPv6 address, followed by an optional port. For example, valid values include:</td>
+<td></td>
+</tr>
+<tr>
+<td>DNS * host.com * host.com:6443</td>
+<td></td>
+</tr>
+<tr>
+<td>IPv4 * 1.2.3.4 * 1.2.3.4:6443</td>
+<td></td>
+</tr>
+<tr>
+<td>IPv6 * 1234<img alt="🔢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f522.svg" title=":1234:" />1234<img alt="🔢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f522.svg" title=":1234:" />1234<img alt="🔢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f522.svg" title=":1234:" />1234:1234 * [1234<img alt="🔢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f522.svg" title=":1234:" />1234<img alt="🔢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f522.svg" title=":1234:" />1234<img alt="🔢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f522.svg" title=":1234:" />1234:1234]:6443 * 1234<img alt="🔢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f522.svg" title=":1234:" />1234:0000:0000:0000:1234:1234 * 1234<img alt="🔢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f522.svg" title=":1234:" />1234:::<img alt="🔢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f522.svg" title=":1234:" />1234 * [1234<img alt="🔢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f522.svg" title=":1234:" />1234:::<img alt="🔢" class="twemoji" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@14.1.2/assets/svg/1f522.svg" title=":1234:" />1234]:6443</td>
+<td></td>
+</tr>
+<tr>
+<td>In other words, the field may be set to any value that is parsable by Go's https://pkg.go.dev/net#ResolveIPAddr and https://pkg.go.dev/net#ParseIP functions.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.726fbb30.min.js"></script>
+      
+    
+  </body>
+</html>

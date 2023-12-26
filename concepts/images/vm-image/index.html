@@ -8,23 +8,25 @@
       
       
       
-        <link rel="canonical" href="https://github.com/vmware-tanzu/vm-operator/">
+        <link rel="canonical" href="https://github.com/vmware-tanzu/vm-operator/concepts/images/vm-image/">
       
       
+        <link rel="prev" href="../">
       
-        <link rel="next" href="start/">
+      
+        <link rel="next" href="../pub-vm-image/">
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.2">
     
     
       
-        <title>VM Operator</title>
+        <title>VirtualMachineImage - VM Operator</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.d451bc0e.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.d451bc0e.min.css">
       
       
 
@@ -43,11 +45,11 @@
       
     
     
-      <link rel="stylesheet" href="www/css/vm-operator.css">
+      <link rel="stylesheet" href="../../../www/css/vm-operator.css">
     
-      <link rel="stylesheet" href="www/css/vm-operator-font.css">
+      <link rel="stylesheet" href="../../../www/css/vm-operator-font.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -69,7 +71,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#vm-operator" class="md-skip">
+        <a href="#virtualmachineimage" class="md-skip">
           Skip to content
         </a>
       
@@ -85,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="VM Operator" class="md-header__button md-logo" aria-label="VM Operator" data-md-component="logo">
+    <a href="../../.." title="VM Operator" class="md-header__button md-logo" aria-label="VM Operator" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -105,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              VirtualMachineImage
             
           </span>
         </div>
@@ -180,9 +182,7 @@
           
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -191,7 +191,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="VM Operator" class="md-nav__button md-logo" aria-label="VM Operator" data-md-component="logo">
+    <a href="../../.." title="VM Operator" class="md-nav__button md-logo" aria-label="VM Operator" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -218,18 +218,9 @@
       
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -238,7 +229,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -285,7 +275,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/" class="md-nav__link">
+      <a href="../../../start/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -305,7 +295,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/quick/" class="md-nav__link">
+      <a href="../../../start/quick/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -325,7 +315,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/help/" class="md-nav__link">
+      <a href="../../../start/help/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -381,7 +371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/" class="md-nav__link">
+      <a href="../../../start/contrib/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -401,7 +391,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/suggest-change/" class="md-nav__link">
+      <a href="../../../start/contrib/suggest-change/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -421,7 +411,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/report-issue/" class="md-nav__link">
+      <a href="../../../start/contrib/report-issue/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -441,7 +431,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/submit-change/" class="md-nav__link">
+      <a href="../../../start/contrib/submit-change/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -505,7 +495,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/about/" class="md-nav__link">
+      <a href="../../../start/about/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -525,7 +515,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/about/roadmap/" class="md-nav__link">
+      <a href="../../../start/about/roadmap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -545,7 +535,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/about/release-notes/" class="md-nav__link">
+      <a href="../../../start/about/release-notes/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -565,7 +555,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/about/license/" class="md-nav__link">
+      <a href="../../../start/about/license/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -598,18 +588,20 @@
       
   
   
+    
+  
   
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -623,7 +615,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Concepts
@@ -636,7 +628,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -692,7 +684,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/" class="md-nav__link">
+      <a href="../../workloads/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -712,7 +704,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/vm/" class="md-nav__link">
+      <a href="../../workloads/vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -732,7 +724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/vm-class/" class="md-nav__link">
+      <a href="../../workloads/vm-class/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -752,7 +744,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/vm-web-console/" class="md-nav__link">
+      <a href="../../workloads/vm-web-console/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -772,7 +764,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/guest/" class="md-nav__link">
+      <a href="../../workloads/guest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -798,18 +790,20 @@
                 
   
   
+    
+  
   
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
@@ -823,7 +817,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_3">
             <span class="md-nav__icon md-icon"></span>
             Images
@@ -836,7 +830,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/images/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -854,9 +848,29 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="concepts/images/vm-image/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    VirtualMachineImage
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -865,6 +879,54 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#image-scope" class="md-nav__link">
+    Image Scope
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image-names" class="md-nav__link">
+    Image Names
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#name-resolution" class="md-nav__link">
+    Name Resolution
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-images" class="md-nav__link">
+    Recommended Images
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -876,7 +938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/images/pub-vm-image/" class="md-nav__link">
+      <a href="../pub-vm-image/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -940,7 +1002,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/services-networking/" class="md-nav__link">
+      <a href="../../services-networking/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -960,7 +1022,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/services-networking/vm-service/" class="md-nav__link">
+      <a href="../../services-networking/vm-service/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -980,7 +1042,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/services-networking/guest-net-config/" class="md-nav__link">
+      <a href="../../services-networking/guest-net-config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1051,7 +1113,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/" class="md-nav__link">
+      <a href="../../../tutorials/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1107,7 +1169,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-vm/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1127,7 +1189,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-vm/cloudinit/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-vm/cloudinit/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1147,7 +1209,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-vm/vappconfig/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-vm/vappconfig/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1211,7 +1273,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-apps/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-apps/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1231,7 +1293,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-apps/nfs-server-and-client/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-apps/nfs-server-and-client/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1295,7 +1357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1315,7 +1377,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/get-console-session/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/get-console-session/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1335,7 +1397,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/deploy-vm/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/deploy-vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1355,7 +1417,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/ip-assignment/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/ip-assignment/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1375,7 +1437,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/publish-vm/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/publish-vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1446,7 +1508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/" class="md-nav__link">
+      <a href="../../../ref/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1502,7 +1564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/api/" class="md-nav__link">
+      <a href="../../../ref/api/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1522,7 +1584,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/api/v1alpha1/" class="md-nav__link">
+      <a href="../../../ref/api/v1alpha1/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1542,7 +1604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/api/v1alpha2/" class="md-nav__link">
+      <a href="../../../ref/api/v1alpha2/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1606,7 +1668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/config/" class="md-nav__link">
+      <a href="../../../ref/config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1626,7 +1688,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/config/manager/" class="md-nav__link">
+      <a href="../../../ref/config/manager/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1690,7 +1752,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/proj/" class="md-nav__link">
+      <a href="../../../ref/proj/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1710,7 +1772,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/proj/build/" class="md-nav__link">
+      <a href="../../../ref/proj/build/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1730,7 +1792,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/proj/release/" class="md-nav__link">
+      <a href="../../../ref/proj/release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1750,7 +1812,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/proj/docs/" class="md-nav__link">
+      <a href="../../../ref/proj/docs/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1787,9 +1849,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -1800,6 +1860,42 @@
   
     
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#image-scope" class="md-nav__link">
+    Image Scope
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#image-names" class="md-nav__link">
+    Image Names
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#name-resolution" class="md-nav__link">
+    Name Resolution
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#recommended-images" class="md-nav__link">
+    Recommended Images
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1817,24 +1913,79 @@
   
 
 
-<style>
-h1 {
-    text-align: center;
-}
-h1#vm-operator::after {
-    text-align: center;
-}
-article.md-content__inner {
-    text-align: center;
-}
-</style>
+<h1 id="virtualmachineimage">VirtualMachineImage</h1>
+<p>// TODO (<a href="https://github.com/vmware-tanzu/vm-operator/issues/109">github.com/vmware-tanzu/vm-operator#109</a>)</p>
+<h2 id="image-scope">Image Scope</h2>
+<p>There are two types of VM image resources, the <code>ClusterVirtualMachineImage</code> and <code>VirtualMachineImage</code>. The former is a cluster-scoped resource, while the latter is a namespace-scoped resource. Other than that, the two resources are exactly the same.</p>
+<h2 id="image-names">Image Names</h2>
+<p>Prior to vSphere 8.0U2, the name of a VM image resource was derived from the name of a Content Library item. For example, if a Content Library item was named <code>photonos-5-x64</code>, then its corresponding  <code>VirtualMachineImage</code> resource would also be named <code>photonos-5-x64</code>. This caused a problem if there library items with the same name from different libraries. With the exception of the first library item encountered, all subsequent library items would have randomly generated data appended to their corresponding Kubernetes resource names to ensure they were unique. In vSphere 8.0U2+, with the introduction of the Image Registry API and potential for global image catalogs, image names needed to be both unique <em>and</em> deterministic, hence:</p>
+<div class="highlight"><pre><span></span><code>vmi-0123456789ABCDEFG
+</code></pre></div>
+<p>The above value is referred to as a <em>VMI ID</em>, where <em>VMI</em> stands for <em>Virtual Machine Image</em>. No matter the source of a VM image, all images have unique, predictable VMI IDs. If the source of a VM image is Content Library, then the VMI ID is constructed using the following steps:</p>
+<ol>
+<li>Remove any <code>-</code> characters from the Content Library item's UUID</li>
+<li>Calculate the sha1sum of the value from the previous step</li>
+<li>Take the first 17 characters from the value from the previous step</li>
+<li>Append the value from the previous step to <code>vmi-</code></li>
+</ol>
+<p>For example, if the Content Library item's UUID is <code>e1968c25-dd84-4506-8dc7-9beacb6b688e</code>, then the VMI ID is <code>vmi-0a0044d7c690bcbea</code>, for example:</p>
+<ol>
+<li>Remove any <code>-</code> characters: <code>e1968c25dd8445068dc79beacb6b688e</code>.</li>
+<li>Get the sha1sum: <code>0a0044d7c690bcbea07c9b49efc9f743479490e5</code>.</li>
+<li>First 17 characters: <code>0a0044d7c690bcbea</code>.</li>
+<li>Create the VMI ID: <code>vmi-0a0044d7c690bcbea</code>.</li>
+</ol>
+<h2 id="name-resolution">Name Resolution</h2>
+<p>When a <code>VirtualMachine</code> resource's field <code>spec.imageName</code> is set to a VMI ID, the value is resolved to the <code>VirtualMachineImage</code> or <code>ClusterVirtualMachineImage</code> with that name. It is also possible to specify images based on their <em>display</em> name.</p>
+<div class="admonition warning">
+<p class="admonition-title">Display name resolution</p>
+<p>Please note that while resolving VM images based on their display name was merged into VM Operator with <a href="https://github.com/vmware-tanzu/vm-operator/issues/214">github.com/vmware-tanzu/vm-operator#214</a>, the feature is not yet part of a shipping vSphere release.</p>
+</div>
+<p>For example, if <code>vmi-0a0044d7c690bcbea</code> refers to an image with a display name of <code>photonos-5-x64</code>, then a user could also specify that value for <code>spec.imageName</code> as long as the following is true:</p>
+<ul>
+<li>There is no other <code>VirtualMachineImage</code> in the same namespace with that display name.</li>
+<li>There is no other <code>ClusterVirtualMachineImage</code> with the same display name.</li>
+</ul>
+<p>If the display name unambiguously resolves to the distinct, VM image <code>vmi-0a0044d7c690bcbea</code>, then a mutation webhook replaces <code>spec.imageName: photonos-5-x64</code> with <code>spec.imageName: vmi-0a0044d7c690bcbea</code>. If the display name resolves to multiple or no VM images, then the mutation webhook denies the request and outputs an error message accordingly.</p>
+<h2 id="recommended-images">Recommended Images</h2>
+<p>There are no restrictions on the images that can be deployed by VM Operator. However, for users wanting to try things out for themselves, here are a few images the project's developers use on a daily basis:</p>
+<table>
+<thead>
+<tr>
+<th>Image</th>
+<th style="text-align: center;">Arch</th>
+<th style="text-align: center;">Download</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M288 448H64V224h64v-64H64c-35.3 0-64 28.7-64 64v224c0 35.3 28.7 64 64 64h224c35.3 0 64-28.7 64-64v-64h-64v64zm-64-96h224c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H224c-35.3 0-64 28.7-64 64v224c0 35.3 28.7 64 64 64z"/></svg></span> Photon OS 4, Rev 2</td>
+<td style="text-align: center;">amd64</td>
+<td style="text-align: center;"><a href="https://packages.vmware.com/photon/4.0/Rev2/ova/photon-ova_uefi-4.0-c001795b80.ova">OVA <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9-.1-2.7-.2-5.4-.2-8.1 0-88.4 71.6-160 160-160 59.3 0 111 32.2 138.7 80.2A95.51 95.51 0 0 1 448 96c53 0 96 43 96 96 0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-167 80 80c9.4 9.4 24.6 9.4 33.9 0l80-80c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-39 39V184c0-13.3-10.7-24-24-24s-24 10.7-24 24v134.1l-39-39c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9z"/></svg></span></a></td>
+</tr>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M288 448H64V224h64v-64H64c-35.3 0-64 28.7-64 64v224c0 35.3 28.7 64 64 64h224c35.3 0 64-28.7 64-64v-64h-64v64zm-64-96h224c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64H224c-35.3 0-64 28.7-64 64v224c0 35.3 28.7 64 64 64z"/></svg></span> Photon OS 3, Rev 3, Update 1</td>
+<td style="text-align: center;">amd64</td>
+<td style="text-align: center;"><a href="https://packages.vmware.com/photon/3.0/Rev3/ova/Update1/photon-hw13_uefi-3.0-913b49438.ova">OVA <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9-.1-2.7-.2-5.4-.2-8.1 0-88.4 71.6-160 160-160 59.3 0 111 32.2 138.7 80.2A95.51 95.51 0 0 1 448 96c53 0 96 43 96 96 0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-167 80 80c9.4 9.4 24.6 9.4 33.9 0l80-80c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-39 39V184c0-13.3-10.7-24-24-24s-24 10.7-24 24v134.1l-39-39c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9z"/></svg></span></a></td>
+</tr>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm52.7 93c8.8-15.2 28.3-20.5 43.5-11.7 15.3 8.8 20.5 28.3 11.7 43.6-8.8 15.2-28.3 20.5-43.5 11.7-15.3-8.9-20.5-28.4-11.7-43.6zM87.4 287.9c-17.6 0-31.9-14.3-31.9-31.9 0-17.6 14.3-31.9 31.9-31.9 17.6 0 31.9 14.3 31.9 31.9 0 17.6-14.3 31.9-31.9 31.9zm28.1 3.1c22.3-17.9 22.4-51.9 0-69.9 8.6-32.8 29.1-60.7 56.5-79.1l23.7 39.6c-51.5 36.3-51.5 112.5 0 148.8L172 370c-27.4-18.3-47.8-46.3-56.5-79zm228.7 131.7c-15.3 8.8-34.7 3.6-43.5-11.7-8.8-15.3-3.6-34.8 11.7-43.6 15.2-8.8 34.7-3.6 43.5 11.7 8.8 15.3 3.6 34.8-11.7 43.6zm.3-69.5c-26.7-10.3-56.1 6.6-60.5 35-5.2 1.4-48.9 14.3-96.7-9.4l22.5-40.3c57 26.5 123.4-11.7 128.9-74.4l46.1.7c-2.3 34.5-17.3 65.5-40.3 88.4zm-5.9-105.3c-5.4-62-71.3-101.2-128.9-74.4l-22.5-40.3c47.9-23.7 91.5-10.8 96.7-9.4 4.4 28.3 33.8 45.3 60.5 35 23.1 22.9 38 53.9 40.2 88.5l-46 .6z"/></svg></span> Ubuntu 22.10 Server (Kinetic Kudo)</td>
+<td style="text-align: center;">amd64</td>
+<td style="text-align: center;"><a href="https://cloud-images.ubuntu.com/releases/22.10/release-20230302/ubuntu-22.10-server-cloudimg-amd64.ova">OVA <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9-.1-2.7-.2-5.4-.2-8.1 0-88.4 71.6-160 160-160 59.3 0 111 32.2 138.7 80.2A95.51 95.51 0 0 1 448 96c53 0 96 43 96 96 0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-167 80 80c9.4 9.4 24.6 9.4 33.9 0l80-80c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-39 39V184c0-13.3-10.7-24-24-24s-24 10.7-24 24v134.1l-39-39c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9z"/></svg></span></a></td>
+</tr>
+<tr>
+<td><span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm52.7 93c8.8-15.2 28.3-20.5 43.5-11.7 15.3 8.8 20.5 28.3 11.7 43.6-8.8 15.2-28.3 20.5-43.5 11.7-15.3-8.9-20.5-28.4-11.7-43.6zM87.4 287.9c-17.6 0-31.9-14.3-31.9-31.9 0-17.6 14.3-31.9 31.9-31.9 17.6 0 31.9 14.3 31.9 31.9 0 17.6-14.3 31.9-31.9 31.9zm28.1 3.1c22.3-17.9 22.4-51.9 0-69.9 8.6-32.8 29.1-60.7 56.5-79.1l23.7 39.6c-51.5 36.3-51.5 112.5 0 148.8L172 370c-27.4-18.3-47.8-46.3-56.5-79zm228.7 131.7c-15.3 8.8-34.7 3.6-43.5-11.7-8.8-15.3-3.6-34.8 11.7-43.6 15.2-8.8 34.7-3.6 43.5 11.7 8.8 15.3 3.6 34.8-11.7 43.6zm.3-69.5c-26.7-10.3-56.1 6.6-60.5 35-5.2 1.4-48.9 14.3-96.7-9.4l22.5-40.3c57 26.5 123.4-11.7 128.9-74.4l46.1.7c-2.3 34.5-17.3 65.5-40.3 88.4zm-5.9-105.3c-5.4-62-71.3-101.2-128.9-74.4l-22.5-40.3c47.9-23.7 91.5-10.8 96.7-9.4 4.4 28.3 33.8 45.3 60.5 35 23.1 22.9 38 53.9 40.2 88.5l-46 .6z"/></svg></span> Ubuntu 22.04 Server (Jammy Jellyfish)</td>
+<td style="text-align: center;">amd64</td>
+<td style="text-align: center;"><a href="https://cloud-images.ubuntu.com/releases/22.04/release-20230302/ubuntu-22.04-server-cloudimg-amd64.ova">OVA <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9-.1-2.7-.2-5.4-.2-8.1 0-88.4 71.6-160 160-160 59.3 0 111 32.2 138.7 80.2A95.51 95.51 0 0 1 448 96c53 0 96 43 96 96 0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-167 80 80c9.4 9.4 24.6 9.4 33.9 0l80-80c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-39 39V184c0-13.3-10.7-24-24-24s-24 10.7-24 24v134.1l-39-39c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9z"/></svg></span></a></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Bring your own image...</p>
+<p>The above list is by no means exhaustive or restrictive -- we <em>want</em> users to bring their own images!</p>
+</div>
 
-<h1 id="vm-operator">VM Operator</h1>
-<p>Self-service management of virtual machines (VM) via Kubernetes.</p>
 
-
-
-  
 
 
 
@@ -1870,10 +2021,10 @@ article.md-content__inner {
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.726fbb30.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.726fbb30.min.js"></script>
       
     
   </body>

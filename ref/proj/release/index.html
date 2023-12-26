@@ -8,23 +8,25 @@
       
       
       
-        <link rel="canonical" href="https://github.com/vmware-tanzu/vm-operator/">
+        <link rel="canonical" href="https://github.com/vmware-tanzu/vm-operator/ref/proj/release/">
       
       
+        <link rel="prev" href="../build/">
       
-        <link rel="next" href="start/">
+      
+        <link rel="next" href="../docs/">
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.2">
     
     
       
-        <title>VM Operator</title>
+        <title>Create a Release - VM Operator</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.d451bc0e.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.d451bc0e.min.css">
       
       
 
@@ -43,11 +45,11 @@
       
     
     
-      <link rel="stylesheet" href="www/css/vm-operator.css">
+      <link rel="stylesheet" href="../../../www/css/vm-operator.css">
     
-      <link rel="stylesheet" href="www/css/vm-operator-font.css">
+      <link rel="stylesheet" href="../../../www/css/vm-operator-font.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -69,7 +71,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#vm-operator" class="md-skip">
+        <a href="#release-process" class="md-skip">
           Skip to content
         </a>
       
@@ -85,7 +87,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="VM Operator" class="md-header__button md-logo" aria-label="VM Operator" data-md-component="logo">
+    <a href="../../.." title="VM Operator" class="md-header__button md-logo" aria-label="VM Operator" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -105,7 +107,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Create a Release
             
           </span>
         </div>
@@ -180,9 +182,7 @@
           
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -191,7 +191,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="VM Operator" class="md-nav__button md-logo" aria-label="VM Operator" data-md-component="logo">
+    <a href="../../.." title="VM Operator" class="md-nav__button md-logo" aria-label="VM Operator" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -218,18 +218,9 @@
       
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -238,7 +229,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -285,7 +275,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/" class="md-nav__link">
+      <a href="../../../start/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -305,7 +295,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/quick/" class="md-nav__link">
+      <a href="../../../start/quick/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -325,7 +315,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/help/" class="md-nav__link">
+      <a href="../../../start/help/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -381,7 +371,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/" class="md-nav__link">
+      <a href="../../../start/contrib/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -401,7 +391,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/suggest-change/" class="md-nav__link">
+      <a href="../../../start/contrib/suggest-change/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -421,7 +411,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/report-issue/" class="md-nav__link">
+      <a href="../../../start/contrib/report-issue/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -441,7 +431,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/contrib/submit-change/" class="md-nav__link">
+      <a href="../../../start/contrib/submit-change/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -505,7 +495,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/about/" class="md-nav__link">
+      <a href="../../../start/about/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -525,7 +515,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/about/roadmap/" class="md-nav__link">
+      <a href="../../../start/about/roadmap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -545,7 +535,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/about/release-notes/" class="md-nav__link">
+      <a href="../../../start/about/release-notes/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -565,7 +555,7 @@
   
   
     <li class="md-nav__item">
-      <a href="start/about/license/" class="md-nav__link">
+      <a href="../../../start/about/license/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -636,7 +626,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/" class="md-nav__link">
+      <a href="../../../concepts/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -692,7 +682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/" class="md-nav__link">
+      <a href="../../../concepts/workloads/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -712,7 +702,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/vm/" class="md-nav__link">
+      <a href="../../../concepts/workloads/vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -732,7 +722,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/vm-class/" class="md-nav__link">
+      <a href="../../../concepts/workloads/vm-class/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -752,7 +742,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/vm-web-console/" class="md-nav__link">
+      <a href="../../../concepts/workloads/vm-web-console/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -772,7 +762,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/workloads/guest/" class="md-nav__link">
+      <a href="../../../concepts/workloads/guest/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -836,7 +826,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/images/" class="md-nav__link">
+      <a href="../../../concepts/images/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -856,7 +846,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/images/vm-image/" class="md-nav__link">
+      <a href="../../../concepts/images/vm-image/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -876,7 +866,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/images/pub-vm-image/" class="md-nav__link">
+      <a href="../../../concepts/images/pub-vm-image/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -940,7 +930,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/services-networking/" class="md-nav__link">
+      <a href="../../../concepts/services-networking/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -960,7 +950,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/services-networking/vm-service/" class="md-nav__link">
+      <a href="../../../concepts/services-networking/vm-service/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -980,7 +970,7 @@
   
   
     <li class="md-nav__item">
-      <a href="concepts/services-networking/guest-net-config/" class="md-nav__link">
+      <a href="../../../concepts/services-networking/guest-net-config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1051,7 +1041,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/" class="md-nav__link">
+      <a href="../../../tutorials/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1107,7 +1097,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-vm/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1127,7 +1117,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-vm/cloudinit/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-vm/cloudinit/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1147,7 +1137,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-vm/vappconfig/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-vm/vappconfig/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1211,7 +1201,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-apps/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-apps/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1231,7 +1221,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/deploy-apps/nfs-server-and-client/" class="md-nav__link">
+      <a href="../../../tutorials/deploy-apps/nfs-server-and-client/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1295,7 +1285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1315,7 +1305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/get-console-session/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/get-console-session/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1335,7 +1325,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/deploy-vm/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/deploy-vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1355,7 +1345,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/ip-assignment/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/ip-assignment/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1375,7 +1365,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/troubleshooting/publish-vm/" class="md-nav__link">
+      <a href="../../../tutorials/troubleshooting/publish-vm/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1408,18 +1398,20 @@
       
   
   
+    
+  
   
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -1433,7 +1425,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Reference
@@ -1446,7 +1438,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/" class="md-nav__link">
+      <a href="../../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1502,7 +1494,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/api/" class="md-nav__link">
+      <a href="../../api/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1522,7 +1514,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/api/v1alpha1/" class="md-nav__link">
+      <a href="../../api/v1alpha1/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1542,7 +1534,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/api/v1alpha2/" class="md-nav__link">
+      <a href="../../api/v1alpha2/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1606,7 +1598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/config/" class="md-nav__link">
+      <a href="../../config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1626,7 +1618,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/config/manager/" class="md-nav__link">
+      <a href="../../config/manager/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1652,18 +1644,20 @@
                 
   
   
+    
+  
   
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" checked>
         
           
           <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
@@ -1677,7 +1671,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_4">
             <span class="md-nav__icon md-icon"></span>
             Project
@@ -1690,7 +1684,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/proj/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1710,7 +1704,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/proj/build/" class="md-nav__link">
+      <a href="../build/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1728,9 +1722,29 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="ref/proj/release/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Create a Release
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1739,6 +1753,88 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#project-stages" class="md-nav__link">
+    Project Stages
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#review-issues-pull-requests" class="md-nav__link">
+    Review Issues &amp; Pull Requests
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-release-notes" class="md-nav__link">
+    Prepare Release Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#commit-pull-request" class="md-nav__link">
+    Commit &amp; Pull Request
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tag-the-release" class="md-nav__link">
+    Tag the Release
+  </a>
+  
+    <nav class="md-nav" aria-label="Tag the Release">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tag-format" class="md-nav__link">
+    Tag Format
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tag-methods" class="md-nav__link">
+    Tag Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    Command Line
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1750,7 +1846,7 @@
   
   
     <li class="md-nav__item">
-      <a href="ref/proj/docs/" class="md-nav__link">
+      <a href="../docs/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1787,9 +1883,7 @@
             
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" hidden>
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -1800,6 +1894,76 @@
   
     
   
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#project-stages" class="md-nav__link">
+    Project Stages
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#review-issues-pull-requests" class="md-nav__link">
+    Review Issues &amp; Pull Requests
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prepare-release-notes" class="md-nav__link">
+    Prepare Release Notes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#commit-pull-request" class="md-nav__link">
+    Commit &amp; Pull Request
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tag-the-release" class="md-nav__link">
+    Tag the Release
+  </a>
+  
+    <nav class="md-nav" aria-label="Tag the Release">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tag-format" class="md-nav__link">
+    Tag Format
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tag-methods" class="md-nav__link">
+    Tag Methods
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    Command Line
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1817,24 +1981,110 @@
   
 
 
-<style>
-h1 {
-    text-align: center;
-}
-h1#vm-operator::after {
-    text-align: center;
-}
-article.md-content__inner {
-    text-align: center;
-}
-</style>
+<h1 id="release-process">Release Process</h1>
+<p>// TODO (<a href="https://github.com/vmware-tanzu/vm-operator/issues/119">github.com/vmware-tanzu/vm-operator#119</a>)</p>
+<h2 id="project-stages">Project Stages</h2>
+<p>This project has three parallels stages of release:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unstable</code></td>
+<td>The tip or HEAD of the <code>main</code> branch is referred to as <code>unstable</code></td>
+</tr>
+<tr>
+<td><code>staged</code></td>
+<td>A commit tagged with the suffix <code>-rc\d+</code> such as <code>v0.3.1-rc2</code> is a <code>staged</code> release. These are release candidates.</td>
+</tr>
+<tr>
+<td><code>stable</code></td>
+<td>A commit tagged with a version sans <code>-rc\d+</code> suffix such as <code>v0.3.1</code> is a <code>stable</code> release.</td>
+</tr>
+</tbody>
+</table>
+<p>There are no steps necessary to create an <code>unstable</code> release as that happens automatically whenever an untagged commit is pushed to <code>main</code>. However, the following workflow should be used when tagging a <code>staged</code> release candidate or <code>stable</code> release.</p>
+<ol>
+<li>Review outstanding issues &amp; pull requests</li>
+<li>Prepare release notes</li>
+<li>Commit &amp; pull request</li>
+<li>Tag the release</li>
+</ol>
+<h2 id="review-issues-pull-requests">Review Issues &amp; Pull Requests</h2>
+<p>The first step to a release is to review the outstanding <a href="https://github.com/vmware-tanzu/vm-operator/issues">issues</a> and <a href="https://github.com/vmware-tanzu/vm-operator/pulls">pull requests</a> that are tagged for the release in question.</p>
+<p>If there are outstanding issues requiring changes or pending pull requests to be merged, handle those prior to tagging any commit as a release candidate or release.</p>
+<p>It is <strong>highly</strong> recommended that pull requests be merged synchronously after rebasing each subsequent one off of the new tip of <code>main</code>. Remember, while GitHub will update a pull request as in conflict if a change to <code>main</code> results in a merge conflict with the pull request, GitHub will <strong>not</strong> force a new build to spawn unless the pull request is actually updated.</p>
+<p>At the very minimum a pull request's build should be re-executed prior to the pull request being merged if <code>main</code> has changed since the pull request was opened.</p>
+<h2 id="prepare-release-notes">Prepare Release Notes</h2>
+<p>Update the release notes at <code>.docs/about/release-notes.md</code>. This file is the project's authoritative changelog and should reflect new features, fixes, and any significant changes.</p>
+<p>The most recent, <code>stable</code> version of the release notes are always available online at <a href="http://vm-operator.rtfd.org/en/stable/about/release-notes/">VM Operator's documentation site</a>.</p>
+<h2 id="commit-pull-request">Commit &amp; Pull Request</h2>
+<p>Once all outstanding issues and pull requests are handled, the release notes are updated, it's time to create a commit.</p>
+<p>Please make sure that the changes to the release notes and version files are a part of the same commit. This makes identifying the aspects of a release, staged or otherwise, far easier for future developers.</p>
+<p>A release's commit message can either be a reflection of the release notes or something simple. Either way the commit message should have the following subject format and first line in its body:</p>
+<div class="highlight"><pre><span></span><code>Release Candidate 0.3.1-rc1
 
-<h1 id="vm-operator">VM Operator</h1>
-<p>Self-service management of virtual machines (VM) via Kubernetes.</p>
+This patch marks release candidate 0.3.1-rc1.
+</code></pre></div>
+<p>If the commit message is longer it should simply reflect the same information from the release notes.</p>
+<p>Once committed push the change to a fork and open a pull request. Even though this commit marks a staged or official release, the pull request system is still used to assure that the build completes successfully and there are no unforeseen errors.</p>
+<h2 id="tag-the-release">Tag the Release</h2>
+<p>Once the pull request marking the <code>staged</code> or <code>stable</code> release has been merged into <code>upstream</code>'s <code>main</code> it's time to tag the release.</p>
+<h3 id="tag-format">Tag Format</h3>
+<p>The release tag should follow a prescribed format depending upon the release type:</p>
+<table>
+<thead>
+<tr>
+<th>Release Type</th>
+<th>Tag Format</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>staged</code></td>
+<td>vMAJOR.MINOR.PATCH-rc[0-9]</td>
+<td>v0.3.1-rc1</td>
+</tr>
+<tr>
+<td><code>stable</code></td>
+<td>vMAJOR.MINOR.PATCH</td>
+<td>v0.3.1</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tag-methods">Tag Methods</h3>
+<p>There are two ways to tag a release:</p>
+<ol>
+<li><a href="https://github.com/vmware-tanzu/vm-operator/releases/new">GitHub Releases</a></li>
+<li>Command Line</li>
+</ol>
+<h3 id="command-line">Command Line</h3>
+<p>If tagging a release via the command line be sure to fetch the latest changes from <code>upstream</code>'s <code>main</code> and either merge them into your local copy of <code>main</code> or reset the local copy to reflect <code>upstream</code> prior to creating any tags.</p>
+<p>The following combination of commands can be used to create a tag for 0.3.1 Release Candidate 1:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>fetch<span class="w"> </span>upstream<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>git<span class="w"> </span>checkout<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>git<span class="w"> </span>reset<span class="w"> </span>--hard<span class="w"> </span>upstream/main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>git<span class="w"> </span>tag<span class="w"> </span>-a<span class="w"> </span>-m<span class="w"> </span>v0.3.1-rc1<span class="w"> </span>v0.3.1-rc1
+</code></pre></div>
+<p>The above example combines a few operations:</p>
+<ol>
+<li>The first command fetches the <code>upstream</code> changes</li>
+<li>The local <code>main</code> branch is checked out</li>
+<li>The local <code>main</code> branch is hard reset to <code>upstream/main</code></li>
+<li>An annotated tag is created on <code>main</code> for <code>v0.3.1-rc1</code>, or 0.3.1 Release Candidate 1, with a tag message of <code>v0.3.1-rc1</code>.</li>
+</ol>
+<p>Please note that the third step will erase any changes that exist only in the local <code>main</code> branch that do not also exist in the remote, upstream copy. However, if the two branches are not equal this method should not be used to create a tag anyway.</p>
+<p>The above steps do not actually push the tag upstream. This is to allow for one final review of all the changes before doing so since the appearance of a new, annotated tag in the repository will cause the project's build system to automatically kick off a build that will result in the release of a <code>staged</code> or <code>stable</code> release. For <code>stable</code> releases the project's documentation will also be updated.</p>
+<p>Once positive everything looks good simply execute the following command to push the tag to the <code>upstream</code> repository:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>upstream<span class="w"> </span>v0.3.1-rc1
+</code></pre></div>
 
 
-
-  
 
 
 
@@ -1870,10 +2120,10 @@ article.md-content__inner {
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.a264c092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.726fbb30.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.726fbb30.min.js"></script>
       
     
   </body>
