@@ -4,19 +4,15 @@
 package v1alpha2_test
 
 import (
-	"context"
-	"errors"
 	"fmt"
 	"time"
 
+	"github.com/google/uuid"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	corev1 "k8s.io/api/core/v1"
-	storagev1 "k8s.io/api/storage/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
-	resourcev1 "k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 
@@ -28,12 +24,8 @@ import (
 
 func intgTests() {
 
-	const dummyInstanceUUID = "instanceUUID1234"
-
 	var (
 		ctx                  *builder.IntegrationTestContext
-		storageClass         *storagev1.StorageClass
-		resourceQuota        *corev1.ResourceQuota
 		obj                  client.Object
 		objKey               types.NamespacedName
 		newObjFn             func() client.Object
@@ -43,38 +35,7 @@ func intgTests() {
 
 	BeforeEach(func() {
 		ctx = suite.NewIntegrationTestContext()
-
-		objKey = types.NamespacedName{Name: "dummy-vm", Namespace: ctx.Namespace}
-
-		// The validation webhook expects there to be a storage class associated
-		// with the namespace where the VM is located.
-		storageClass = &storagev1.StorageClass{
-			ObjectMeta: metav1.ObjectMeta{
-				GenerateName: "dummy-storage-class-",
-			},
-			Provisioner: "dummy-provisioner",
-		}
-		Expect(ctx.Client.Create(ctx, storageClass)).To(Succeed())
-		resourceQuota = &corev1.ResourceQuota{
-			ObjectMeta: metav1.ObjectMeta{
-				GenerateName: "dummy-resource-quota-",
-				Namespace:    ctx.Namespace,
-			},
-			Spec: corev1.ResourceQuotaSpec{
-				Hard: corev1.ResourceList{
-					corev1.ResourceName(storageClass.Name + ".storageclass.storage.k8s.io/dummy"): resourcev1.MustParse("0"),
-				},
-			},
-		}
-		Expect(ctx.Client.Create(ctx, resourceQuota)).To(Succeed())
-
-		intgFakeVMProvider.Lock()
-		intgFakeVMProvider.CreateOrUpdateVirtualMachineFn = func(ctx context.Context, vm *vmopv1a2.VirtualMachine) error {
-			// Used below just to check for something in the Status is updated.
-			vm.Status.InstanceUUID = dummyInstanceUUID
-			return nil
-		}
-		intgFakeVMProvider.Unlock()
+		objKey = types.NamespacedName{Name: uuid.NewString(), Namespace: ctx.Namespace}
 	})
 
 	AfterEach(func() {
@@ -91,11 +52,6 @@ func intgTests() {
 			}
 		})
 
-		Expect(ctx.Client.Delete(ctx, resourceQuota)).To(Succeed())
-		resourceQuota = nil
-		Expect(ctx.Client.Delete(ctx, storageClass)).To(Succeed())
-		storageClass = nil
-
 		obj = nil
 		newObjFn = nil
 		getInstanceUUIDFn = nil
@@ -103,7 +59,6 @@ func intgTests() {
 
 		ctx.AfterEach()
 		ctx = nil
-		intgFakeVMProvider.Reset()
 	})
 
 	getObject := func(
@@ -159,7 +114,7 @@ func intgTests() {
 						return getInstanceUUIDFn(obj)
 					}
 					return ""
-				}).Should(Equal(dummyInstanceUUID), "waiting for expected InstanceUUID")
+				}).ShouldNot(BeEmpty(), "waiting for expected InstanceUUID")
 			})
 
 			By("VirtualMachine should not be updated in steady-state", func() {
@@ -182,17 +137,6 @@ func intgTests() {
 		})
 
 		When("CreateOrUpdateVirtualMachine returns an error", func() {
-			errMsg := "create error"
-
-			BeforeEach(func() {
-				intgFakeVMProvider.Lock()
-				intgFakeVMProvider.CreateOrUpdateVirtualMachineFn = func(ctx context.Context, vm *vmopv1a2.VirtualMachine) error {
-					vm.Status.BiosUUID = "dummy-bios-uuid"
-					return errors.New(errMsg)
-				}
-				intgFakeVMProvider.Unlock()
-			})
-
 			It("VirtualMachine is in Creating Phase", func() {
 				Expect(ctx.Client.Create(ctx, obj)).To(Succeed())
 				// Wait for initial reconcile.
@@ -216,16 +160,6 @@ func intgTests() {
 		})
 
 		When("Provider DeleteVM returns an error", func() {
-			errMsg := "delete error"
-
-			BeforeEach(func() {
-				intgFakeVMProvider.Lock()
-				intgFakeVMProvider.DeleteVirtualMachineFn = func(ctx context.Context, vm *vmopv1a2.VirtualMachine) error {
-					return errors.New(errMsg)
-				}
-				intgFakeVMProvider.Unlock()
-			})
-
 			It("VirtualMachine is in Deleting Phase", func() {
 				Expect(ctx.Client.Create(ctx, obj)).To(Succeed())
 				// Wait for initial reconcile.
@@ -258,9 +192,9 @@ func intgTests() {
 					Name:      objKey.Name,
 				},
 				Spec: vmopv1a2.VirtualMachineSpec{
-					ImageName:    "dummy-image",
-					ClassName:    "dummy-class",
-					StorageClass: storageClass.Name,
+					ClassName:    ctx.DefaultVMClass,
+					ImageName:    ctx.DefaultVMImageForLinux,
+					StorageClass: ctx.DefaultStorageClass,
 					PowerState:   vmopv1a2.VirtualMachinePowerStateOn,
 				},
 			}
@@ -287,9 +221,9 @@ func intgTests() {
 					Name:      objKey.Name,
 				},
 				Spec: vmopv1.VirtualMachineSpec{
-					ImageName:    "dummy-image",
-					ClassName:    "dummy-class",
-					StorageClass: storageClass.Name,
+					ClassName:    ctx.DefaultVMClass,
+					ImageName:    ctx.DefaultVMImageForLinux,
+					StorageClass: ctx.DefaultStorageClass,
 					PowerState:   vmopv1.VirtualMachinePoweredOn,
 				},
 			}

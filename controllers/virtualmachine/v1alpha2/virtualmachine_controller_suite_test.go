@@ -4,6 +4,7 @@
 package v1alpha2_test
 
 import (
+	"fmt"
 	"testing"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -16,7 +17,8 @@ import (
 	ctrlContext "github.com/vmware-tanzu/vm-operator/pkg/context"
 	"github.com/vmware-tanzu/vm-operator/pkg/lib"
 	pkgmgr "github.com/vmware-tanzu/vm-operator/pkg/manager"
-	providerfake "github.com/vmware-tanzu/vm-operator/pkg/vmprovider/fake"
+	"github.com/vmware-tanzu/vm-operator/pkg/record"
+	vsphere2 "github.com/vmware-tanzu/vm-operator/pkg/vmprovider/providers/vsphere2"
 	"github.com/vmware-tanzu/vm-operator/test/builder"
 	mutationv1a1 "github.com/vmware-tanzu/vm-operator/webhooks/virtualmachine/v1alpha1/mutation"
 	validationv1a1 "github.com/vmware-tanzu/vm-operator/webhooks/virtualmachine/v1alpha1/validation"
@@ -24,43 +26,55 @@ import (
 	validationv1a2 "github.com/vmware-tanzu/vm-operator/webhooks/virtualmachine/v1alpha2/validation"
 )
 
-var intgFakeVMProvider = providerfake.NewVMProviderA2()
-
 var suite = builder.NewTestSuiteWithOptions(
 	builder.TestSuiteOptions{
-		InitProviderFn: func(ctx *ctrlContext.ControllerManagerContext, _ ctrlmgr.Manager) error {
-			ctx.VMProviderA2 = intgFakeVMProvider
+		InitProviderFn: func(ctx *ctrlContext.ControllerManagerContext, mgr ctrlmgr.Manager) error {
+			vmProviderName := fmt.Sprintf("%s/%s/vmProvider", ctx.Namespace, ctx.Name)
+			recorder := record.New(mgr.GetEventRecorderFor(vmProviderName))
+			ctx.VMProviderA2 = vsphere2.NewVSphereVMProviderFromClient(mgr.GetClient(), recorder)
 			return nil
 		},
-		FeatureStates: map[string]bool{lib.VMServiceV1Alpha2FSS: true},
-		Controllers:   []pkgmgr.AddToManagerFunc{virtualmachine.AddToManager},
-		ConversionWebhooks: []builder.TestSuiteConversionWebhookOptions{
-			{
-				Name: "virtualmachines.vmoperator.vmware.com",
-				AddToManagerFn: []func(ctrlmgr.Manager) error{
-					(&vmopv1.VirtualMachine{}).SetupWebhookWithManager,
-					(&vmopv1a2.VirtualMachine{}).SetupWebhookWithManager,
+		FeatureStates: map[string]bool{
+			lib.WcpFaultDomainsFSS:   false,
+			lib.VMServiceV1Alpha2FSS: true,
+			lib.NamespacedVMClassFSS: true,
+			lib.VMImageRegistryFSS:   true,
+		},
+		IntegrationTests: builder.TestSuiteIntegrationTestOptions{
+			VSphere: &builder.VSphereOptions{
+				VCSim: builder.VCSimOptions{
+					Enabled: true,
 				},
 			},
-		},
-		MutationWebhooks: []builder.TestSuiteMutationWebhookOptions{
-			{
-				Name:           "default.mutating.virtualmachine.v1alpha1.vmoperator.vmware.com",
-				AddToManagerFn: mutationv1a1.AddToManager,
+			Controllers: []pkgmgr.AddToManagerFunc{virtualmachine.AddToManager},
+			ConversionWebhooks: []builder.TestSuiteConversionWebhookOptions{
+				{
+					Name: "virtualmachines.vmoperator.vmware.com",
+					AddToManagerFn: []func(ctrlmgr.Manager) error{
+						(&vmopv1.VirtualMachine{}).SetupWebhookWithManager,
+						(&vmopv1a2.VirtualMachine{}).SetupWebhookWithManager,
+					},
+				},
 			},
-			{
-				Name:           "default.mutating.virtualmachine.v1alpha2.vmoperator.vmware.com",
-				AddToManagerFn: mutationv1a2.AddToManager,
+			MutationWebhooks: []builder.TestSuiteMutationWebhookOptions{
+				{
+					Name:           "default.mutating.virtualmachine.v1alpha1.vmoperator.vmware.com",
+					AddToManagerFn: mutationv1a1.AddToManager,
+				},
+				{
+					Name:           "default.mutating.virtualmachine.v1alpha2.vmoperator.vmware.com",
+					AddToManagerFn: mutationv1a2.AddToManager,
+				},
 			},
-		},
-		ValidationWebhooks: []builder.TestSuiteValidationWebhookOptions{
-			{
-				Name:           "default.validating.virtualmachine.v1alpha1.vmoperator.vmware.com",
-				AddToManagerFn: validationv1a1.AddToManager,
-			},
-			{
-				Name:           "default.validating.virtualmachine.v1alpha2.vmoperator.vmware.com",
-				AddToManagerFn: validationv1a2.AddToManager,
+			ValidationWebhooks: []builder.TestSuiteValidationWebhookOptions{
+				{
+					Name:           "default.validating.virtualmachine.v1alpha1.vmoperator.vmware.com",
+					AddToManagerFn: validationv1a1.AddToManager,
+				},
+				{
+					Name:           "default.validating.virtualmachine.v1alpha2.vmoperator.vmware.com",
+					AddToManagerFn: validationv1a2.AddToManager,
+				},
 			},
 		},
 	})

@@ -27,17 +27,19 @@ var suite = builder.NewTestSuiteWithOptions(
 			ctx.VMProvider = intgFakeVMProvider
 			return nil
 		},
-		Controllers: []pkgmgr.AddToManagerFunc{virtualmachine.AddToManager},
-		MutationWebhooks: []builder.TestSuiteMutationWebhookOptions{
-			{
-				Name:           "default.mutating.virtualmachine.v1alpha1.vmoperator.vmware.com",
-				AddToManagerFn: mutationv1a1.AddToManager,
+		IntegrationTests: builder.TestSuiteIntegrationTestOptions{
+			Controllers: []pkgmgr.AddToManagerFunc{virtualmachine.AddToManager},
+			MutationWebhooks: []builder.TestSuiteMutationWebhookOptions{
+				{
+					Name:           "default.mutating.virtualmachine.v1alpha1.vmoperator.vmware.com",
+					AddToManagerFn: mutationv1a1.AddToManager,
+				},
 			},
-		},
-		ValidationWebhooks: []builder.TestSuiteValidationWebhookOptions{
-			{
-				Name:           "default.validating.virtualmachine.v1alpha1.vmoperator.vmware.com",
-				AddToManagerFn: validationv1a1.AddToManager,
+			ValidationWebhooks: []builder.TestSuiteValidationWebhookOptions{
+				{
+					Name:           "default.validating.virtualmachine.v1alpha1.vmoperator.vmware.com",
+					AddToManagerFn: validationv1a1.AddToManager,
+				},
 			},
 		},
 	})

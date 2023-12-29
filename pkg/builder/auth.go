@@ -10,8 +10,13 @@ import (
 )
 
 func IsPrivilegedAccount(ctx *context.WebhookContext, userInfo authv1.UserInfo) bool {
-	username := userInfo.Username
+	for i := range userInfo.Groups {
+		if userInfo.Groups[i] == "system:masters" {
+			return true
+		}
+	}
 
+	username := userInfo.Username
 	if strings.EqualFold(username, kubeAdminUser) {
 		return true
 	}

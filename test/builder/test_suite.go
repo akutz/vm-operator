@@ -24,6 +24,7 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/pkg/errors"
 
+	"github.com/google/uuid"
 	admissionregv1 "k8s.io/api/admissionregistration/v1"
 	corev1 "k8s.io/api/core/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -70,138 +71,27 @@ func init() {
 	logf.SetLogger(klogr.New())
 }
 
-// TestSuite is used for unit and integration testing builder. Each TestSuite
-// contains one independent test environment and a controller manager.
-type TestSuite struct {
-	context.Context
-
-	flags                 testFlags
-	envTest               envtest.Environment
-	config                *rest.Config
-	integrationTestClient ctrlclient.Client
-	integrationTest       bool
-	initProvidersFn       pkgmgr.InitializeProvidersFunc
-
-	// Controller manager specific fields.
-	manager             pkgmgr.Manager
-	managerRunning      bool
-	managerRunningMutex sync.Mutex
-
-	// Cancel function that will be called to close the Done channel of the
-	// Context, which will then stop the manager.
-	cancelFuncMutex sync.Mutex
-	cancelFunc      context.CancelFunc
-
-	// Controller specific fields.
-	controllers []pkgmgr.AddToManagerFunc
-
-	// Webhook specific fields.
-	webhook testSuiteWebhookConfig
-
-	// Feature state switches.
-	fssMap map[string]bool
-}
-
-type testSuiteWebhookConfig struct {
-	certDir        string
-	pki            pkiToolchain
-	conversionOpts []TestSuiteConversionWebhookOptions
-	conversionName []string
-	mutationOpts   []TestSuiteMutationWebhookOptions
-	mutationYAML   []byte
-	validationOpts []TestSuiteValidationWebhookOptions
-	validationYAML []byte
-}
-
-func (s *TestSuite) isControllerTest() bool {
-	return len(s.controllers) > 0
-}
-
-func (s *TestSuite) isWebhookTest() bool {
-	return s.isAdmissionWebhookTest() || s.isConversionWebhookTest()
-}
-
-func (s *TestSuite) isAdmissionWebhookTest() bool {
-	return s.isMutationWebhookTest() || s.isValidationWebhookTest()
-}
-
-func (s *TestSuite) isConversionWebhookTest() bool {
-	return len(s.webhook.conversionOpts) > 0
-}
-
-func (s *TestSuite) isMutationWebhookTest() bool {
-	return len(s.webhook.mutationOpts) > 0
-}
-
-func (s *TestSuite) isValidationWebhookTest() bool {
-	return len(s.webhook.validationOpts) > 0
-}
-
-func (s *TestSuite) GetEnvTestConfig() *rest.Config {
-	return s.config
-}
-
-func (s *TestSuite) GetLogger() logr.Logger {
-	return logf.Log
-}
-
-// NewTestSuite returns a new test suite used for unit and/or integration test.
-func NewTestSuite() *TestSuite {
-	return NewTestSuiteWithOptions(
-		TestSuiteOptions{
-			InitProviderFn: pkgmgr.InitializeProvidersNoopFn,
-			Controllers:    []pkgmgr.AddToManagerFunc{pkgmgr.AddToManagerNoopFn},
-		})
-}
-
-// NewFunctionalTestSuite returns a new test suite used for functional tests.
-// The functional test starts all the controllers, and creates all the providers
-// so it is a more fully functioning env than an integration test with a single
-// controller running.
-func NewFunctionalTestSuite(addToManagerFn pkgmgr.AddToManagerFunc) *TestSuite {
-	return NewTestSuiteWithOptions(
-		TestSuiteOptions{
-			InitProviderFn: pkgmgr.InitializeProviders,
-			Controllers:    []pkgmgr.AddToManagerFunc{addToManagerFn},
-		})
-}
-
-// NewTestSuiteForController returns a new test suite used for controller
-// integration test.
-func NewTestSuiteForController(
-	addToManagerFn pkgmgr.AddToManagerFunc,
-	initProvidersFn pkgmgr.InitializeProvidersFunc) *TestSuite {
-
-	return NewTestSuiteWithOptions(
-		TestSuiteOptions{
-			InitProviderFn: initProvidersFn,
-			Controllers:    []pkgmgr.AddToManagerFunc{addToManagerFn},
-			FeatureStates:  map[string]bool{},
-		})
-}
-
-// NewTestSuiteForControllerWithFSS returns a new test suite used for controller
-// integration test with FSS set.
-func NewTestSuiteForControllerWithFSS(
-	addToManagerFn pkgmgr.AddToManagerFunc,
-	initProvidersFn pkgmgr.InitializeProvidersFunc,
-	fssMap map[string]bool) *TestSuite {
-
-	return NewTestSuiteWithOptions(
-		TestSuiteOptions{
-			InitProviderFn: initProvidersFn,
-			Controllers:    []pkgmgr.AddToManagerFunc{addToManagerFn},
-			FeatureStates:  fssMap,
-		})
-}
-
 type TestSuiteOptions struct {
-	InitProviderFn     pkgmgr.InitializeProvidersFunc
-	FeatureStates      map[string]bool
+	InitProviderFn   pkgmgr.InitializeProvidersFunc
+	FeatureStates    map[string]bool
+	IntegrationTests TestSuiteIntegrationTestOptions
+}
+
+type TestSuiteIntegrationTestOptions struct {
+	// Disabled may be set to true to explicitly disable the integration test
+	// logic in the suite's init routine. Normally this is controlled by the
+	// flag -enable-integration-tests, but since there is a single test suite
+	// per package, there may be cases where a test run uses
+	// -enable-integration-tests, but there exists a package whose test suite
+	// *only* contains integration tests.
+	Disabled bool
+
 	Controllers        []pkgmgr.AddToManagerFunc
 	ValidationWebhooks []TestSuiteValidationWebhookOptions
 	MutationWebhooks   []TestSuiteMutationWebhookOptions
 	ConversionWebhooks []TestSuiteConversionWebhookOptions
+
+	VSphere *VSphereOptions
 }
 
 type TestSuiteValidationWebhookOptions struct {
@@ -242,13 +132,175 @@ type TestSuiteConversionWebhookOptions struct {
 	AddToManagerFn []func(ctrl.Manager) error
 }
 
-// NewTestSuiteWithOptions returns a new test suite used for controller integration test with FSS set.
+type TestSuiteVCSimOptions struct {
+	// Enabled enables the use of the vSphere provider during integration tests.
+	Enabled bool
+
+	// When fault domains are enabled
+	ZoneCount       int
+	ClustersPerZone int
+	ZoneNames       []string
+
+	// When WithContentLibrary is true:
+	ContentLibraryImageName string
+	ContentLibraryID        string
+
+	// When WithoutStorageClass is false:
+	StorageClassName string
+	StorageProfileID string
+}
+
+// TestSuite is used for unit and integration testing builder. Each TestSuite
+// contains one independent test environment and a controller manager.
+type TestSuite struct {
+	context.Context
+
+	flags           testFlags
+	initProvidersFn pkgmgr.InitializeProvidersFunc
+	fssMap          map[string]bool
+	integration     testSuiteIntegrationTestConfig
+}
+
+type testSuiteIntegrationTestConfig struct {
+	disabled bool
+
+	envTest envtest.Environment
+	config  *rest.Config
+	client  ctrlclient.Client
+
+	// Controller manager specific fields.
+	manager             pkgmgr.Manager
+	managerRunning      bool
+	managerRunningMutex sync.Mutex
+	podNamespace        string
+
+	// Cancel function that will be called to close the Done channel of the
+	// Context, which will then stop the manager.
+	cancelFuncMutex sync.Mutex
+	cancelFunc      context.CancelFunc
+
+	// Controller specific fields.
+	controllers []pkgmgr.AddToManagerFunc
+
+	// Webhook specific fields.
+	webhook testSuiteWebhookConfig
+
+	// vSphere specific fields.
+	vsphere *vsphereConfig
+}
+
+type testSuiteWebhookConfig struct {
+	certDir        string
+	pki            pkiToolchain
+	conversionOpts []TestSuiteConversionWebhookOptions
+	conversionName []string
+	mutationOpts   []TestSuiteMutationWebhookOptions
+	mutationYAML   []byte
+	validationOpts []TestSuiteValidationWebhookOptions
+	validationYAML []byte
+}
+
+func (s *TestSuite) isControllerTest() bool {
+	return len(s.integration.controllers) > 0
+}
+
+func (s *TestSuite) isWebhookTest() bool {
+	return s.isAdmissionWebhookTest() || s.isConversionWebhookTest()
+}
+
+func (s *TestSuite) isAdmissionWebhookTest() bool {
+	return s.isMutationWebhookTest() || s.isValidationWebhookTest()
+}
+
+func (s *TestSuite) isConversionWebhookTest() bool {
+	return len(s.integration.webhook.conversionOpts) > 0
+}
+
+func (s *TestSuite) isMutationWebhookTest() bool {
+	return len(s.integration.webhook.mutationOpts) > 0
+}
+
+func (s *TestSuite) isValidationWebhookTest() bool {
+	return len(s.integration.webhook.validationOpts) > 0
+}
+
+func (s *TestSuite) isVSphereEnabled() bool {
+	return s.integration.vsphere != nil
+}
+
+func (s *TestSuite) GetEnvTestConfig() *rest.Config {
+	return s.integration.config
+}
+
+func (s *TestSuite) GetLogger() logr.Logger {
+	return logf.Log
+}
+
+// NewTestSuite returns a new test suite used for unit and/or integration test.
+func NewTestSuite() *TestSuite {
+	return NewTestSuiteWithOptions(
+		TestSuiteOptions{
+			InitProviderFn: pkgmgr.InitializeProvidersNoopFn,
+			IntegrationTests: TestSuiteIntegrationTestOptions{
+				Controllers: []pkgmgr.AddToManagerFunc{pkgmgr.AddToManagerNoopFn},
+			},
+		})
+}
+
+// NewFunctionalTestSuite returns a new test suite used for functional tests.
+// The functional test starts all the controllers, and creates all the providers
+// so it is a more fully functioning env than an integration test with a single
+// controller running.
+func NewFunctionalTestSuite(addToManagerFn pkgmgr.AddToManagerFunc) *TestSuite {
+	return NewTestSuiteWithOptions(
+		TestSuiteOptions{
+			InitProviderFn: pkgmgr.InitializeProviders,
+			IntegrationTests: TestSuiteIntegrationTestOptions{
+				Controllers: []pkgmgr.AddToManagerFunc{addToManagerFn},
+			},
+		})
+}
+
+// NewTestSuiteForController returns a new test suite used for controller
+// integration test.
+func NewTestSuiteForController(
+	addToManagerFn pkgmgr.AddToManagerFunc,
+	initProvidersFn pkgmgr.InitializeProvidersFunc) *TestSuite {
+
+	return NewTestSuiteWithOptions(
+		TestSuiteOptions{
+			InitProviderFn: initProvidersFn,
+			FeatureStates:  map[string]bool{},
+			IntegrationTests: TestSuiteIntegrationTestOptions{
+				Controllers: []pkgmgr.AddToManagerFunc{addToManagerFn},
+			},
+		})
+}
+
+// NewTestSuiteForControllerWithFSS returns a new test suite used for controller
+// integration test with FSS set.
+func NewTestSuiteForControllerWithFSS(
+	addToManagerFn pkgmgr.AddToManagerFunc,
+	initProvidersFn pkgmgr.InitializeProvidersFunc,
+	fssMap map[string]bool) *TestSuite {
+
+	return NewTestSuiteWithOptions(
+		TestSuiteOptions{
+			InitProviderFn: initProvidersFn,
+			FeatureStates:  fssMap,
+			IntegrationTests: TestSuiteIntegrationTestOptions{
+				Controllers: []pkgmgr.AddToManagerFunc{addToManagerFn},
+			},
+		})
+}
+
+// NewTestSuiteWithOptions returns a new test suite with the provided options.
 func NewTestSuiteWithOptions(opts TestSuiteOptions) *TestSuite {
 
-	if len(opts.Controllers) == 0 &&
-		len(opts.ValidationWebhooks) == 0 &&
-		len(opts.MutationWebhooks) == 0 &&
-		len(opts.ConversionWebhooks) == 0 {
+	if len(opts.IntegrationTests.Controllers) == 0 &&
+		len(opts.IntegrationTests.ValidationWebhooks) == 0 &&
+		len(opts.IntegrationTests.MutationWebhooks) == 0 &&
+		len(opts.IntegrationTests.ConversionWebhooks) == 0 {
 
 		panic("there are no addToManager functions")
 	}
@@ -258,24 +310,32 @@ func NewTestSuiteWithOptions(opts TestSuiteOptions) *TestSuite {
 
 	testSuite := &TestSuite{
 		Context:         context.Background(),
-		integrationTest: true,
-		controllers:     opts.Controllers,
 		initProvidersFn: opts.InitProviderFn,
 		fssMap:          opts.FeatureStates,
-		webhook: testSuiteWebhookConfig{
-			conversionOpts: opts.ConversionWebhooks,
-			mutationOpts:   opts.MutationWebhooks,
-			validationOpts: opts.ValidationWebhooks,
+		integration: testSuiteIntegrationTestConfig{
+			disabled:    opts.IntegrationTests.Disabled,
+			controllers: opts.IntegrationTests.Controllers,
+			webhook: testSuiteWebhookConfig{
+				conversionOpts: opts.IntegrationTests.ConversionWebhooks,
+				mutationOpts:   opts.IntegrationTests.MutationWebhooks,
+				validationOpts: opts.IntegrationTests.ValidationWebhooks,
+			},
 		},
+	}
+	if o := opts.IntegrationTests.VSphere; o != nil {
+		testSuite.integration.vsphere = &vsphereConfig{
+			opts:   *o,
+			fssMap: opts.FeatureStates,
+		}
 	}
 
 	if testSuite.isWebhookTest() {
 		// Create a temp directory for the certs needed for testing webhooks.
 		certDir, err := os.MkdirTemp(os.TempDir(), "")
 		if err != nil {
-			panic(errors.Wrap(err, "failed to create temp dir for certs"))
+			panic(errors.Wrap(err, "failed to create temp dir for webhook certs"))
 		}
-		testSuite.webhook.certDir = certDir
+		testSuite.integration.webhook.certDir = certDir
 	}
 
 	testSuite.init()
@@ -291,19 +351,42 @@ func NewTestSuiteForValidatingWebhook(
 	newValidatorFn builder.ValidatorFunc,
 	webhookName string) *TestSuite {
 
-	return newTestSuiteForWebhook(addToManagerFn, newValidatorFn, nil, webhookName, map[string]bool{})
+	return NewTestSuiteWithOptions(
+		TestSuiteOptions{
+			IntegrationTests: TestSuiteIntegrationTestOptions{
+				ValidationWebhooks: []TestSuiteValidationWebhookOptions{
+					{
+						Name:           webhookName,
+						AddToManagerFn: addToManagerFn,
+						ValidatorFn:    newValidatorFn,
+					},
+				},
+			},
+		})
 }
 
-// NewTestSuiteForValidatingWebhookwithFSS returns a new test suite used for unit and
-// integration testing validating webhooks created using the "pkg/builder"
-// package with FSS set.
+// NewTestSuiteForValidatingWebhookwithFSS returns a new test suite used for
+// unit and integration testing validating webhooks created using the
+// "pkg/builder" package with FSS set.
 func NewTestSuiteForValidatingWebhookwithFSS(
 	addToManagerFn pkgmgr.AddToManagerFunc,
 	newValidatorFn builder.ValidatorFunc,
 	webhookName string,
 	fssMap map[string]bool) *TestSuite {
 
-	return newTestSuiteForWebhook(addToManagerFn, newValidatorFn, nil, webhookName, fssMap)
+	return NewTestSuiteWithOptions(
+		TestSuiteOptions{
+			FeatureStates: fssMap,
+			IntegrationTests: TestSuiteIntegrationTestOptions{
+				ValidationWebhooks: []TestSuiteValidationWebhookOptions{
+					{
+						Name:           webhookName,
+						AddToManagerFn: addToManagerFn,
+						ValidatorFn:    newValidatorFn,
+					},
+				},
+			},
+		})
 }
 
 // NewTestSuiteForMutatingWebhook returns a new test suite used for unit and
@@ -314,11 +397,22 @@ func NewTestSuiteForMutatingWebhook(
 	newMutatorFn builder.MutatorFunc,
 	webhookName string) *TestSuite {
 
-	return newTestSuiteForWebhook(addToManagerFn, nil, newMutatorFn, webhookName, map[string]bool{})
+	return NewTestSuiteWithOptions(
+		TestSuiteOptions{
+			IntegrationTests: TestSuiteIntegrationTestOptions{
+				MutationWebhooks: []TestSuiteMutationWebhookOptions{
+					{
+						Name:           webhookName,
+						AddToManagerFn: addToManagerFn,
+						MutatorFn:      newMutatorFn,
+					},
+				},
+			},
+		})
 }
 
-// NewTestSuiteForMutatingWebhookwithFSS returns a new test suite used for unit and
-// integration testing mutating webhooks created using the "pkg/builder"
+// NewTestSuiteForMutatingWebhookwithFSS returns a new test suite used for unit
+// and integration testing mutating webhooks created using the "pkg/builder"
 // package with FSS set.
 func NewTestSuiteForMutatingWebhookwithFSS(
 	addToManagerFn pkgmgr.AddToManagerFunc,
@@ -326,41 +420,19 @@ func NewTestSuiteForMutatingWebhookwithFSS(
 	webhookName string,
 	fssMap map[string]bool) *TestSuite {
 
-	return newTestSuiteForWebhook(addToManagerFn, nil, newMutatorFn, webhookName, fssMap)
-}
-
-func newTestSuiteForWebhook(
-	addToManagerFn pkgmgr.AddToManagerFunc,
-	newValidatorFn builder.ValidatorFunc,
-	newMutatorFn builder.MutatorFunc,
-	webhookName string,
-	fssMap map[string]bool) *TestSuite {
-
-	opts := TestSuiteOptions{
-		InitProviderFn: pkgmgr.InitializeProvidersNoopFn,
-		FeatureStates:  fssMap,
-	}
-
-	if newMutatorFn != nil {
-		opts.MutationWebhooks = []TestSuiteMutationWebhookOptions{
-			{
-				Name:           webhookName,
-				MutatorFn:      newMutatorFn,
-				AddToManagerFn: addToManagerFn,
+	return NewTestSuiteWithOptions(
+		TestSuiteOptions{
+			FeatureStates: fssMap,
+			IntegrationTests: TestSuiteIntegrationTestOptions{
+				MutationWebhooks: []TestSuiteMutationWebhookOptions{
+					{
+						Name:           webhookName,
+						AddToManagerFn: addToManagerFn,
+						MutatorFn:      newMutatorFn,
+					},
+				},
 			},
-		}
-	}
-	if newValidatorFn != nil {
-		opts.ValidationWebhooks = []TestSuiteValidationWebhookOptions{
-			{
-				Name:           webhookName,
-				ValidatorFn:    newValidatorFn,
-				AddToManagerFn: addToManagerFn,
-			},
-		}
-	}
-
-	return NewTestSuiteWithOptions(opts)
+		})
 }
 
 func (s *TestSuite) init() {
@@ -375,12 +447,15 @@ func (s *TestSuite) init() {
 	}
 
 	if s.flags.IntegrationTestsEnabled {
-		s.envTest = envtest.Environment{
+		s.integration.envTest = envtest.Environment{
 			CRDs: s.applyFeatureStatesToCRDs(crds),
 			CRDDirectoryPaths: []string{
 				filepath.Join(rootDir, "config", "crd", "external-crds"),
 			},
-			BinaryAssetsDirectory: filepath.Join(testutil.GetRootDirOrDie(), "hack", "tools", "bin", goruntime.GOOS+"_"+goruntime.GOARCH),
+			BinaryAssetsDirectory: filepath.Join(
+				rootDir,
+				"hack", "tools", "bin",
+				goruntime.GOOS+"_"+goruntime.GOARCH),
 		}
 	}
 }
@@ -439,7 +514,7 @@ func (s *TestSuite) NewUnitTestContextForValidatingWebhook(
 	initObjects ...ctrlclient.Object) *UnitTestContextForValidatingWebhook {
 
 	if s.flags.UnitTestsEnabled {
-		ctx := NewUnitTestContextForValidatingWebhook(s.webhook.validationOpts[0].ValidatorFn, obj, oldObj, initObjects...)
+		ctx := NewUnitTestContextForValidatingWebhook(s.integration.webhook.validationOpts[0].ValidatorFn, obj, oldObj, initObjects...)
 		return ctx
 	}
 	return nil
@@ -451,7 +526,7 @@ func (s *TestSuite) NewUnitTestContextForValidatingWebhook(
 // Returns nil if unit testing is disabled.
 func (s *TestSuite) NewUnitTestContextForMutatingWebhook(obj *unstructured.Unstructured) *UnitTestContextForMutatingWebhook {
 	if s.flags.UnitTestsEnabled {
-		ctx := NewUnitTestContextForMutatingWebhook(s.webhook.mutationOpts[0].MutatorFn, obj)
+		ctx := NewUnitTestContextForMutatingWebhook(s.integration.webhook.mutationOpts[0].MutatorFn, obj)
 		return ctx
 	}
 	return nil
@@ -476,7 +551,8 @@ func (s *TestSuite) createManager() {
 	var err error
 
 	opts := pkgmgr.Options{
-		KubeConfig:          s.config,
+		PodNamespace:        uuid.NewString(),
+		KubeConfig:          s.integration.config,
 		MetricsAddr:         "0",
 		InitializeProviders: s.initProvidersFn,
 		AddToManager: func(
@@ -485,8 +561,8 @@ func (s *TestSuite) createManager() {
 
 			if s.isControllerTest() {
 				By("registering controllers")
-				for i := range s.controllers {
-					if err := s.controllers[i](ctx, m); err != nil {
+				for i := range s.integration.controllers {
+					if err := s.integration.controllers[i](ctx, m); err != nil {
 						return err
 					}
 				}
@@ -494,9 +570,9 @@ func (s *TestSuite) createManager() {
 
 			if s.isConversionWebhookTest() {
 				By("registering conversion webhooks")
-				for i := range s.webhook.conversionOpts {
-					for j := range s.webhook.conversionOpts[i].AddToManagerFn {
-						if err := s.webhook.conversionOpts[i].AddToManagerFn[j](m); err != nil {
+				for i := range s.integration.webhook.conversionOpts {
+					for j := range s.integration.webhook.conversionOpts[i].AddToManagerFn {
+						if err := s.integration.webhook.conversionOpts[i].AddToManagerFn[j](m); err != nil {
 							return err
 						}
 					}
@@ -505,8 +581,8 @@ func (s *TestSuite) createManager() {
 
 			if s.isMutationWebhookTest() {
 				By("registering mutation webhooks")
-				for i := range s.webhook.mutationOpts {
-					if err := s.webhook.mutationOpts[i].AddToManagerFn(ctx, m); err != nil {
+				for i := range s.integration.webhook.mutationOpts {
+					if err := s.integration.webhook.mutationOpts[i].AddToManagerFn(ctx, m); err != nil {
 						return err
 					}
 				}
@@ -514,8 +590,8 @@ func (s *TestSuite) createManager() {
 
 			if s.isValidationWebhookTest() {
 				By("registering validation webhooks")
-				for i := range s.webhook.validationOpts {
-					if err := s.webhook.validationOpts[i].AddToManagerFn(ctx, m); err != nil {
+				for i := range s.integration.webhook.validationOpts {
+					if err := s.integration.webhook.validationOpts[i].AddToManagerFn(ctx, m); err != nil {
 						return err
 					}
 				}
@@ -530,51 +606,51 @@ func (s *TestSuite) createManager() {
 		_ = vmopv1alpha2.AddToScheme(opts.Scheme)
 	}
 
-	s.manager, err = pkgmgr.New(opts)
+	s.integration.manager, err = pkgmgr.New(opts)
 
 	Expect(err).NotTo(HaveOccurred())
-	Expect(s.manager).ToNot(BeNil())
+	Expect(s.integration.manager).ToNot(BeNil())
 }
 
 func (s *TestSuite) initializeManager() {
 	// If one or more webhooks are being tested then go ahead and configure the webhook server.
 	if s.isWebhookTest() {
 		By("configuring webhook server", func() {
-			svr := s.manager.GetWebhookServer().(*webhook.DefaultServer)
+			svr := s.integration.manager.GetWebhookServer().(*webhook.DefaultServer)
 			svr.Options.Host = "127.0.0.1"
 			svr.Options.Port = randomTCPPort()
-			svr.Options.CertDir = s.webhook.certDir
+			svr.Options.CertDir = s.integration.webhook.certDir
 		})
 	}
 }
 
 // Set a flag to indicate that the manager is running or not.
 func (s *TestSuite) setManagerRunning(isRunning bool) {
-	s.managerRunningMutex.Lock()
-	s.managerRunning = isRunning
-	s.managerRunningMutex.Unlock()
+	s.integration.managerRunningMutex.Lock()
+	s.integration.managerRunning = isRunning
+	s.integration.managerRunningMutex.Unlock()
 }
 
 // Returns true if the manager is running, false otherwise.
 func (s *TestSuite) getManagerRunning() bool {
-	s.managerRunningMutex.Lock()
-	result := s.managerRunning
-	s.managerRunningMutex.Unlock()
+	s.integration.managerRunningMutex.Lock()
+	result := s.integration.managerRunning
+	s.integration.managerRunningMutex.Unlock()
 	return result
 }
 
 // Starts the manager and sets managerRunning.
 func (s *TestSuite) startManager() {
 	ctx, cancel := context.WithCancel(s.Context)
-	s.cancelFuncMutex.Lock()
-	s.cancelFunc = cancel
-	s.cancelFuncMutex.Unlock()
+	s.integration.cancelFuncMutex.Lock()
+	s.integration.cancelFunc = cancel
+	s.integration.cancelFuncMutex.Unlock()
 
 	go func() {
 		defer GinkgoRecover()
 
 		s.setManagerRunning(true)
-		Expect(s.manager.Start(ctx)).ToNot(HaveOccurred())
+		Expect(s.integration.manager.Start(ctx)).ToNot(HaveOccurred())
 		s.setManagerRunning(false)
 	}()
 }
@@ -585,15 +661,15 @@ func (s *TestSuite) postConfigureManager() {
 	// webhooks are being tested. Go ahead and install the webhooks and wait
 	// for the webhook server to come online.
 	if s.isWebhookTest() {
-		svr := s.manager.GetWebhookServer().(*webhook.DefaultServer)
+		svr := s.integration.manager.GetWebhookServer().(*webhook.DefaultServer)
 
 		if s.isConversionWebhookTest() {
 			updateConversionWebhookConfig(
-				s, s.integrationTestClient,
-				s.webhook.conversionOpts,
+				s, s.integration.client,
+				s.integration.webhook.conversionOpts,
 				svr.Options.Host, svr.Options.Port,
-				s.webhook.pki.publicKeyPEM,
-				&s.webhook.conversionName)
+				s.integration.webhook.pki.publicKeyPEM,
+				&s.integration.webhook.conversionName)
 		}
 
 		if s.isAdmissionWebhookTest() {
@@ -608,24 +684,24 @@ func (s *TestSuite) postConfigureManager() {
 				admissionWebhookManifestFilePath)
 
 			updateMutationWebhookConfig(
-				s, s.integrationTestClient,
-				s.webhook.mutationOpts, mutationWebhookConfig,
+				s, s.integration.client,
+				s.integration.webhook.mutationOpts, mutationWebhookConfig,
 				svr.Options.Host, svr.Options.Port,
-				s.webhook.pki.publicKeyPEM,
-				&s.webhook.mutationYAML)
+				s.integration.webhook.pki.publicKeyPEM,
+				&s.integration.webhook.mutationYAML)
 
 			updateValidationWebhookConfig(
-				s, s.integrationTestClient,
-				s.webhook.validationOpts, validationWebhookConfig,
+				s, s.integration.client,
+				s.integration.webhook.validationOpts, validationWebhookConfig,
 				svr.Options.Host, svr.Options.Port,
-				s.webhook.pki.publicKeyPEM,
-				&s.webhook.validationYAML)
+				s.integration.webhook.pki.publicKeyPEM,
+				&s.integration.webhook.validationYAML)
 		}
 
 		// It can take a few seconds for the webhook server to come online.
 		// This step blocks until the webserver can be successfully accessed.
 		By("waiting for the webhook server to come online", func() {
-			svr := s.manager.GetWebhookServer().(*webhook.DefaultServer)
+			svr := s.integration.manager.GetWebhookServer().(*webhook.DefaultServer)
 			addr := net.JoinHostPort(svr.Options.Host, strconv.Itoa(svr.Options.Port))
 			dialer := &net.Dialer{Timeout: time.Second}
 			//nolint:gosec
@@ -646,9 +722,9 @@ func (s *TestSuite) beforeSuiteForIntegrationTesting() {
 	var err error
 
 	By("bootstrapping test environment", func() {
-		s.config, err = s.envTest.Start()
+		s.integration.config, err = s.integration.envTest.Start()
 		Expect(err).ToNot(HaveOccurred())
-		Expect(s.config).ToNot(BeNil())
+		Expect(s.integration.config).ToNot(BeNil())
 	})
 
 	By("updating CRD scope", func() {
@@ -678,37 +754,52 @@ func (s *TestSuite) beforeSuiteForIntegrationTesting() {
 	// PKI toolchain to use with the webhook server.
 	if s.isWebhookTest() {
 		By("generating the pki toolchain", func() {
-			s.webhook.pki, err = generatePKIToolchain()
+			s.integration.webhook.pki, err = generatePKIToolchain()
 			Expect(err).ToNot(HaveOccurred())
 			// Write the CA pub key and cert pub and private keys to the cert dir.
-			tlsCrtPath := path.Join(s.webhook.certDir, "tls.crt")
-			tlsKeyPath := path.Join(s.webhook.certDir, "tls.key")
-			Expect(os.WriteFile(tlsCrtPath, s.webhook.pki.publicKeyPEM, 0400)).To(Succeed())
-			Expect(os.WriteFile(tlsKeyPath, s.webhook.pki.privateKeyPEM, 0400)).To(Succeed())
+			tlsCrtPath := path.Join(s.integration.webhook.certDir, "tls.crt")
+			tlsKeyPath := path.Join(s.integration.webhook.certDir, "tls.key")
+			Expect(os.WriteFile(tlsCrtPath, s.integration.webhook.pki.publicKeyPEM, 0400)).To(Succeed())
+			Expect(os.WriteFile(tlsKeyPath, s.integration.webhook.pki.privateKeyPEM, 0400)).To(Succeed())
 		})
 	}
 
-	if s.integrationTest {
+	if !s.integration.disabled {
+
 		By("setting up a new manager", func() {
 			s.createManager()
 			s.initializeManager()
 		})
 
-		s.integrationTestClient, err = ctrlclient.New(s.manager.GetConfig(), ctrlclient.Options{Scheme: s.manager.GetScheme()})
+		s.integration.client, err = ctrlclient.New(
+			s.integration.manager.GetConfig(),
+			ctrlclient.Options{Scheme: s.integration.manager.GetScheme()})
 		Expect(err).NotTo(HaveOccurred())
 
 		By("create pod namespace", func() {
 			namespace := &corev1.Namespace{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: s.manager.GetContext().Namespace,
+					Name: s.integration.manager.GetContext().Namespace,
 				},
 			}
-			Expect(s.integrationTestClient.Create(s, namespace)).To(Succeed())
+			Expect(s.integration.client.Create(s, namespace)).To(Succeed())
+			s.integration.podNamespace = namespace.Name
 		})
 
-		By("create availability zone", func() {
-			Expect(s.integrationTestClient.Create(s, DummyAvailabilityZone())).To(Succeed())
-		})
+		if s.isVSphereEnabled() {
+			By("initialize vSphere", func() {
+				Expect(s.integration.vsphere.init(
+					s,
+					s.integration.client,
+					s.integration.podNamespace)).To(Succeed())
+			})
+
+		} else {
+			By("create availability zone", func() {
+				Expect(s.integration.client.Create(
+					s, DummyAvailabilityZone())).To(Succeed())
+			})
+		}
 
 		By("starting the manager", func() {
 			s.startManager()
@@ -721,17 +812,17 @@ func (s *TestSuite) beforeSuiteForIntegrationTesting() {
 }
 
 func (s *TestSuite) afterSuiteForIntegrationTesting() {
-	if s.integrationTest {
+	if !s.integration.disabled {
 		By("tearing down the manager", func() {
-			s.cancelFuncMutex.Lock()
-			if s.cancelFunc != nil {
-				s.cancelFunc()
+			s.integration.cancelFuncMutex.Lock()
+			if s.integration.cancelFunc != nil {
+				s.integration.cancelFunc()
 			}
-			s.cancelFuncMutex.Unlock()
+			s.integration.cancelFuncMutex.Unlock()
 
 			Eventually(s.getManagerRunning).Should(BeFalse())
 
-			if data := s.webhook.conversionName; len(data) > 0 {
+			if data := s.integration.webhook.conversionName; len(data) > 0 {
 				By("tearing down conversion webhooks")
 				for i := range data {
 					name := data[i]
@@ -744,35 +835,35 @@ func (s *TestSuite) afterSuiteForIntegrationTesting() {
 							Name: name,
 						},
 					}
-					Expect(s.integrationTestClient.Get(s, ctrlclient.ObjectKey{Name: name}, &crd)).To(Succeed())
+					Expect(s.integration.client.Get(s, ctrlclient.ObjectKey{Name: name}, &crd)).To(Succeed())
 					Expect(crd.Spec.Conversion).ToNot(BeNil())
 					crd.Spec.Conversion = nil
-					Expect(s.integrationTestClient.Update(s, &crd)).To(Succeed())
-					Expect(s.integrationTestClient.Get(s, ctrlclient.ObjectKey{Name: name}, &crd)).To(Succeed())
+					Expect(s.integration.client.Update(s, &crd)).To(Succeed())
+					Expect(s.integration.client.Get(s, ctrlclient.ObjectKey{Name: name}, &crd)).To(Succeed())
 					Expect(crd.Spec.Conversion).ToNot(BeNil())
 					Expect(crd.Spec.Conversion.Strategy).To(Equal(apiextensionsv1.NoneConverter))
 					Expect(crd.Spec.Conversion.Webhook).To(BeNil())
 				}
 			}
 
-			if data := s.webhook.mutationYAML; len(data) > 0 {
+			if data := s.integration.webhook.mutationYAML; len(data) > 0 {
 				By("tearing down mutation webhooks")
 				Eventually(func() error {
-					return remote.DeleteYAML(s, s.integrationTestClient, data)
+					return remote.DeleteYAML(s, s.integration.client, data)
 				}).Should(Succeed())
 			}
 
-			if data := s.webhook.validationYAML; len(data) > 0 {
+			if data := s.integration.webhook.validationYAML; len(data) > 0 {
 				By("tearing down validation webhooks")
 				Eventually(func() error {
-					return remote.DeleteYAML(s, s.integrationTestClient, data)
+					return remote.DeleteYAML(s, s.integration.client, data)
 				}).Should(Succeed())
 			}
 		})
 	}
 
 	By("tearing down the test environment", func() {
-		Expect(s.envTest.Stop()).To(Succeed())
+		Expect(s.integration.envTest.Stop()).To(Succeed())
 	})
 }
 
@@ -789,7 +880,7 @@ func (s *TestSuite) applyFeatureStatesToCRDs(in []*apiextensionsv1.CustomResourc
 }
 
 func (s *TestSuite) GetInstalledCRD(crdName string) *apiextensionsv1.CustomResourceDefinition {
-	for _, crd := range s.envTest.CRDs {
+	for _, crd := range s.integration.envTest.CRDs {
 		if crd.Name == crdName {
 			return crd
 		}
@@ -800,7 +891,7 @@ func (s *TestSuite) GetInstalledCRD(crdName string) *apiextensionsv1.CustomResou
 
 func (s *TestSuite) UpdateCRDScope(oldCrd *apiextensionsv1.CustomResourceDefinition, newScope string) {
 	// crd.spec.scope is immutable, uninstall first
-	err := envtest.UninstallCRDs(s.envTest.Config, envtest.CRDInstallOptions{
+	err := envtest.UninstallCRDs(s.integration.envTest.Config, envtest.CRDInstallOptions{
 		CRDs: []*apiextensionsv1.CustomResourceDefinition{oldCrd},
 	})
 	Expect(err).ShouldNot(HaveOccurred())
@@ -816,12 +907,12 @@ func (s *TestSuite) UpdateCRDScope(oldCrd *apiextensionsv1.CustomResourceDefinit
 			Spec: oldCrd.Spec,
 		}
 		newCrd.Spec.Scope = apiextensionsv1.ResourceScope(newScope)
-		crds, err = envtest.InstallCRDs(s.envTest.Config, envtest.CRDInstallOptions{
+		crds, err = envtest.InstallCRDs(s.integration.envTest.Config, envtest.CRDInstallOptions{
 			CRDs: []*apiextensionsv1.CustomResourceDefinition{newCrd},
 		})
 		return err
 	}).ShouldNot(HaveOccurred())
-	s.envTest.CRDs = append(s.envTest.CRDs, crds...)
+	s.integration.envTest.CRDs = append(s.integration.envTest.CRDs, crds...)
 }
 
 func parseAdmissionWebhookManifestFile(path string) (
@@ -1009,4 +1100,42 @@ func updateAPIExtensionWebhookConfig(
 	webhookConfig.CABundle = key
 	webhookConfig.Service = nil
 	webhookConfig.URL = addrOf(fmt.Sprintf("https://%s:%d%s", host, port, path))
+}
+
+func (s *TestSuite) setupEnvWhenVSphereIsEnabled() {
+
+	// Let the vSphere provider known in which namespace the ConfigMap
+	// responsible for configuring the provider can be found.
+	Expect(os.Setenv(lib.VmopNamespaceEnv, s.integration.podNamespace)).To(Succeed())
+
+	// Assume content library is used.
+	Expect(os.Setenv("CONTENT_API_WAIT_SECS", "1")).To(Succeed())
+
+	// Configure the networking model.
+	const netKey = lib.NetworkProviderType
+	switch s.integration.vsphere.opts.NetworkEnv {
+	case NetworkEnvVDS:
+		Expect(os.Setenv(netKey, lib.NetworkProviderTypeVDS)).To(Succeed())
+	case NetworkEnvNSXT:
+		Expect(os.Setenv(netKey, lib.NetworkProviderTypeNSXT)).To(Succeed())
+	case NetworkEnvNamed:
+		Expect(os.Setenv(netKey, lib.NetworkProviderTypeNamed)).To(Succeed())
+	default:
+		Expect(os.Unsetenv(netKey)).To(Succeed())
+	}
+
+	// Configure the feature states.
+	for k, v := range s.fssMap {
+		if v {
+			Expect(os.Setenv(k, lib.TrueString)).To(Succeed())
+		} else {
+			Expect(os.Setenv(k, lib.FalseString)).To(Succeed())
+		}
+	}
+
+	if v := s.integration.vsphere.opts.WithJSONExtraConfig; v != "" {
+		Expect(os.Setenv("JSON_EXTRA_CONFIG", v)).To(Succeed())
+	} else {
+		Expect(os.Unsetenv("JSON_EXTRA_CONFIG")).To(Succeed())
+	}
 }

@@ -55,16 +55,6 @@ import (
 	"github.com/vmware-tanzu/vm-operator/test/testutil"
 )
 
-type NetworkEnv string
-
-const (
-	NetworkEnvVDS   = NetworkEnv("vds")
-	NetworkEnvNSXT  = NetworkEnv("nsx-t")
-	NetworkEnvNamed = NetworkEnv("named")
-
-	NsxTLogicalSwitchUUID = "nsxt-dummy-ls-uuid"
-)
-
 // VCSimTestConfig configures the vcsim environment.
 type VCSimTestConfig struct {
 	// WithFaultDomains enables the HA WCP_FAULTDOMAINS_FSS.
@@ -155,13 +145,6 @@ type WorkloadNamespaceInfo struct {
 	Folder    *object.Folder
 }
 
-const (
-	// zoneCount is how many zones to create for HA.
-	zoneCount = 3
-	// clustersPerZone is how many clusters to create per zone.
-	clustersPerZone = 1
-)
-
 func (s *TestSuite) NewTestContextForVCSim(
 	config VCSimTestConfig,
 	initObjects ...client.Object) *TestContextForVCSim {
@@ -195,7 +178,7 @@ func newTestContextForVCSim(
 		if config.NumFaultDomains != 0 {
 			ctx.ZoneCount = config.NumFaultDomains
 		} else {
-			ctx.ZoneCount = zoneCount
+			ctx.ZoneCount = zoneCountForHA
 		}
 
 		ctx.ClustersPerZone = clustersPerZone
