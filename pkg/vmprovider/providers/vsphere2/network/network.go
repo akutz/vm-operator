@@ -223,8 +223,9 @@ func createNamedNetworkInterface(
 	}
 
 	return &NetworkInterfaceResult{
-		NetworkID: networkName,
-		Backing:   backing,
+		NetworkID:  networkName,
+		Backing:    backing,
+		ExternalID: interfaceSpec.Name,
 	}, nil
 }
 
@@ -327,7 +328,7 @@ func netOpNetIfToResult(
 	return &NetworkInterfaceResult{
 		IPConfigs:  ipConfigs,
 		MacAddress: netIf.Status.MacAddress, // Not set by NetOP.
-		ExternalID: netIf.Status.ExternalID, // Ditto.
+		ExternalID: netIf.Name,              // Use name as external ID.
 		NetworkID:  netIf.Status.NetworkID,
 		Backing:    object.NewDistributedVirtualPortgroup(vimClient, pgObjRef),
 	}
@@ -650,4 +651,69 @@ func ApplyInterfaceResultToVirtualEthCard(
 	}
 
 	return nil
+}
+
+func ExternalIDToInterfaceSpecName(
+	ctx goctx.Context,
+	client ctrlruntime.Client,
+	namespace, externalID string) (string, error) {
+
+	switch pkgconfig.FromContext(ctx).NetworkProviderType {
+
+	case pkgconfig.NetworkProviderTypeNSXT:
+
+		list := &ncpv1alpha1.VirtualNetworkInterfaceList{}
+		if err := client.List(
+			ctx,
+			list,
+			ctrlruntime.InNamespace(namespace)); err != nil {
+
+			return "", err
+		}
+
+		for i := range list.Items {
+			obj := list.Items[i]
+			if obj.Status.InterfaceID == externalID {
+				if v := obj.Annotations["vmoperator.vmware.com/interface-name"]; v != "" {
+					return v, nil
+				}
+
+				// The last part of the name is the interface name.
+				nameParts := strings.Split(obj.Name, "-")
+				lastPart := nameParts[len(nameParts)-1]
+
+				// TODO This fails to behave as intended if someone names their
+				//      NIC "lsp".
+				if lastPart != "lsp" {
+					return lastPart, nil
+				}
+			}
+		}
+
+		// For any resources
+		return "eth0", nil
+
+	case pkgconfig.NetworkProviderTypeVDS:
+		obj := &netopv1alpha1.NetworkInterface{}
+		key := ctrlruntime.ObjectKey{
+			Namespace: namespace,
+			Name:      externalID,
+		}
+		if err := client.Get(ctx, key, obj); err != nil {
+			// if not found return
+			return "", err
+		}
+
+		if v := obj.Annotations["vmoperator.vmware.com/interface-name"]; v != "" {
+			return v, nil
+		}
+
+		// The last part of the name is the interface name.
+		nameParts := strings.Split(obj.Name, "-")
+		return nameParts[len(nameParts)-1], nil
+
+	default:
+
+		return externalID, nil
+	}
 }
