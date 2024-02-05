@@ -88,10 +88,10 @@ func SoapKeepAliveHandlerFn(
 
 	return func() error {
 		ctx := context.Background()
-		if _, err := methods.GetCurrentTime(ctx, sc); err != nil && isNotAuthenticatedError(err) {
+		if _, err := methods.GetCurrentTime(ctx, sc); err != nil && IsNotAuthenticatedError(err) {
 			log.Info("Re-authenticating vim client")
 			if err = sm.Login(ctx, userInfo); err != nil {
-				if isInvalidLogin(err) {
+				if IsInvalidLogin(err) {
 					log.Error(err, "Invalid login in keepalive handler", "url", sc.URL())
 					return err
 				}
@@ -238,7 +238,7 @@ func newFinder(
 	return finder, dc, nil
 }
 
-func isNotAuthenticatedError(err error) bool {
+func IsNotAuthenticatedError(err error) bool {
 	if soap.IsSoapFault(err) {
 		vimFault := soap.ToSoapFault(err).VimFault()
 		if _, ok := vimFault.(types.NotAuthenticated); ok {
@@ -249,7 +249,7 @@ func isNotAuthenticatedError(err error) bool {
 	return false
 }
 
-func isInvalidLogin(err error) bool {
+func IsInvalidLogin(err error) bool {
 	if soap.IsSoapFault(err) {
 		vimFault := soap.ToSoapFault(err).VimFault()
 		if _, ok := vimFault.(types.InvalidLogin); ok {
