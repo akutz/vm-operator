@@ -35,6 +35,7 @@ import (
 	"github.com/vmware-tanzu/vm-operator/pkg/providers/vsphere/vmlifecycle"
 	"github.com/vmware-tanzu/vm-operator/pkg/record"
 	kubeutil "github.com/vmware-tanzu/vm-operator/pkg/util/kube"
+	vmopv1util "github.com/vmware-tanzu/vm-operator/pkg/util/vmopv1"
 )
 
 const (
@@ -252,6 +253,13 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (_ ctrl.Re
 	}
 
 	defer func() {
+		vmopv1util.SyncStorageUsageForNamespace(
+			ctx,
+			r.Client,
+			vm.Namespace,
+			vm.Spec.StorageClass,
+		)
+
 		if err := patchHelper.Patch(ctx, vm); err != nil {
 			if reterr == nil {
 				reterr = err

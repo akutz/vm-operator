@@ -19,7 +19,7 @@ import (
 	"github.com/vmware-tanzu/vm-operator/controllers/storagepolicyquota"
 	spqv1 "github.com/vmware-tanzu/vm-operator/external/storage-policy-quota/api/v1alpha1"
 	"github.com/vmware-tanzu/vm-operator/pkg/constants/testlabels"
-	kubeutil "github.com/vmware-tanzu/vm-operator/pkg/util/kube"
+	spqutil "github.com/vmware-tanzu/vm-operator/pkg/util/kube/spq"
 	"github.com/vmware-tanzu/vm-operator/pkg/util/ptr"
 	"github.com/vmware-tanzu/vm-operator/test/builder"
 )
@@ -106,12 +106,12 @@ func unitTestsReconcile() {
 					ctx,
 					types.NamespacedName{
 						Namespace: namespace,
-						Name:      kubeutil.StoragePolicyUsageNameFromQuotaName(name),
+						Name:      spqutil.StoragePolicyUsageName(name),
 					},
 					&dst)).To(Succeed())
 				ExpectWithOffset(1, dst.Spec.ResourceAPIgroup).To(Equal(ptr.To(spqv1.GroupVersion.Group)))
-				ExpectWithOffset(1, dst.Spec.ResourceExtensionName).To(Equal("vmservice.cns.vsphere.vmware.com"))
-				ExpectWithOffset(1, dst.Spec.ResourceKind).To(Equal("StoragePolicyQuota"))
+				ExpectWithOffset(1, dst.Spec.ResourceExtensionName).To(Equal(spqutil.StoragePolicyQuotaExtensionName))
+				ExpectWithOffset(1, dst.Spec.ResourceKind).To(Equal(spqutil.StoragePolicyQuotaKind))
 				ExpectWithOffset(1, dst.Spec.StorageClassName).To(Equal(src.Name))
 				ExpectWithOffset(1, dst.Spec.StoragePolicyId).To(Equal(src.Spec.StoragePolicyId))
 			}
@@ -128,7 +128,7 @@ func unitTestsReconcile() {
 					dst = &spqv1.StoragePolicyUsage{
 						ObjectMeta: metav1.ObjectMeta{
 							Namespace: namespace,
-							Name:      kubeutil.StoragePolicyUsageNameFromQuotaName(name),
+							Name:      spqutil.StoragePolicyUsageName(name),
 						},
 						Spec: spqv1.StoragePolicyUsageSpec{
 							StoragePolicyId: src.Spec.StoragePolicyId,
@@ -171,7 +171,7 @@ func unitTestsReconcile() {
 							dst.ObjectMeta.OwnerReferences = []metav1.OwnerReference{
 								{
 									APIVersion:         spqv1.GroupVersion.String(),
-									Kind:               "StoragePolicyQuota",
+									Kind:               spqutil.StoragePolicyQuotaKind,
 									Name:               src.Name,
 									UID:                src.UID,
 									Controller:         ptr.To(true),

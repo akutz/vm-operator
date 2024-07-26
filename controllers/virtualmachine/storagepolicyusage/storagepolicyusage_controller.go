@@ -1,7 +1,7 @@
 // Copyright (c) 2024 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package storagepolicyusage
+package storagepolicyquota
 
 import (
 	"context"
@@ -12,37 +12,45 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
+	"sigs.k8s.io/controller-runtime/pkg/source"
 
 	vmopv1 "github.com/vmware-tanzu/vm-operator/api/v1alpha3"
-	spqv1alpha1 "github.com/vmware-tanzu/vm-operator/external/storage-policy-quota/api/v1alpha1"
 	pkgcfg "github.com/vmware-tanzu/vm-operator/pkg/config"
 	pkgctx "github.com/vmware-tanzu/vm-operator/pkg/context"
-	"github.com/vmware-tanzu/vm-operator/pkg/patch"
 	"github.com/vmware-tanzu/vm-operator/pkg/record"
+	kubeutil "github.com/vmware-tanzu/vm-operator/pkg/util/kube"
+	spqutil "github.com/vmware-tanzu/vm-operator/pkg/util/kube/spq"
 )
 
 // AddToManager adds this package's controller to the provided manager.
 func AddToManager(ctx *pkgctx.ControllerManagerContext, mgr manager.Manager) error {
 	var (
-		controllerName      = "storagepolicyusage"
-		controllerNameShort = fmt.Sprintf("%s-controller", strings.ToLower(controllerName))
+		controlledTypeName  = spqutil.StoragePolicyUsageKind
+		controllerName      = controlledTypeName
+		controllerNameShort = fmt.Sprintf("%s-controller", strings.ToLower(controlledTypeName))
 		controllerNameLong  = fmt.Sprintf("%s/%s/%s", ctx.Namespace, ctx.Name, controllerNameShort)
 	)
 
 	r := NewReconciler(
 		ctx,
 		mgr.GetClient(),
-		ctrl.Log.WithName("controllers").WithName(controllerName),
+		ctrl.Log.WithName("controllers").WithName(controlledTypeName),
 		record.New(mgr.GetEventRecorderFor(controllerNameLong)),
 	)
 
-	_ = spqv1alpha1.AddToScheme
+	c, err := controller.New(controllerName, mgr, controller.Options{Reconciler: r})
+	if err != nil {
+		return err
+	}
 
-	return ctrl.NewControllerManagedBy(mgr).
-		For(nil).
-		WithOptions(controller.Options{MaxConcurrentReconciles: 1}).
-		Complete(r)
+	return c.Watch(source.Kind(
+		mgr.GetCache(),
+		&vmopv1.VirtualMachine{},
+		&handler.TypedEnqueueRequestForObject[*vmopv1.VirtualMachine]{},
+		kubeutil.TypedResourceVersionChangedPredicate[*vmopv1.VirtualMachine]{},
+	))
 }
 
 func NewReconciler(
@@ -59,7 +67,7 @@ func NewReconciler(
 	}
 }
 
-// Reconciler reconciles a VirtualMachineClass object.
+// Reconciler reconciles a VirtualMachine object.
 type Reconciler struct {
 	client.Client
 	Context  context.Context
@@ -67,49 +75,13 @@ type Reconciler struct {
 	Recorder record.Recorder
 }
 
-// +kubebuilder:rbac:groups=vmoperator.vmware.com,resources=virtualmachineclasses,verbs=get;list;watch;create;update;patch;delete
-// +kubebuilder:rbac:groups=vmoperator.vmware.com,resources=virtualmachineclasses/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=cns.vmware.com,resources=storagepolicyusages,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=cns.vmware.com,resources=storagepolicyusages/status,verbs=get;update;patch
+// +kubebuilder:rbac:groups=vmoperator.vmware.com,resources=virtualmachines,verbs=get;list;watch
+// +kubebuilder:rbac:groups=vmoperator.vmware.com,resources=virtualmachines/status,verbs=get
 
 func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (_ ctrl.Result, reterr error) {
 	ctx = pkgcfg.JoinContext(ctx, r.Context)
 
-	vmClass := &vmopv1.VirtualMachineClass{}
-	if err := r.Get(ctx, req.NamespacedName, vmClass); err != nil {
-		return ctrl.Result{}, client.IgnoreNotFound(err)
-	}
-
-	vmClassCtx := &pkgctx.VirtualMachineClassContext{
-		Context: ctx,
-		Logger:  ctrl.Log.WithName("VirtualMachineClass").WithValues("name", req.Name),
-		VMClass: vmClass,
-	}
-
-	patchHelper, err := patch.NewHelper(vmClass, r.Client)
-	if err != nil {
-		return ctrl.Result{}, fmt.Errorf("failed to init patch helper for %s: %w", vmClassCtx, err)
-	}
-	defer func() {
-		if err := patchHelper.Patch(ctx, vmClass); err != nil {
-			if reterr == nil {
-				reterr = err
-			}
-			vmClassCtx.Logger.Error(err, "patch failed")
-		}
-	}()
-
-	if !vmClass.DeletionTimestamp.IsZero() {
-		// Noop.
-		return ctrl.Result{}, nil
-	}
-
-	if err := r.ReconcileNormal(vmClassCtx); err != nil {
-		vmClassCtx.Logger.Error(err, "Failed to reconcile VirtualMachineClass")
-		return ctrl.Result{}, err
-	}
-
 	return ctrl.Result{}, nil
-}
-
-func (r *Reconciler) ReconcileNormal(vmClassCtx *pkgctx.VirtualMachineClassContext) error {
-	return nil
 }

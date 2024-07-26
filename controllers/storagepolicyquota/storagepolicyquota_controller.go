@@ -19,9 +19,15 @@ import (
 	spqv1 "github.com/vmware-tanzu/vm-operator/external/storage-policy-quota/api/v1alpha1"
 	pkgcfg "github.com/vmware-tanzu/vm-operator/pkg/config"
 	pkgctx "github.com/vmware-tanzu/vm-operator/pkg/context"
+	"github.com/vmware-tanzu/vm-operator/pkg/patch"
 	"github.com/vmware-tanzu/vm-operator/pkg/record"
 	kubeutil "github.com/vmware-tanzu/vm-operator/pkg/util/kube"
+	spqutil "github.com/vmware-tanzu/vm-operator/pkg/util/kube/spq"
 	"github.com/vmware-tanzu/vm-operator/pkg/util/ptr"
+)
+
+const (
+	finalizerName = "vmoperator.vmware.com/storagepolicyquota"
 )
 
 // AddToManager adds this package's controller to the provided manager.
@@ -75,8 +81,8 @@ type Reconciler struct {
 // delete on the owner, then a 422 (unprocessable entity) is returned.
 //
 
-// +kubebuilder:rbac:groups=cns.vmware.com,resources=storagepolicyquotas,verbs=get;list;watch;delete
-// +kubebuilder:rbac:groups=cns.vmware.com,resources=storagepolicyquotas/status,verbs=get
+// +kubebuilder:rbac:groups=cns.vmware.com,resources=storagepolicyquotas,verbs=get;list;watch;update;patch;delete
+// +kubebuilder:rbac:groups=cns.vmware.com,resources=storagepolicyquotas/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=cns.vmware.com,resources=storagepolicyusages,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=cns.vmware.com,resources=storagepolicyusages/status,verbs=get;update;patch
 
@@ -88,54 +94,121 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (_ ctrl.Re
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	logger := ctrl.Log.WithName("StoragePolicyQuota").WithValues("name", req.NamespacedName)
+	logger := ctrl.Log.WithName(spqutil.StoragePolicyQuotaKind).WithValues(
+		"name", req.NamespacedName)
 
 	// Ensure the GVK for the object is synced back into the object since
 	// the object's APIVersion and Kind fields may be used later.
 	kubeutil.MustSyncGVKToObject(&obj, r.Scheme())
 
-	if !obj.DeletionTimestamp.IsZero() {
-		// Noop.
-		return ctrl.Result{}, nil
+	patchHelper, err := patch.NewHelper(&obj, r.Client)
+	if err != nil {
+		return ctrl.Result{}, fmt.Errorf("failed to init patch helper for %s: %w", req, err)
 	}
 
-	if err := r.ReconcileNormal(ctx, logger, obj); err != nil {
-		logger.Error(err, "Failed to reconcile StoragePolicyQuota")
+	defer func() {
+		if err := patchHelper.Patch(ctx, &obj); err != nil {
+			if reterr == nil {
+				reterr = err
+			}
+			logger.Error(err, "patch failed")
+		}
+	}()
+
+	if !obj.DeletionTimestamp.IsZero() {
+		if err := r.ReconcileDelete(ctx, logger, &obj); err != nil {
+			logger.Error(err, "Failed to ReconcileDelete StoragePolicyQuota")
+			return ctrl.Result{}, err
+		}
+	}
+
+	if err := r.ReconcileNormal(ctx, logger, &obj); err != nil {
+		logger.Error(err, "Failed to ReconcileNormal StoragePolicyQuota")
 		return ctrl.Result{}, err
 	}
 
 	return ctrl.Result{}, nil
 }
 
-func (r *Reconciler) ReconcileNormal(
+func (r *Reconciler) ReconcileDelete(
 	ctx context.Context,
 	logger logr.Logger,
-	src spqv1.StoragePolicyQuota) error {
+	src *spqv1.StoragePolicyQuota) error {
 
-	dst := spqv1.StoragePolicyUsage{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      kubeutil.StoragePolicyUsageNameFromQuotaName(src.Name),
-			Namespace: src.Namespace,
-		},
-	}
-
-	fn := func() error {
-		if err := ctrlutil.SetControllerReference(
-			&src, &dst, r.Scheme()); err != nil {
-
-			return err
-		}
-
-		dst.Spec.StorageClassName = src.Name
-		dst.Spec.StoragePolicyId = src.Spec.StoragePolicyId
-		dst.Spec.ResourceAPIgroup = ptr.To(spqv1.GroupVersion.Group)
-		dst.Spec.ResourceKind = "StoragePolicyQuota"
-		dst.Spec.ResourceExtensionName = "vmservice.cns.vsphere.vmware.com"
-
+	if !ctrlutil.ContainsFinalizer(src, finalizerName) {
 		return nil
 	}
 
-	_, err := ctrlutil.CreateOrPatch(ctx, r.Client, &dst, fn)
+	if err := spqutil.DeleteChanForStoragePolicy(
+		ctx,
+		r.Client,
+		src.Namespace,
+		src.Spec.StoragePolicyId); err != nil {
+
+		return err
+	}
+
+	ctrlutil.RemoveFinalizer(src, finalizerName)
+
+	return nil
+}
+
+func (r *Reconciler) ReconcileNormal(
+	ctx context.Context,
+	logger logr.Logger,
+	src *spqv1.StoragePolicyQuota) error {
+
+	// Add the finalizer and return early to ensure no work is done until
+	// the finalizer is added. The act of patching the finalizer will cause this
+	// object to get requeued.
+	if ctrlutil.AddFinalizer(src, finalizerName) {
+		return nil
+	}
+
+	// Get the list of storage classes for the provided policy ID.
+	objs, err := spqutil.GetStorageClassesForPolicy(
+		ctx,
+		r.Client,
+		src.Namespace,
+		src.Spec.StoragePolicyId)
+	if err != nil {
+		return err
+	}
+
+	// Create the StoragePolicyUsage resources.
+	for i := range objs {
+		dst := spqv1.StoragePolicyUsage{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: src.Namespace,
+				Name:      spqutil.StoragePolicyUsageName(objs[i].Name),
+			},
+		}
+
+		fn := func() error {
+			if err := ctrlutil.SetControllerReference(
+				src, &dst, r.Scheme()); err != nil {
+
+				return err
+			}
+
+			dst.Spec.StorageClassName = objs[i].Name
+			dst.Spec.StoragePolicyId = src.Spec.StoragePolicyId
+			dst.Spec.ResourceAPIgroup = ptr.To(spqv1.GroupVersion.Group)
+			dst.Spec.ResourceKind = spqutil.StoragePolicyQuotaKind
+			dst.Spec.ResourceExtensionName = spqutil.StoragePolicyQuotaExtensionName
+
+			return nil
+		}
+
+		if _, err := ctrlutil.CreateOrPatch(
+			ctx,
+			r.Client,
+			&dst,
+			fn); err != nil {
+
+			return err
+		}
+	}
 
 	return err
 }

@@ -11,12 +11,15 @@ import (
 
 	vimtypes "github.com/vmware/govmomi/vim25/types"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	vmopv1 "github.com/vmware-tanzu/vm-operator/api/v1alpha3"
+	spqv1 "github.com/vmware-tanzu/vm-operator/external/storage-policy-quota/api/v1alpha1"
 	"github.com/vmware-tanzu/vm-operator/pkg/constants"
 	pkgutil "github.com/vmware-tanzu/vm-operator/pkg/util"
+	spqutil "github.com/vmware-tanzu/vm-operator/pkg/util/kube/spq"
 )
 
 const (
@@ -212,4 +215,124 @@ func IsClasslessVM(vm vmopv1.VirtualMachine) bool {
 // image.
 func IsImagelessVM(vm vmopv1.VirtualMachine) bool {
 	return vm.Spec.Image == nil && vm.Spec.ImageName == ""
+}
+
+func SyncStorageUsageForNamespace(
+	ctx context.Context,
+	k8sClient client.Client,
+	namespace, storageClass string) (bool, <-chan error) {
+
+	var (
+		chanErr = make(chan error, 1)
+		objKey  = client.ObjectKey{
+			Namespace: namespace,
+			Name:      spqutil.StoragePolicyUsageName(storageClass),
+		}
+	)
+
+	syncFn := func() {
+		defer close(chanErr)
+
+		ctx := context.Background()
+
+		// Make sure the StoragePolicyUsage document exists.
+		var obj spqv1.StoragePolicyUsage
+		if err := k8sClient.Get(ctx, objKey, &obj); err != nil {
+
+			// Even if the SPU is not found, log the error to indicate that
+			// the function was enqueued but could not proceed.
+			chanErr <- fmt.Errorf(
+				"failed to get StoragePolicyUsage %s: %w", objKey, err)
+			return
+		}
+
+		var list vmopv1.VirtualMachineList
+		if err := k8sClient.List(
+			ctx,
+			&list,
+			client.InNamespace(namespace)); err != nil {
+
+			chanErr <- fmt.Errorf(
+				"failed to list VMs in namespace %s: %w", namespace, err)
+			return
+		}
+
+		var (
+			totalUsed     resource.Quantity
+			totalReserved resource.Quantity
+		)
+
+		for i := range list.Items {
+			vm := list.Items[i]
+
+			if !vm.DeletionTimestamp.IsZero() || vm.Status.Storage == nil {
+				// Ignore VMs being deleted or that are not reporting storage
+				// status.
+				continue
+			}
+
+			// Account for storage used by this VM.
+			if vm.Status.Storage.Unshared != nil {
+				totalUsed.Add(*vm.Status.Storage.Unshared)
+			}
+
+			// Account for storage marked as reserved by this VM.
+			if vm.Status.Storage.Committed != nil {
+				totalReserved.Add(*vm.Status.Storage.Committed)
+			}
+			if vm.Status.Storage.Uncommitted != nil {
+				totalReserved.Add(*vm.Status.Storage.Uncommitted)
+			}
+
+			// Subtract the PVC usage/limit from the total usage/reserved values
+			// as PVCs are counted separately.
+			for j := range vm.Status.Volumes {
+				v := vm.Status.Volumes[j]
+				if v.Type == vmopv1.VirtualMachineStorageDiskTypeManaged {
+					if v.Used != nil {
+						totalUsed.Sub(*v.Used)
+					}
+					if v.Limit != nil {
+						totalReserved.Sub(*v.Limit)
+					}
+				}
+			}
+		}
+
+		// Get the StoragePolicyUsage resource again to ensure it is up-to-date.
+		if err := k8sClient.Get(ctx, objKey, &obj); err != nil {
+			chanErr <- fmt.Errorf(
+				"failed to get StoragePolicyUsage %s: %w", objKey, err)
+			return
+		}
+
+		objPatch := client.MergeFrom(obj.DeepCopy())
+
+		if obj.Status.ResourceTypeLevelQuotaUsage == nil {
+			obj.Status.ResourceTypeLevelQuotaUsage = &spqv1.QuotaUsageDetails{}
+		}
+		obj.Status.ResourceTypeLevelQuotaUsage.Reserved = &totalReserved
+		obj.Status.ResourceTypeLevelQuotaUsage.Used = &totalUsed
+
+		if err := k8sClient.Status().Patch(ctx, &obj, objPatch); err != nil {
+			chanErr <- fmt.Errorf(
+				"failed to patch StoragePolicyUsage %s: %w", objKey, err)
+			return
+		}
+	}
+
+	if !spqutil.ExecuteForStorageClass(
+		ctx,
+		namespace,
+		storageClass,
+		syncFn) {
+
+		// Close the error channel immediately if the sync function could not be
+		// scheduled.
+		close(chanErr)
+
+		return false, chanErr
+	}
+
+	return true, chanErr
 }

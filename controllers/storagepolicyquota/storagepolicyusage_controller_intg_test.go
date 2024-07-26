@@ -14,7 +14,7 @@ import (
 
 	spqv1 "github.com/vmware-tanzu/vm-operator/external/storage-policy-quota/api/v1alpha1"
 	"github.com/vmware-tanzu/vm-operator/pkg/constants/testlabels"
-	kubeutil "github.com/vmware-tanzu/vm-operator/pkg/util/kube"
+	spqutil "github.com/vmware-tanzu/vm-operator/pkg/util/kube/spq"
 	"github.com/vmware-tanzu/vm-operator/pkg/util/ptr"
 	"github.com/vmware-tanzu/vm-operator/test/builder"
 )
@@ -74,14 +74,14 @@ func intgTestsReconcile() {
 				var dst spqv1.StoragePolicyUsage
 				dstKey := client.ObjectKey{
 					Namespace: ctx.Namespace,
-					Name:      kubeutil.StoragePolicyUsageNameFromQuotaName(srcKey.Name),
+					Name:      spqutil.StoragePolicyUsageName(srcKey.Name),
 				}
 				g.Expect(ctx.Client.Get(ctx, dstKey, &dst)).To(Succeed())
 
 				g.Expect(dst.OwnerReferences).To(Equal([]metav1.OwnerReference{
 					{
 						APIVersion:         spqv1.GroupVersion.String(),
-						Kind:               "StoragePolicyQuota",
+						Kind:               spqutil.StoragePolicyQuotaKind,
 						Name:               src.Name,
 						UID:                src.UID,
 						Controller:         ptr.To(true),
@@ -91,8 +91,8 @@ func intgTestsReconcile() {
 				g.Expect(dst.Spec.StoragePolicyId).To(Equal(src.Spec.StoragePolicyId))
 				g.Expect(dst.Spec.StorageClassName).To(Equal(src.Name))
 				g.Expect(dst.Spec.ResourceAPIgroup).To(Equal(ptr.To(spqv1.GroupVersion.Group)))
-				g.Expect(dst.Spec.ResourceKind).To(Equal("StoragePolicyQuota"))
-				g.Expect(dst.Spec.ResourceExtensionName).To(Equal("vmservice.cns.vsphere.vmware.com"))
+				g.Expect(dst.Spec.ResourceKind).To(Equal(spqutil.StoragePolicyQuotaKind))
+				g.Expect(dst.Spec.ResourceExtensionName).To(Equal(spqutil.StoragePolicyQuotaExtensionName))
 			}).Should(Succeed())
 		})
 	})
