@@ -75,9 +75,13 @@ var (
 	ErrNoWatcher = errors.New("no watcher")
 )
 
-// Add starts watching a container to which VirtualMachine resources may belong,
-// such as a Folder, Cluster, ResourcePool, etc.
-func Add(ctx context.Context, ref moRef, id string) (err error) {
+// Add starts watching a managed object.
+func Add(
+	ctx context.Context,
+	ref moRef,
+	asContainer bool,
+	id string) (err error) {
+
 	if pkgcfg.FromContext(ctx).AsyncSignalDisabled {
 		return ErrAsyncSignalDisabled
 	}
@@ -88,7 +92,7 @@ func Add(ctx context.Context, ref moRef, id string) (err error) {
 			if w == nil {
 				err = ErrNoWatcher
 			} else {
-				err = w.add(ctx, ref, id)
+				err = w.add(ctx, ref, asContainer, id)
 			}
 		})
 	return

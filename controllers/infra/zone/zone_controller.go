@@ -155,6 +155,7 @@ func (r *Reconciler) ReconcileNormal(
 					Type:  "Folder",
 					Value: val,
 				},
+				true,
 				fmt.Sprintf("%s/%s", obj.Namespace, obj.Name)); err != nil {
 
 				if err != watcher.ErrAsyncSignalDisabled {

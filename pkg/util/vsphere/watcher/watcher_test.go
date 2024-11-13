@@ -16,6 +16,8 @@ import (
 	"github.com/go-logr/logr"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/format"
+	gomegatypes "github.com/onsi/gomega/types"
 
 	"github.com/vmware/govmomi"
 	"github.com/vmware/govmomi/find"
@@ -165,7 +167,8 @@ var _ = Describe("Start", func() {
 				}
 				return "", "", false
 			},
-			cluster1.Reference())
+			nil,
+			[]vimtypes.ManagedObjectReference{cluster1.Reference()})
 		Expect(err).ToNot(HaveOccurred())
 		Expect(w).ToNot(BeNil())
 	})
@@ -184,7 +187,7 @@ var _ = Describe("Start", func() {
 
 		var result watcher.Result
 		EventuallyWithOffset(1, w.Result(), time.Second*5).Should(
-			Receive(&result, Equal(watcher.Result{
+			Receive(&result, resultEqual(watcher.Result{
 				Namespace: namespace,
 				Name:      name,
 				Ref:       vm.Reference(),
@@ -433,9 +436,9 @@ var _ = Describe("Start", func() {
 
 		When("the container has multiple adds", func() {
 			JustBeforeEach(func() {
-				Expect(watcher.Add(ctx, cluster1.Reference(), fakeStr+"1")).To(Succeed())
-				Expect(watcher.Add(ctx, cluster1.Reference(), fakeStr+"2")).To(Succeed())
-				Expect(watcher.Add(ctx, cluster1.Reference(), fakeStr+"3")).To(Succeed())
+				Expect(watcher.Add(ctx, cluster1.Reference(), true, fakeStr+"1")).To(Succeed())
+				Expect(watcher.Add(ctx, cluster1.Reference(), true, fakeStr+"2")).To(Succeed())
+				Expect(watcher.Add(ctx, cluster1.Reference(), true, fakeStr+"3")).To(Succeed())
 			})
 			Specify("it should need an equal number of removes before it stops being watched", func() {
 				// Assert that a result is signaled due to the VM entering the
@@ -538,16 +541,16 @@ var _ = Describe("Start", func() {
 				result1,
 				result2,
 			}).To(ConsistOf(
-				watcher.Result{
+				resultEqual(watcher.Result{
 					Namespace: "my-namespace-2",
 					Name:      "my-name-2",
 					Ref:       cluster1vm2.Reference(),
-				},
-				watcher.Result{
+				}),
+				resultEqual(watcher.Result{
 					Namespace: "my-namespace-1",
 					Name:      "my-name-1",
 					Ref:       cluster1vm1.Reference(),
-				},
+				}),
 			))
 
 			// Assert no more results are signaled.
@@ -589,7 +592,7 @@ var _ = Describe("Start", func() {
 
 		When("the container is added to the watcher", func() {
 			JustBeforeEach(func() {
-				Expect(watcher.Add(ctx, cluster2.Reference(), fakeStr)).To(Succeed())
+				Expect(watcher.Add(ctx, cluster2.Reference(), true, fakeStr)).To(Succeed())
 			})
 			When("the lookup function returns verified=false", func() {
 				Specify("the result channel should receive a result", func() {
@@ -622,4 +625,65 @@ var _ = Describe("Start", func() {
 			})
 		})
 	})
+
+	When("watching a task", func() {
+		var (
+			task *object.Task
+		)
+		JustBeforeEach(func() {
+			var err error
+			task, err = cluster1vm1.PowerOn(ctx)
+			Expect(err).ToNot(HaveOccurred())
+			Expect(watcher.Add(ctx, task.Reference(), false, fakeStr)).To(Succeed())
+		})
+		Specify("the result channel should receive a result", func() {
+			// Assert that a result is signaled due to the task entering the
+			// scope of the watcher.
+			var result watcher.Result
+			Eventually(w.Result(), time.Second*5).Should(
+				Receive(&result, resultEqual(watcher.Result{
+					Ref: task.Reference(),
+				})))
+
+			// Assert no more results are signaled.
+			assertNoResult()
+
+			// Assert no error either.
+			assertNoError()
+		})
+	})
 })
+
+func resultEqual(expected interface{}) gomegatypes.GomegaMatcher {
+	return &resultMatcher{
+		Expected: expected,
+	}
+}
+
+type resultMatcher struct {
+	Expected interface{}
+}
+
+func (m *resultMatcher) Match(actual interface{}) (success bool, err error) {
+	e := m.Expected.(watcher.Result)
+	a := actual.(watcher.Result)
+
+	return e.Verified == a.Verified &&
+		e.Name == a.Name &&
+		e.Namespace == a.Namespace &&
+		e.Ref == a.Ref, nil
+}
+
+func (m *resultMatcher) FailureMessage(actual interface{}) (message string) {
+	actualString, actualOK := actual.(string)
+	expectedString, expectedOK := m.Expected.(string)
+	if actualOK && expectedOK {
+		return format.MessageWithDiff(actualString, "to equal", expectedString)
+	}
+
+	return format.Message(actual, "to equal", m.Expected)
+}
+
+func (m *resultMatcher) NegatedFailureMessage(actual interface{}) (message string) {
+	return format.Message(actual, "not to equal", m.Expected)
+}

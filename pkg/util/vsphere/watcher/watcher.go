@@ -18,6 +18,7 @@ import (
 	vimtypes "github.com/vmware/govmomi/vim25/types"
 
 	backupapi "github.com/vmware-tanzu/vm-operator/pkg/backup/api"
+	"github.com/vmware-tanzu/vm-operator/pkg/util/ptr"
 )
 
 // DefaultWatchedPropertyPaths returns the default set of property paths to
@@ -38,7 +39,15 @@ func DefaultWatchedPropertyPaths() []string {
 	}
 }
 
-const extraConfigNamespacedNameKey = "vmservice.namespacedName"
+const (
+	extraConfigNamespacedNameKey     = "vmservice.namespacedName"
+	taskType                         = "Task"
+	virtualMachineType               = "VirtualMachine"
+	configPropPath                   = "config"
+	extraConfigPropPath              = configPropPath + ".extraConfig"
+	extraConfigNamespaceNameKey      = "vmservice.namespacedName"
+	extraConfigNamespaceNamePropPath = extraConfigPropPath + `["` + extraConfigNamespaceNameKey + `"]`
+)
 
 // defaultIgnoredExtraConfigKeys returns the default set of extra config keys to
 // ignore.
@@ -62,21 +71,37 @@ var defaultIgnoredExtraConfigKeys = []string{
 
 type moRef = vimtypes.ManagedObjectReference
 
+type onUpdateCallbackFn func(context.Context, moRef, Update) (Result, bool, error)
+
 type lookupNamespacedNameFn func(context.Context, moRef) (string, string, bool)
 
+type Update struct {
+	Kind    vimtypes.ObjectUpdateKind
+	Changes []vimtypes.PropertyChange
+}
+
 type Result struct {
+	// Ref is the ManagedObjectReference for the object that caused the update.
+	Ref moRef
+
 	// Namespace is the namespace to which the VirtualMachine resource belongs.
+	// This field is set when the result is for a VirtualMachine or a Task for
+	// a VirtualMachine.
 	Namespace string
 
 	// Name is the name of the VirtualMachine resource.
+	// This field is set when the result is for a VirtualMachine or a Task for
+	// a VirtualMachine.
 	Name string
-
-	// Ref is the ManagedObjectReference for the VM in vSphere.
-	Ref moRef
 
 	// Verified is true if the VirtualMachine resource identified by Namespace
 	// and Name has already been verified to exist in this Kubernetes cluster.
+	// This field is set when the result is for a VirtualMachine or a Task for
+	// a VirtualMachine.
 	Verified bool
+
+	// Update is the data that caused the watch result.
+	Update Update
 }
 
 type Watcher struct {
@@ -94,11 +119,11 @@ type Watcher struct {
 	lv *view.ListView
 	cv map[moRef]*view.ContainerView
 
-	// cvr is used to count the number of times a container has been added to
-	// the list view. If the Remove function is called on a container with a ref
-	// count of one, then the container will be removed from the list view and
+	// refc is used to count the number of times a reference has been added to
+	// the list view. If the Remove function is called on a reference with a
+	// count of one, then the reference will be removed from the list view and
 	// destroyed.
-	cvr map[moRef]map[string]struct{}
+	refc map[moRef]map[string]struct{}
 
 	ignoredExtraConfigKeys map[string]struct{}
 	lookupNamespacedName   lookupNamespacedNameFn
@@ -134,7 +159,8 @@ func newWatcher(
 	watchedPropertyPaths []string,
 	additionalIgnoredExtraConfigKeys []string,
 	lookupNamespacedName lookupNamespacedNameFn,
-	containerRefs ...moRef) (*Watcher, error) {
+	refs []moRef,
+	containerRefs []moRef) (*Watcher, error) {
 
 	if watchedPropertyPaths == nil {
 		watchedPropertyPaths = DefaultWatchedPropertyPaths()
@@ -146,16 +172,16 @@ func newWatcher(
 	// Get the view manager.
 	vm := view.NewManager(client)
 
-	// For each container reference, create a container view and add it to
-	// the list view's initial list of members.
-	cvs, cvr, err := toContainerViewMap(ctx, vm, containerRefs...)
+	// For each container reference, create a container view.
+	cvs, err := getContainerViews(ctx, vm, containerRefs)
 	if err != nil {
 		return nil, err
 	}
 
-	// Create a new list view used to monitor all of the containers to which
-	// VM Service VMs belong.
-	lv, err := vm.CreateListView(ctx, toMoRefs(cvs))
+	// Create a new list view used to monitor all of the provided references.
+	// The references from the containerRefs parameter are monitored via their
+	// container view.
+	lv, err := vm.CreateListView(ctx, append(refs, toValueMoRefs(cvs)...))
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +195,7 @@ func newWatcher(
 	// Create a new property filter that uses the list view created up above.
 	pf, err := pc.CreateFilter(
 		ctx,
-		viewToVM(lv.Reference(), watchedPropertyPaths))
+		createPropFilter(lv.Reference(), watchedPropertyPaths))
 	if err != nil {
 		return nil, err
 	}
@@ -183,7 +209,7 @@ func newWatcher(
 		vm:                     vm,
 		lv:                     lv,
 		cv:                     cvs,
-		cvr:                    cvr,
+		refc:                   getRefCounterMap(append(refs, containerRefs...)),
 		ignoredExtraConfigKeys: toSet(ignoredExtraConfigKeys),
 		lookupNamespacedName:   lookupNamespacedName,
 	}, nil
@@ -201,7 +227,8 @@ func (w *Watcher) close() {
 	}
 }
 
-// Start begins watching a vSphere server for updates to VM Service managed VMs.
+// Start begins watching a vSphere server for updates to the provided
+// references.
 // If watchedPropertyPaths is nil, DefaultWatchedPropertyPaths will be used.
 // The containerRefs parameter may be used to start the watcher with an initial
 // list of entities to watch.
@@ -211,11 +238,12 @@ func Start(
 	watchedPropertyPaths []string,
 	additionalIgnoredExtraConfigKeys []string,
 	lookupNamespacedName lookupNamespacedNameFn,
-	containerRefs ...moRef) (*Watcher, error) {
+	refs []moRef,
+	containerRefs []moRef) (*Watcher, error) {
 
 	logger := logr.FromContextOrDiscard(ctx).WithName("vSphereWatcher")
 
-	logger.Info("Started watching VMs")
+	logger.Info("Starting watcher")
 
 	w, err := newWatcher(
 		ctx,
@@ -223,7 +251,8 @@ func Start(
 		watchedPropertyPaths,
 		additionalIgnoredExtraConfigKeys,
 		lookupNamespacedName,
-		containerRefs...)
+		refs,
+		containerRefs)
 	if err != nil {
 		return nil, err
 	}
@@ -258,19 +287,6 @@ func Start(
 	return w, nil
 }
 
-const (
-	virtualMachineType               = "VirtualMachine"
-	configPropPath                   = "config"
-	extraConfigPropPath              = configPropPath + ".extraConfig"
-	extraConfigNamespaceNameKey      = "vmservice.namespacedName"
-	extraConfigNamespaceNamePropPath = extraConfigPropPath + `["` + extraConfigNamespaceNameKey + `"]`
-)
-
-type objUpdate struct {
-	kind    vimtypes.ObjectUpdateKind
-	changes []vimtypes.PropertyChange
-}
-
 func (w *Watcher) onUpdate(
 	ctx context.Context,
 	ou []vimtypes.ObjectUpdate) bool {
@@ -278,45 +294,55 @@ func (w *Watcher) onUpdate(
 	logger := logr.FromContextOrDiscard(ctx)
 	logger.V(4).Info("OnUpdate", "objectUpdates", ou)
 
-	updates := map[moRef]objUpdate{}
+	updates := map[moRef]Update{}
 
 	for i := range ou {
 		oui := ou[i]
 		if oui.Kind != vimtypes.ObjectUpdateKindLeave {
 			if v, ok := updates[oui.Obj]; !ok {
-				updates[oui.Obj] = objUpdate{
-					kind:    oui.Kind,
-					changes: oui.ChangeSet,
+				updates[oui.Obj] = Update{
+					Kind:    oui.Kind,
+					Changes: oui.ChangeSet,
 				}
 			} else {
-				v.changes = append(v.changes, oui.ChangeSet...)
+				v.Changes = append(v.Changes, oui.ChangeSet...)
 				updates[oui.Obj] = v
 			}
 		}
 	}
 
 	for obj, update := range updates {
-		if err := w.onObject(
-			ctx,
-			obj,
-			update); err != nil {
 
+		var onUpdate onUpdateCallbackFn
+
+		switch obj.Type {
+		case virtualMachineType:
+			onUpdate = w.onVirtualMachine
+		case taskType:
+			onUpdate = w.onTask
+		default:
+			onUpdate = w.onObject
+		}
+
+		result, ok, err := onUpdate(ctx, obj, update)
+		if err != nil {
 			w.setErr(err)
 			return true
+		}
+
+		if ok {
+			logger.V(4).Info("Sending result", "result", result)
+			go func(r Result) { w.chanResult <- r }(result)
 		}
 	}
 
 	return false
 }
 
-func (w *Watcher) onObject(
+func (w *Watcher) onVirtualMachine(
 	ctx context.Context,
 	obj moRef,
-	update objUpdate) error {
-
-	logger := logr.FromContextOrDiscard(ctx).
-		WithName("onObject").
-		WithValues("obj", obj)
+	update Update) (Result, bool, error) {
 
 	var (
 		namespace string
@@ -327,8 +353,8 @@ func (w *Watcher) onObject(
 	// This update will be skipped if after removing all of the changes for
 	// the ignoredExtraConfigKeys there is nothing left.
 	var ignoredChanges int
-	for i := range update.changes {
-		c := update.changes[i]
+	for i := range update.Changes {
+		c := update.Changes[i]
 		ignore := false
 		if c.Name == extraConfigPropPath {
 			if aov, ok := c.Val.(vimtypes.ArrayOfOptionValue); ok {
@@ -340,23 +366,23 @@ func (w *Watcher) onObject(
 			ignoredChanges++
 		}
 	}
-	if ignoredChanges == len(update.changes) {
-		return nil
+	if ignoredChanges == len(update.Changes) {
+		return Result{}, false, nil
 	}
 
 	if w.lookupNamespacedName != nil {
-		if namespace == "" || name == "" || update.kind == vimtypes.ObjectUpdateKindEnter {
+		if namespace == "" || name == "" || update.Kind == vimtypes.ObjectUpdateKindEnter {
 			namespace, name, verified = w.lookupNamespacedName(ctx, obj)
 		}
 	}
 
-	if update.kind == vimtypes.ObjectUpdateKindEnter && verified {
+	if update.Kind == vimtypes.ObjectUpdateKindEnter && verified {
 		// The behavior of Controller-Runtime to sync all objects upon startup
 		// will cause *existing* VMs to be reconciled. Therefore, do not emit a
 		// result when the object is entering the scope of the watcher and the
 		// corresponding Kubernetes object already exists with a matching
 		// status.uniqueID field.
-		return nil
+		return Result{}, false, nil
 	}
 
 	if namespace == "" || name == "" {
@@ -368,27 +394,60 @@ func (w *Watcher) onObject(
 			&content,
 		)
 		if err != nil {
-			return err
+			return Result{}, false, err
 		}
 		namespace, name = namespacedNameFromObjContent(content)
 	}
 
 	if namespace != "" && name != "" {
-		r := Result{
+		return Result{
 			Namespace: namespace,
 			Name:      name,
 			Ref:       obj,
 			Verified:  verified,
-		}
-
-		logger.V(4).Info("Sending result", "result", r)
-
-		go func(r Result) {
-			w.chanResult <- r
-		}(r)
+			Update:    update,
+		}, true, nil
 	}
 
-	return nil
+	return Result{}, false, nil
+}
+
+func (w *Watcher) onTask(
+	ctx context.Context,
+	obj moRef,
+	update Update) (Result, bool, error) {
+
+	if update.Kind == vimtypes.ObjectUpdateKindEnter {
+		return Result{}, false, nil
+	}
+
+	var ti *vimtypes.TaskInfo
+	for i := range update.Changes {
+		c := update.Changes[i]
+		if c.Name == "info" {
+			ti = ptr.To(c.Val.(vimtypes.TaskInfo))
+			break
+		}
+	}
+
+	if ti == nil {
+		return Result{}, false, nil
+	}
+
+	fmt.Printf("\n\ntask.info=%[1]T, %+[1]v\n\n", ti)
+
+	return Result{
+		Ref: obj,
+		//Update: update,
+	}, true, nil
+}
+
+func (w *Watcher) onObject(
+	ctx context.Context,
+	obj moRef,
+	update Update) (Result, bool, error) {
+
+	return Result{}, false, nil
 }
 
 func checkExtraConfig(
@@ -421,102 +480,115 @@ func checkExtraConfig(
 	return !hasNonIgnoredKey, namespace, name
 }
 
-func (w *Watcher) add(ctx context.Context, ref moRef, id string) error {
-	if _, ok := w.cv[ref]; ok {
-		w.cvr[ref][id] = struct{}{}
+func (w *Watcher) add(
+	ctx context.Context,
+	ref moRef,
+	asContainer bool,
+	id string) error {
+
+	if _, ok := w.refc[ref]; ok {
+		w.refc[ref][id] = struct{}{}
 		return nil
 	}
 
-	cv, err := w.vm.CreateContainerView(
-		ctx,
-		ref,
-		[]string{virtualMachineType},
-		true)
-	if err != nil {
-		return err
-	}
-
-	if _, err := w.lv.Add(
-		ctx,
-		[]vimtypes.ManagedObjectReference{cv.Reference()}); err != nil {
-
-		if err2 := cv.Destroy(context.Background()); err2 != nil {
-			return fmt.Errorf(
-				"failed to destroy container view after adding "+
-					"it to list failed: addErr=%w, destroyErr=%w", err, err2)
+	if asContainer {
+		cv, err := w.vm.CreateContainerView(
+			ctx,
+			ref,
+			[]string{virtualMachineType},
+			true)
+		if err != nil {
+			return err
 		}
 
+		if _, err := w.lv.Add(
+			ctx,
+			[]vimtypes.ManagedObjectReference{cv.Reference()}); err != nil {
+
+			if err2 := cv.Destroy(context.Background()); err2 != nil {
+				return fmt.Errorf(
+					"failed to destroy container view after adding "+
+						"it to list failed: addErr=%w, destroyErr=%w", err, err2)
+			}
+
+			return err
+		}
+
+		w.cv[ref] = cv
+	} else if _, err := w.lv.Add(
+		ctx,
+		[]vimtypes.ManagedObjectReference{ref}); err != nil {
+
 		return err
 	}
 
-	w.cv[ref] = cv
-	if w.cvr[ref] == nil {
-		w.cvr[ref] = map[string]struct{}{}
+	if w.refc[ref] == nil {
+		w.refc[ref] = map[string]struct{}{}
 	}
-	w.cvr[ref][id] = struct{}{}
+	w.refc[ref][id] = struct{}{}
 
 	return nil
 }
 
 func (w *Watcher) remove(_ context.Context, ref moRef, id string) error {
-	cv, ok := w.cv[ref]
-	if !ok {
+	if _, ok := w.refc[ref]; !ok {
 		return nil
 	}
 
-	// Only remove the container from the list view if it has a ref count of
+	// Only remove the object from the list view if it has a ref count of
 	// one.
-	if len(w.cvr[ref]) > 1 {
-		delete(w.cvr[ref], id)
+	if len(w.refc[ref]) > 1 {
+		delete(w.refc[ref], id)
 		return nil
 	}
 
-	_, err := w.lv.Remove(context.Background(), []moRef{cv.Reference()})
-	if err != nil {
-		return err
+	if cv, ok := w.cv[ref]; ok {
+		_, err := w.lv.Remove(context.Background(), []moRef{cv.Reference()})
+		if err != nil {
+			return err
+		}
+
+		if err := cv.Destroy(context.Background()); err != nil {
+			return err
+		}
+
+		delete(w.cv, ref)
 	}
 
-	if err := cv.Destroy(context.Background()); err != nil {
-		return err
-	}
-
-	delete(w.cv, ref)
-	delete(w.cvr[ref], id)
-
+	delete(w.refc[ref], id)
 	return nil
 }
 
-func toContainerViewMap(
+func getContainerViews(
 	ctx context.Context,
 	vm *view.Manager,
-	containerRefs ...moRef) (map[moRef]*view.ContainerView, map[moRef]map[string]struct{}, error) {
+	refs []moRef) (map[moRef]*view.ContainerView, error) {
 
-	var (
-		cvMap     = map[moRef]*view.ContainerView{}
-		cvRefsMap = map[moRef]map[string]struct{}{}
-	)
+	cvMap := map[moRef]*view.ContainerView{}
 
-	if len(containerRefs) == 0 {
-		return cvMap, cvRefsMap, nil
+	if len(refs) == 0 {
+		return cvMap, nil
 	}
 
 	var resultErr error
-	for i := range containerRefs {
-		if _, ok := cvMap[containerRefs[i]]; ok {
+	for i := range refs {
+		r := refs[i]
+
+		if _, ok := cvMap[r]; ok {
 			// Ignore duplicates.
 			continue
 		}
+
 		cv, err := vm.CreateContainerView(
 			ctx,
-			containerRefs[i],
+			r,
 			[]string{virtualMachineType},
 			true)
 		if err != nil {
 			resultErr = err
 			break
 		}
-		cvMap[containerRefs[i]] = cv
-		cvRefsMap[containerRefs[i]] = map[string]struct{}{}
+		cvMap[r] = cv
 	}
 
 	if resultErr != nil {
@@ -527,10 +599,25 @@ func toContainerViewMap(
 				resultErr = fmt.Errorf("%w,%w", resultErr, err)
 			}
 		}
-		return nil, nil, resultErr
+		return nil, resultErr
 	}
 
-	return cvMap, cvRefsMap, nil
+	return cvMap, nil
+}
+
+func getRefCounterMap(refs []moRef) map[moRef]map[string]struct{} {
+	refCounter := map[moRef]map[string]struct{}{}
+	if len(refs) == 0 {
+		return refCounter
+	}
+	for i := range refs {
+		if _, ok := refCounter[refs[i]]; ok {
+			// Ignore duplicates.
+			continue
+		}
+		refCounter[refs[i]] = map[string]struct{}{}
+	}
+	return refCounter
 }
 
 func namespacedNameFromString(s string) (string, string) {
@@ -558,7 +645,7 @@ func namespacedNameFromObjContent(
 	return "", ""
 }
 
-func viewToVM(ref moRef, watchedPropertyPaths []string) vimtypes.CreateFilter {
+func createPropFilter(ref moRef, watchedPropertyPaths []string) vimtypes.CreateFilter {
 	return vimtypes.CreateFilter{
 		Spec: vimtypes.PropertyFilterSpec{
 			ObjectSet: []vimtypes.ObjectSpec{
@@ -566,11 +653,11 @@ func viewToVM(ref moRef, watchedPropertyPaths []string) vimtypes.CreateFilter {
 					Obj:  ref,
 					Skip: &[]bool{true}[0],
 					SelectSet: []vimtypes.BaseSelectionSpec{
-						// ListView --> ContainerView
 						&vimtypes.TraversalSpec{
 							Type: "ListView",
 							Path: "view",
 							SelectSet: []vimtypes.BaseSelectionSpec{
+								// ListView --> ContainerView
 								&vimtypes.SelectionSpec{
 									Name: "visitViews",
 								},
@@ -592,6 +679,10 @@ func viewToVM(ref moRef, watchedPropertyPaths []string) vimtypes.CreateFilter {
 					Type:    virtualMachineType,
 					PathSet: watchedPropertyPaths,
 				},
+				{
+					Type:    taskType,
+					PathSet: []string{"info"},
+				},
 			},
 		},
 	}
@@ -601,7 +692,9 @@ type hasRef interface {
 	Reference() moRef
 }
 
-func toMoRefs[M ~map[K]V, K comparable, V hasRef](m M) []moRef {
+// toValueMoRefs returns a list of references from the values in the
+// provided map.
+func toValueMoRefs[M ~map[K]V, K comparable, V hasRef](m M) []moRef {
 	if len(m) == 0 {
 		return nil
 	}

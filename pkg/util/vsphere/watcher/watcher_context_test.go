@@ -109,6 +109,7 @@ var _ = Describe("Add", func() {
 			Expect(watcher.Add(
 				watcher.WithContext(pkgcfg.NewContext()),
 				vimtypes.ManagedObjectReference{},
+				false,
 				"fake",
 			)).To(MatchError(watcher.ErrNoWatcher))
 		})
@@ -119,6 +120,7 @@ var _ = Describe("Add", func() {
 				watcher.WithContext(pkgcfg.WithConfig(
 					pkgcfg.Config{AsyncSignalDisabled: true})),
 				vimtypes.ManagedObjectReference{},
+				false,
 				"fake",
 			)).To(MatchError(watcher.ErrAsyncSignalDisabled))
 		})

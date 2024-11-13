@@ -94,8 +94,6 @@ func (s Service) Start(ctx context.Context) error {
 	return ctx.Err()
 }
 
-var emptyResult watcher.Result
-
 func (s Service) vmFolderRefs(ctx context.Context) ([]vimtypes.ManagedObjectReference, error) {
 	// Get a list of all the folders that can contain VM Service VMs.
 	var (
@@ -147,7 +145,8 @@ func (s Service) waitForChanges(ctx context.Context) error {
 		nil,
 		nil,
 		s.lookupNamespacedName,
-		refs...)
+		nil,
+		refs)
 	if err != nil {
 		return err
 	}
@@ -155,7 +154,7 @@ func (s Service) waitForChanges(ctx context.Context) error {
 	for {
 		select {
 		case result := <-w.Result():
-			if result == emptyResult {
+			if result.Ref.Value == "" {
 				logger.Info("Received empty result, watcher is closed")
 				return w.Err()
 			}
