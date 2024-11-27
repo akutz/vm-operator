@@ -523,9 +523,11 @@ func (vs *vSphereVMProvider) createVirtualMachine(
 
 	moRef, err := vmlifecycle.CreateVirtualMachine(
 		ctx,
+		vs.k8sClient,
 		vcClient.RestClient(),
 		vcClient.VimClient(),
 		vcClient.Finder(),
+		vcClient.Datacenter(),
 		&args.CreateArgs)
 
 	if err != nil {
@@ -559,9 +561,11 @@ func (vs *vSphereVMProvider) createVirtualMachineAsync(
 
 	moRef, vimErr := vmlifecycle.CreateVirtualMachine(
 		ctx,
+		vs.k8sClient,
 		vcClient.RestClient(),
 		vcClient.VimClient(),
 		vcClient.Finder(),
+		vcClient.Datacenter(),
 		&args.CreateArgs)
 
 	if vimErr != nil {

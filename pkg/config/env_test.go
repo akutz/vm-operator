@@ -102,6 +102,7 @@ var _ = Describe(
 					Expect(os.Setenv("FSS_WCP_VMSERVICE_BYOK", "true")).To(Succeed())
 					Expect(os.Setenv("FSS_WCP_SUPERVISOR_ASYNC_UPGRADE", "false")).To(Succeed())
 					Expect(os.Setenv("FSS_WCP_SIMPLIFIED_ENABLEMENT", "true")).To(Succeed())
+					Expect(os.Setenv("FSS_WCP_VMSERVICE_FAST_DEPLOY", "true")).To(Succeed())
 					Expect(os.Setenv("CREATE_VM_REQUEUE_DELAY", "125h")).To(Succeed())
 					Expect(os.Setenv("POWERED_ON_VM_HAS_IP_REQUEUE_DELAY", "126h")).To(Succeed())
 				})
@@ -151,6 +152,7 @@ var _ = Describe(
 							BringYourOwnEncryptionKey: true,
 							SVAsyncUpgrade:            false, // Capability gate so tested below
 							WorkloadDomainIsolation:   true,
+							FastDeploy:                true,
 							SimplifiedEnablement:      true,
 						},
 						CreateVMRequeueDelay:         125 * time.Hour,
