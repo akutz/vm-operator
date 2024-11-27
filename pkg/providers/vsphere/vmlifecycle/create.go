@@ -5,9 +5,11 @@ package vmlifecycle
 
 import (
 	"github.com/vmware/govmomi/find"
+	"github.com/vmware/govmomi/object"
 	"github.com/vmware/govmomi/vapi/rest"
 	"github.com/vmware/govmomi/vim25"
 	vimtypes "github.com/vmware/govmomi/vim25/types"
+	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
 
 	pkgctx "github.com/vmware-tanzu/vm-operator/pkg/context"
 )
@@ -28,13 +30,22 @@ type CreateArgs struct {
 
 func CreateVirtualMachine(
 	vmCtx pkgctx.VirtualMachineContext,
+	k8sClient ctrlclient.Client,
 	restClient *rest.Client,
 	vimClient *vim25.Client,
 	finder *find.Finder,
+	datacenter *object.Datacenter,
 	createArgs *CreateArgs) (*vimtypes.ManagedObjectReference, error) {
 
 	if createArgs.UseContentLibrary {
-		return deployFromContentLibrary(vmCtx, restClient, vimClient, createArgs)
+		return deployFromContentLibrary(
+			vmCtx,
+			k8sClient,
+			restClient,
+			vimClient,
+			finder,
+			datacenter,
+			createArgs)
 	}
 
 	return cloneVMFromInventory(vmCtx, finder, createArgs)
