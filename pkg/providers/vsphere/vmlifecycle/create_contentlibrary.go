@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"fmt"
 
-	"github.com/vmware/govmomi/find"
 	"github.com/vmware/govmomi/object"
 	"github.com/vmware/govmomi/vapi/library"
 	"github.com/vmware/govmomi/vapi/rest"
@@ -120,7 +119,6 @@ func deployFromContentLibrary(
 	k8sClient ctrlclient.Client,
 	restClient *rest.Client,
 	vimClient *vim25.Client,
-	finder *find.Finder,
 	datacenter *object.Datacenter,
 	createArgs *CreateArgs) (*vimtypes.ManagedObjectReference, error) {
 
@@ -139,8 +137,6 @@ func deployFromContentLibrary(
 				vmCtx,
 				k8sClient,
 				vimClient,
-				restClient,
-				finder,
 				datacenter,
 				item,
 				createArgs)

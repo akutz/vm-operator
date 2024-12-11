@@ -5,6 +5,7 @@ package vsphere
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"maps"
 	"math/rand"
@@ -47,6 +48,7 @@ import (
 	pkgutil "github.com/vmware-tanzu/vm-operator/pkg/util"
 	"github.com/vmware-tanzu/vm-operator/pkg/util/annotations"
 	kubeutil "github.com/vmware-tanzu/vm-operator/pkg/util/kube"
+	"github.com/vmware-tanzu/vm-operator/pkg/util/ovfcache"
 	vmopv1util "github.com/vmware-tanzu/vm-operator/pkg/util/vmopv1"
 	"github.com/vmware-tanzu/vm-operator/pkg/vmconfig"
 )
@@ -435,6 +437,7 @@ func (vs *vSphereVMProvider) vmCreatePathName(
 	if len(vmCtx.VM.Spec.Cdrom) == 0 {
 		return nil // only needed when deploying ISO library items
 	}
+
 	if createArgs.StorageProfileID == "" {
 		return nil
 	}
@@ -484,6 +487,33 @@ func (vs *vSphereVMProvider) vmCreatePathName(
 	return nil
 }
 
+func (vs *vSphereVMProvider) vmCreatePathNameFromDatastoreRecommendation(
+	vmCtx pkgctx.VirtualMachineContext,
+	createArgs *VMCreateArgs) error {
+
+	if createArgs.ConfigSpec.Files == nil {
+		createArgs.ConfigSpec.Files = &vimtypes.VirtualMachineFileInfo{}
+	}
+	if createArgs.ConfigSpec.Files.VmPathName != "" {
+		return nil
+	}
+	if len(createArgs.Datastores) == 0 {
+		return errors.New("no compatible datastores")
+	}
+
+	createArgs.ConfigSpec.Files.VmPathName = fmt.Sprintf(
+		"[%s] %s/%s.vmx",
+		createArgs.Datastores[0].Name,
+		vmCtx.VM.UID,
+		vmCtx.VM.Name)
+
+	vmCtx.Logger.Info(
+		"vmCreatePathName",
+		"VmPathName", createArgs.ConfigSpec.Files.VmPathName)
+
+	return nil
+}
+
 func (vs *vSphereVMProvider) getCreateArgs(
 	vmCtx pkgctx.VirtualMachineContext,
 	vcClient *vcclient.Client) (*VMCreateArgs, error) {
@@ -501,8 +531,14 @@ func (vs *vSphereVMProvider) getCreateArgs(
 		return nil, err
 	}
 
-	if err := vs.vmCreatePathName(vmCtx, vcClient, createArgs); err != nil {
-		return nil, err
+	if pkgcfg.FromContext(vmCtx).Features.FastDeploy {
+		if err := vs.vmCreatePathNameFromDatastoreRecommendation(vmCtx, createArgs); err != nil {
+			return nil, err
+		}
+	} else {
+		if err := vs.vmCreatePathName(vmCtx, vcClient, createArgs); err != nil {
+			return nil, err
+		}
 	}
 
 	if err := vs.vmCreateFixupConfigSpec(vmCtx, vcClient, createArgs); err != nil {
@@ -759,6 +795,7 @@ func (vs *vSphereVMProvider) vmCreateDoPlacement(
 		vmCtx,
 		vs.k8sClient,
 		vcClient.VimClient(),
+		vcClient.Finder(),
 		placementConfigSpec,
 		constraints)
 	if err != nil {
@@ -771,6 +808,16 @@ func (vs *vSphereVMProvider) vmCreateDoPlacement(
 
 	if result.HostMoRef != nil {
 		createArgs.HostMoID = result.HostMoRef.Value
+	}
+
+	if pkgcfg.FromContext(vmCtx).Features.FastDeploy {
+		createArgs.Datastores = make([]vmlifecycle.DatastoreRef, len(result.Datastores))
+		for i := range result.Datastores {
+			createArgs.Datastores[i].DiskKey = result.Datastores[i].DiskKey
+			createArgs.Datastores[i].ForDisk = result.Datastores[i].ForDisk
+			createArgs.Datastores[i].MoRef = result.Datastores[i].MoRef
+			createArgs.Datastores[i].Name = result.Datastores[i].Name
+		}
 	}
 
 	if result.InstanceStoragePlacement {
@@ -1237,6 +1284,17 @@ func (vs *vSphereVMProvider) vmCreateGenConfigSpec(
 		createArgs.ImageStatus,
 		minCPUFreq)
 
+	if pkgcfg.FromContext(vmCtx).Features.FastDeploy {
+		if err := vs.vmCreateGenConfigSpecImage(vmCtx, createArgs); err != nil {
+			return err
+		}
+		createArgs.ConfigSpec.VmProfile = []vimtypes.BaseVirtualMachineProfileSpec{
+			&vimtypes.VirtualMachineDefinedProfileSpec{
+				ProfileId: createArgs.StorageProfileID,
+			},
+		}
+	}
+
 	// Get the encryption class details for the VM.
 	if pkgcfg.FromContext(vmCtx).Features.BringYourOwnEncryptionKey {
 		for _, r := range vmconfig.FromContext(vmCtx) {
@@ -1253,20 +1311,57 @@ func (vs *vSphereVMProvider) vmCreateGenConfigSpec(
 		}
 	}
 
-	err := vs.vmCreateGenConfigSpecExtraConfig(vmCtx, createArgs)
-	if err != nil {
+	if err := vs.vmCreateGenConfigSpecExtraConfig(vmCtx, createArgs); err != nil {
 		return err
 	}
 
-	err = vs.vmCreateGenConfigSpecChangeBootDiskSize(vmCtx, createArgs)
-	if err != nil {
+	if err := vs.vmCreateGenConfigSpecChangeBootDiskSize(vmCtx, createArgs); err != nil {
 		return err
 	}
 
-	err = vs.vmCreateGenConfigSpecZipNetworkInterfaces(vmCtx, createArgs)
-	if err != nil {
+	if err := vs.vmCreateGenConfigSpecZipNetworkInterfaces(vmCtx, createArgs); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func (vs *vSphereVMProvider) vmCreateGenConfigSpecImage(
+	vmCtx pkgctx.VirtualMachineContext,
+	createArgs *VMCreateArgs) error {
+
+	if createArgs.ImageStatus.Type != "OVF" {
+		return nil
+	}
+
+	if createArgs.ImageStatus.ProviderItemID == "" {
+		return errors.New("empty image provider item id")
+	}
+	if createArgs.ImageStatus.ProviderContentVersion == "" {
+		return errors.New("empty image provider content version")
+	}
+
+	ovf, err := ovfcache.GetOVFEnvelope(
+		vmCtx,
+		createArgs.ImageStatus.ProviderItemID,
+		createArgs.ImageStatus.ProviderContentVersion)
+	if err != nil {
+		return fmt.Errorf("failed to get ovf from cache: %w", err)
+	}
+
+	ovfConfigSpec, err := ovf.ToConfigSpec()
+	if err != nil {
+		return fmt.Errorf("failed to transform ovf to config spec: %w", err)
+	}
+
+	if createArgs.ConfigSpec.GuestId == "" {
+		createArgs.ConfigSpec.GuestId = ovfConfigSpec.GuestId
+	}
+
+	pkgutil.CopyStorageControllersAndDisks(
+		&createArgs.ConfigSpec,
+		ovfConfigSpec,
+		createArgs.StorageProfileID)
 
 	return nil
 }
@@ -1501,6 +1596,7 @@ func (vs *vSphereVMProvider) vmResizeGetArgs(
 			resizeArgs.VMClass.Spec,
 			vmopv1.VirtualMachineImageStatus{},
 			minCPUFreq)
+
 	}
 
 	return resizeArgs, nil

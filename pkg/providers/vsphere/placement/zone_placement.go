@@ -9,7 +9,9 @@ import (
 	"math/rand"
 	"strings"
 
+	"github.com/vmware/govmomi/find"
 	"github.com/vmware/govmomi/object"
+	"github.com/vmware/govmomi/property"
 	"github.com/vmware/govmomi/vim25"
 	vimtypes "github.com/vmware/govmomi/vim25/types"
 	"golang.org/x/exp/maps"
@@ -42,7 +44,18 @@ type Result struct {
 	ZoneName                 string
 	HostMoRef                *vimtypes.ManagedObjectReference
 	PoolMoRef                vimtypes.ManagedObjectReference
+	Datastores               []DatastoreResult
 	// TODO: Datastore, whatever else as we need it.
+}
+
+type DatastoreResult struct {
+	Name  string
+	MoRef vimtypes.ManagedObjectReference
+
+	// ForDisk is false if the recommendation is for the VM's home directory and
+	// true if for a disk. DiskKey is only valid if ForDisk is true.
+	ForDisk bool
+	DiskKey int32
 }
 
 func doesVMNeedPlacement(vmCtx pkgctx.VirtualMachineContext) (res Result, needZonePlacement, needInstanceStoragePlacement bool) {
@@ -262,9 +275,14 @@ func getPlacementRecommendations(
 func getZonalPlacementRecommendations(
 	vmCtx pkgctx.VirtualMachineContext,
 	vcClient *vim25.Client,
+	finder *find.Finder,
 	candidates map[string][]string,
 	configSpec vimtypes.VirtualMachineConfigSpec,
 	needsHost bool) map[string][]Recommendation {
+
+	if pkgcfg.FromContext(vmCtx).Features.FastDeploy {
+		needsHost = true
+	}
 
 	rpMOToZone := map[vimtypes.ManagedObjectReference]string{}
 	var candidateRPMoRefs []vimtypes.ManagedObjectReference
@@ -297,7 +315,13 @@ func getZonalPlacementRecommendations(
 	} else {
 		var err error
 
-		recs, err = ClusterPlaceVMForCreate(vmCtx, vcClient, candidateRPMoRefs, configSpec, needsHost)
+		recs, err = ClusterPlaceVMForCreate(
+			vmCtx,
+			vcClient,
+			finder,
+			candidateRPMoRefs,
+			configSpec,
+			needsHost)
 		if err != nil {
 			vmCtx.Logger.Error(err, "PlaceVmsXCluster failed")
 			return nil
@@ -338,6 +362,7 @@ func Placement(
 	vmCtx pkgctx.VirtualMachineContext,
 	client ctrlclient.Client,
 	vcClient *vim25.Client,
+	finder *find.Finder,
 	configSpec vimtypes.VirtualMachineConfigSpec,
 	constraints Constraints) (*Result, error) {
 
@@ -387,7 +412,13 @@ func Placement(
 
 	var recommendations map[string][]Recommendation
 	if zonePlacement {
-		recommendations = getZonalPlacementRecommendations(vmCtx, vcClient, candidates, configSpec, needsHost)
+		recommendations = getZonalPlacementRecommendations(
+			vmCtx,
+			vcClient,
+			finder,
+			candidates,
+			configSpec,
+			needsHost)
 	} else /* instanceStoragePlacement */ {
 		recommendations = getPlacementRecommendations(vmCtx, vcClient, candidates, configSpec)
 	}
@@ -398,13 +429,70 @@ func Placement(
 	zoneName, rec := MakePlacementDecision(recommendations)
 	vmCtx.Logger.V(5).Info("Placement decision result", "zone", zoneName, "recommendation", rec)
 
+	if pkgcfg.FromContext(vmCtx).Features.FastDeploy {
+		// Get the names of the datastores.
+		if err := getDatastoreNames(vmCtx, vcClient, &rec); err != nil {
+			return nil, err
+		}
+	}
+
 	result := &Result{
 		ZonePlacement:            zonePlacement,
 		InstanceStoragePlacement: instanceStoragePlacement,
 		ZoneName:                 zoneName,
 		PoolMoRef:                rec.PoolMoRef,
 		HostMoRef:                rec.HostMoRef,
+		Datastores:               rec.Datastores,
 	}
 
 	return result, nil
+}
+
+func getDatastoreNames(
+	vmCtx pkgctx.VirtualMachineContext,
+	vcClient *vim25.Client,
+	rec *Recommendation) error {
+
+	var objSet []vimtypes.ObjectSpec
+	for i := range rec.Datastores {
+		d := rec.Datastores[i]
+		if d.Name == "" {
+			objSet = append(objSet, vimtypes.ObjectSpec{
+				Obj: d.MoRef,
+			})
+		}
+	}
+
+	if len(objSet) == 0 {
+		return nil
+	}
+
+	pc := property.DefaultCollector(vcClient)
+	res, err := pc.RetrieveProperties(vmCtx, vimtypes.RetrieveProperties{
+		SpecSet: []vimtypes.PropertyFilterSpec{
+			{
+				PropSet: []vimtypes.PropertySpec{
+					{
+						Type:    "Datastore",
+						PathSet: []string{"name"},
+					},
+				},
+				ObjectSet: objSet,
+			},
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to get datastore names: %w", err)
+	}
+
+	for i := range res.Returnval {
+		r := res.Returnval[i]
+		for j := range rec.Datastores {
+			if r.Obj == rec.Datastores[j].MoRef {
+				rec.Datastores[j].Name = r.PropSet[0].Val.(string)
+			}
+		}
+	}
+
+	return nil
 }

@@ -26,6 +26,17 @@ type CreateArgs struct {
 	HostMoID            string
 	StorageProfileID    string
 	DatastoreMoID       string // gce2e only: used only if StorageProfileID is unset
+	Datastores          []DatastoreRef
+}
+
+type DatastoreRef struct {
+	Name  string
+	MoRef vimtypes.ManagedObjectReference
+
+	// ForDisk is false if the recommendation is for the VM's home directory and
+	// true if for a disk. DiskKey is only valid if ForDisk is true.
+	ForDisk bool
+	DiskKey int32
 }
 
 func CreateVirtualMachine(
@@ -43,7 +54,6 @@ func CreateVirtualMachine(
 			k8sClient,
 			restClient,
 			vimClient,
-			finder,
 			datacenter,
 			createArgs)
 	}
