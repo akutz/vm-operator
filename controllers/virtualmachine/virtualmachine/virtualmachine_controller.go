@@ -46,6 +46,7 @@ import (
 	vmopv1util "github.com/vmware-tanzu/vm-operator/pkg/util/vmopv1"
 	"github.com/vmware-tanzu/vm-operator/pkg/vmconfig"
 	"github.com/vmware-tanzu/vm-operator/pkg/vmconfig/crypto"
+	"github.com/vmware-tanzu/vm-operator/pkg/vmconfig/diskpromo"
 )
 
 const (
@@ -289,8 +290,10 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (_ ctrl.Re
 	ctx = pkgcfg.JoinContext(ctx, r.Context)
 	ctx = cource.JoinContext(ctx, r.Context)
 
-	if pkgcfg.FromContext(ctx).Features.BringYourOwnEncryptionKey {
+	if pkgcfg.FromContext(ctx).Features.BringYourOwnEncryptionKey ||
+		pkgcfg.FromContext(ctx).Features.FastDeploy {
 		ctx = vmconfig.WithContext(ctx)
+		ctx = vmconfig.Register(ctx, diskpromo.New())
 		ctx = vmconfig.Register(ctx, crypto.New())
 	}
 
