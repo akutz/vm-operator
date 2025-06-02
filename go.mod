@@ -22,7 +22,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.19.0
 	github.com/onsi/gomega v1.33.1
 	github.com/prometheus/client_golang v1.19.1
-	github.com/vmware-tanzu/image-registry-operator-api v0.0.0-20240509202721-f6552612433a
+	github.com/vmware-tanzu/image-registry-operator-api v0.0.0-20250513220855-7e450cba845f
 	github.com/vmware-tanzu/net-operator-api v0.0.0-20240523152550-862e2c4eb0e0
 	github.com/vmware-tanzu/nsx-operator/pkg/apis v0.0.0-20241112044858-9da8637c1b0d
 	github.com/vmware-tanzu/vm-operator/api v0.0.0-00010101000000-000000000000

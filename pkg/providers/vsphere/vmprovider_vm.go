@@ -32,7 +32,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/yaml"
 
-	imgregv1a1 "github.com/vmware-tanzu/image-registry-operator-api/api/v1alpha1"
+	imgregv1 "github.com/vmware-tanzu/image-registry-operator-api/api/v1alpha2"
 
 	vmopv1 "github.com/vmware-tanzu/vm-operator/api/v1alpha4"
 	"github.com/vmware-tanzu/vm-operator/api/v1alpha4/common"
@@ -292,7 +292,7 @@ func (vs *vSphereVMProvider) PublishVirtualMachine(
 	ctx context.Context,
 	vm *vmopv1.VirtualMachine,
 	vmPub *vmopv1.VirtualMachinePublishRequest,
-	cl *imgregv1a1.ContentLibrary,
+	cl *imgregv1.ContentLibrary,
 	actID string) (string, error) {
 
 	vmCtx := pkgctx.VirtualMachineContext{
@@ -309,12 +309,16 @@ func (vs *vSphereVMProvider) PublishVirtualMachine(
 		return "", fmt.Errorf("failed to get vCenter client: %w", err)
 	}
 
-	itemID, err := virtualmachine.CreateOVF(vmCtx, client.RestClient(), vmPub, cl, actID)
-	if err != nil {
-		return "", err
-	}
+	switch cl.Spec.Type {
+	case imgregv1.LibraryTypeContentLibrary:
+		return virtualmachine.CreateOVF(vmCtx, client.RestClient(), vmPub, cl, actID)
 
-	return itemID, nil
+	case imgregv1.LibraryTypeInventory:
+		return virtualmachine.CloneVM(vmCtx, client, vmPub, cl)
+
+	default:
+		return "", fmt.Errorf("unsupported library type: %s", cl.Spec.Type)
+	}
 }
 
 func (vs *vSphereVMProvider) GetVirtualMachineGuestHeartbeat(
