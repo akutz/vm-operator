@@ -239,25 +239,21 @@ func (s *Session) reconcilePoweredOffOrPoweredOnVM(
 		useResizeArgs = features.VMResize || features.VMResizeCPUMemory
 	}
 
+	var getArgsErr error
+
 	if useResizeArgs {
 		vmCtx.Logger.V(4).Info("Using resize")
-		var err error
-		resizeArgs, err = getResizeArgsFn()
-		if err != nil {
-			return err
+		if resizeArgs, getArgsErr = getResizeArgsFn(); getArgsErr == nil {
+			bootstrapData = resizeArgs.BootstrapData
+			resourcePolicy = resizeArgs.ResourcePolicy
 		}
-		bootstrapData = resizeArgs.BootstrapData
-		resourcePolicy = resizeArgs.ResourcePolicy
 
 	} else {
 		vmCtx.Logger.V(4).Info("Using update")
-		var err error
-		updateArgs, err = getUpdateArgsFn()
-		if err != nil {
-			return err
+		if updateArgs, getArgsErr = getUpdateArgsFn(); getArgsErr == nil {
+			bootstrapData = updateArgs.BootstrapData
+			resourcePolicy = updateArgs.ResourcePolicy
 		}
-		bootstrapData = updateArgs.BootstrapData
-		resourcePolicy = updateArgs.ResourcePolicy
 	}
 
 	if err := s.reconcileClusterModule(vmCtx, resourcePolicy); err != nil {
@@ -295,30 +291,45 @@ func (s *Session) reconcilePoweredOffOrPoweredOnVM(
 
 	case vimtypes.VirtualMachinePowerStatePoweredOff:
 
-		if useResizeArgs {
-
-			resizeArgs.NetworkResults = networkResults
-			if err := s.resizeVMWhenPoweredStateOff(
-				vmCtx,
-				vcVM,
-				vmCtx.MoVM,
-				resizeArgs); err != nil {
-
-				return err
-			}
-
+		if getArgsErr != nil {
+			vmCtx.Logger.V(4).Info(
+				"Skipping reconciliation of powered off VM due to getArgsErr",
+				"error", getArgsErr)
+			return getArgsErr
 		} else {
+			if useResizeArgs {
 
-			updateArgs.NetworkResults = networkResults
-			if err := s.poweredOffReconfigure(
-				vmCtx,
-				vcVM,
-				vmCtx.MoVM.Config,
-				updateArgs); err != nil {
+				resizeArgs.NetworkResults = networkResults
+				if err := s.resizeVMWhenPoweredStateOff(
+					vmCtx,
+					vcVM,
+					vmCtx.MoVM,
+					resizeArgs); err != nil {
 
-				return err
+					return err
+				}
+
+			} else {
+
+				updateArgs.NetworkResults = networkResults
+				if err := s.poweredOffReconfigure(
+					vmCtx,
+					vcVM,
+					vmCtx.MoVM.Config,
+					updateArgs); err != nil {
+
+					return err
+				}
 			}
 		}
+	}
+
+	if getArgsErr != nil {
+		vmCtx.Logger.V(4).Info(
+			"Skipping reconciliation of network and guest customization "+
+				"due to getArgsErr",
+			"error", getArgsErr)
+		return getArgsErr
 	}
 
 	return s.reconcileNetworkAndGuestCustomizationState(
