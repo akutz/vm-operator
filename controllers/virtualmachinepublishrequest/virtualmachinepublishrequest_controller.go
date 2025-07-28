@@ -25,6 +25,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	"github.com/go-logr/logr"
+	"github.com/vmware/govmomi/object"
 	"github.com/vmware/govmomi/vapi/library"
 	vimtypes "github.com/vmware/govmomi/vim25/types"
 
@@ -321,9 +322,9 @@ func (r *Reconciler) publishVirtualMachine(ctx *pkgctx.VirtualMachinePublishRequ
 			actID := getPublishRequestActID(vmPublishReq)
 			itemID, pubErr := r.VMProvider.PublishVirtualMachine(ctx, ctx.VM, vmPublishReq, ctx.ContentLibrary, actID)
 			if pubErr != nil {
-				ctx.Logger.Error(pubErr, "failed to publish VM")
+				ctx.Logger.Error(pubErr, "failed to publish vm as image")
 			} else {
-				ctx.Logger.Info("created an OVF from VM", "itemID", itemID)
+				ctx.Logger.Info("published vm as image", "itemID", itemID)
 			}
 			r.Recorder.EmitEvent(vmPublishReq, "Publish", pubErr, false)
 		}()
@@ -441,27 +442,34 @@ func (r *Reconciler) checkIsTargetValid(ctx *pkgctx.VirtualMachinePublishRequest
 	}
 
 	ctx.ContentLibrary = contentLibrary
-	item, err := r.VMProvider.GetItemFromLibraryByName(ctx, string(contentLibrary.Spec.UUID), targetItemName)
+	item, err := r.VMProvider.GetItemFromLibraryByName(
+		ctx, string(contentLibrary.Spec.UUID), targetItemName)
 	if err != nil {
-		ctx.Logger.Error(err, "failed to find item", "cl", objKey, "item name", targetItemName)
-		return err
+		return fmt.Errorf("failed to get item from library: %w", err)
 	}
 
 	if item != nil {
-		ctx.Logger.Info("target item already exists in the content library",
-			"cl", objKey, "item name", targetItemName)
+		ctx.Logger.Info(
+			"target item already exists in the content library",
+			"library", objKey,
+			"itemName", targetItemName)
+
 		// If item already exists in the content library and attempt is not zero,
 		// check if it is created from this VirtualMachinePublishRequest by getting its description.
 		// If VC forgets the task, or the task hadn't proceeded far enough to be submitted to VC
 		// within 30 seconds window, this check can help us find if there is a prior task succeeded.
 		// Ideally we are unlikely to see this.
 		if vmPubReq.Status.Attempts > 0 {
-			if r.isItemCorrelatedWithVMPub(ctx, item) {
+			itemID, ok, err := r.isItemCorrelatedWithVMPub(ctx, item)
+			if ok {
 				ctx.Logger.Info("existing target item is published by this VMPubReq")
 				conditions.MarkTrue(vmPubReq, vmopv1.VirtualMachinePublishRequestConditionTargetValid)
 				conditions.MarkTrue(vmPubReq, vmopv1.VirtualMachinePublishRequestConditionUploaded)
-				ctx.ItemID = item.ID
+				ctx.ItemID = itemID
 				return nil
+			}
+			if err != nil {
+				return err
 			}
 		}
 
@@ -471,7 +479,6 @@ func (r *Reconciler) checkIsTargetValid(ctx *pkgctx.VirtualMachinePublishRequest
 			vmopv1.VirtualMachinePublishRequestConditionTargetValid,
 			vmopv1.TargetItemAlreadyExistsReason,
 			"item with name %s already exists in the content library %s", targetItemName, contentLibrary.Status.Name)
-		return nil
 	}
 
 	conditions.MarkTrue(vmPubReq, vmopv1.VirtualMachinePublishRequestConditionTargetValid)
@@ -730,16 +737,34 @@ func (r *Reconciler) getUploadedItemID(ctx *pkgctx.VirtualMachinePublishRequestC
 // waiting time window but a new task with a new actID is already triggered),
 // we'll get stuck if any previous task succeeds because all tasks afterwards
 // would fail due to item duplication error.
-func (r *Reconciler) isItemCorrelatedWithVMPub(ctx *pkgctx.VirtualMachinePublishRequestContext,
-	item *library.Item) bool {
-	if item.Description != nil {
-		descriptions := itemDescriptionReg.FindStringSubmatch(*item.Description)
-		if len(descriptions) > 1 && descriptions[1] == string(ctx.VMPublishRequest.UID) {
-			return true
-		}
+func (r *Reconciler) isItemCorrelatedWithVMPub(
+	ctx *pkgctx.VirtualMachinePublishRequestContext,
+	item any) (string, bool, error) {
+
+	if item == nil {
+		return "", false, errors.New("item is nil")
 	}
 
-	return false
+	switch tItem := item.(type) {
+	case *object.VirtualMachine:
+
+		// TODO(akutz) Verify if the VM is associated with this publish request.
+		return tItem.Reference().Value, true, nil
+
+	case *library.Item:
+
+		if tItem.Description != nil {
+			descriptions := itemDescriptionReg.FindStringSubmatch(*tItem.Description)
+			if len(descriptions) > 1 && descriptions[1] == string(ctx.VMPublishRequest.UID) {
+				return tItem.ID, true, nil
+			}
+		}
+
+	default:
+		return "", false, fmt.Errorf("item is unexpected type: %T", item)
+	}
+
+	return "", false, nil
 }
 
 // findCorrelatedItemIDByName finds the published item ID in the VC by target item name.
@@ -754,16 +779,17 @@ func (r *Reconciler) findCorrelatedItemIDByName(ctx *pkgctx.VirtualMachinePublis
 		targetLocationName := ctx.VMPublishRequest.Spec.Target.Location.Name
 		objKey := client.ObjectKey{Name: targetLocationName, Namespace: ctx.VMPublishRequest.Namespace}
 		if err := r.Get(ctx, objKey, contentLibrary); err != nil {
-			ctx.Logger.Error(err, "failed to get ContentLibrary", "cl", objKey)
-			return "", err
+			return "", fmt.Errorf("failed to get library %v: %w", objKey, err)
 		}
 		ctx.ContentLibrary = contentLibrary
 	}
 
-	item, err := r.VMProvider.GetItemFromLibraryByName(ctx, string(ctx.ContentLibrary.Spec.UUID), targetItemName)
+	item, err := r.VMProvider.GetItemFromLibraryByName(
+		ctx, string(ctx.ContentLibrary.Spec.UUID), targetItemName)
 	if err != nil {
-		ctx.Logger.Error(err, "failed to find item from VC by its name", "item name", targetItemName)
-		return "", err
+		return "", fmt.Errorf(
+			"failed to find item from VC by its name %q: %w",
+			targetItemName, err)
 	}
 
 	if item != nil {
@@ -772,9 +798,15 @@ func (r *Reconciler) findCorrelatedItemIDByName(ctx *pkgctx.VirtualMachinePublis
 		// If VC forgets the task, or the task hadn't proceeded far enough to be submitted to VC
 		// within 30 seconds window, this check can help us find if there is a prior task succeeded.
 		// Ideally we are unlikely to see this.
-		if r.isItemCorrelatedWithVMPub(ctx, item) {
-			return item.ID, nil
+		itemID, ok, err := r.isItemCorrelatedWithVMPub(ctx, item)
+		if err != nil {
+			return "", err
 		}
+		if !ok {
+			return "", fmt.Errorf(
+				"item %s not correlated with this pub request", targetItemName)
+		}
+		return itemID, nil
 	}
 
 	return "", fmt.Errorf("no item with name %s exists in the VC", targetItemName)

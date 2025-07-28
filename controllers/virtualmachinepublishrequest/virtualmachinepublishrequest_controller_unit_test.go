@@ -231,7 +231,7 @@ func unitTestsReconcile() {
 				JustBeforeEach(func() {
 					Expect(ctx.Client.Create(ctx, cl)).To(Succeed())
 					fakeVMProvider.GetItemFromLibraryByNameFn = func(ctx context.Context,
-						contentLibrary, itemName string) (*library.Item, error) {
+						contentLibrary, itemName string) (any, error) {
 						return &library.Item{ID: "dummy-id"}, nil
 					}
 				})
@@ -660,7 +660,7 @@ func unitTestsReconcile() {
 					description := fmt.Sprintf("virtualmachinepublishrequest.vmoperator.vmware.com: %s\n",
 						vmpub.UID)
 					fakeVMProvider.GetItemFromLibraryByNameFn = func(ctx context.Context,
-						contentLibrary, itemName string) (*library.Item, error) {
+						contentLibrary, itemName string) (any, error) {
 						return &library.Item{ID: "dummy-id", Description: &description}, nil
 					}
 					fakeVMProvider.Unlock()

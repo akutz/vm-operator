@@ -7,8 +7,11 @@ package virtualmachine
 import (
 	"fmt"
 
+	"github.com/vmware/govmomi/object"
 	"github.com/vmware/govmomi/vapi/rest"
 	"github.com/vmware/govmomi/vapi/vcenter"
+	"github.com/vmware/govmomi/vim25"
+	vimtypes "github.com/vmware/govmomi/vim25/types"
 
 	imgregv1a1 "github.com/vmware-tanzu/image-registry-operator-api/api/v1alpha1"
 
@@ -60,4 +63,83 @@ func CreateOVF(
 	return vcenter.NewManager(client).CreateOVF(
 		pkgutil.WithVAPIActivationID(vmCtx, client, actID),
 		ovf)
+}
+
+func CloneVM(
+	vmCtx pkgctx.VirtualMachineContext,
+	client *vim25.Client,
+	vmPubReq *vmopv1.VirtualMachinePublishRequest,
+	cl *imgregv1a1.ContentLibrary,
+	actID string) (string, error) {
+
+	cloneName := vmPubReq.Status.TargetRef.Item.Name
+
+	folderRef := vimtypes.ManagedObjectReference{
+		Type:  string(vimtypes.ManagedObjectTypesVirtualMachine),
+		Value: string(cl.Spec.UUID),
+	}
+
+	// TODO(akutz) Figure out how encrypted VMs are to be handled.
+
+	// TODO(akutz) Handle the async quota request.
+
+	cloneSpec := vimtypes.VirtualMachineCloneSpec{
+		Location: vimtypes.VirtualMachineRelocateSpec{
+			Folder: &folderRef,
+
+			// This causes a linked clone to be unlinked and consolidated.
+			DiskMoveType: string(vimtypes.VirtualMachineRelocateDiskMoveOptionsMoveAllDiskBackingsAndDisallowSharing),
+
+			// TODO(akutz) Should be taken from the Image Registry v1alpha2
+			//             ContentLibrary object.
+			Profile: nil,
+		},
+		Template: true,
+
+		// TODO(akutz) Are we going to support publishing VMs with their memory
+		//             state intact?
+		Snapshot: nil,
+		Memory:   nil,
+
+		// TODO(akutz) Use to disconnect NICs, clean ExtraConfig, etc. prior to
+		//             cloning to a template.
+		Config: nil,
+
+		// TODO(akutz) Do we support publishing encrypted VMs at all?
+		TpmProvisionPolicy: string(vimtypes.VirtualMachineCloneSpecTpmProvisionPolicyCopy),
+	}
+
+	vmCtx.Logger.Info("Publishing VM as template",
+		"actId", actID,
+		"cloneName", cloneName,
+		"cloneSpec", cloneSpec,
+		"cloneSrc", vmCtx.VM.Status.UniqueID,
+		"cloneTgt", cl.Spec.UUID)
+
+	vm := object.NewVirtualMachine(
+		client,
+		vimtypes.ManagedObjectReference{
+			Type:  string(vimtypes.ManagedObjectTypesVirtualMachine),
+			Value: vmCtx.VM.Status.UniqueID,
+		})
+
+	cloneTask, err := vm.Clone(
+		vmCtx,
+		object.NewFolder(client, folderRef),
+		cloneName,
+		cloneSpec)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to call clone api: %w", err)
+	}
+
+	cloneTaskInfo, err := cloneTask.WaitForResult(vmCtx)
+	if err != nil {
+		return "", fmt.Errorf("failed to clone VM to template: %w", err)
+	}
+
+	vmCtx.Logger.V(4).Info("cloned vm", "taskInfo", cloneTaskInfo)
+
+	cloneMoRef := cloneTaskInfo.Result.(vimtypes.ManagedObjectReference)
+	return cloneMoRef.Value, nil
 }

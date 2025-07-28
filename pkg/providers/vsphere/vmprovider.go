@@ -18,7 +18,6 @@ import (
 	"github.com/vmware/govmomi/object"
 	"github.com/vmware/govmomi/ovf"
 	"github.com/vmware/govmomi/task"
-	"github.com/vmware/govmomi/vapi/library"
 	"github.com/vmware/govmomi/vim25/mo"
 	vimtypes "github.com/vmware/govmomi/vim25/types"
 	corev1 "k8s.io/api/core/v1"
@@ -410,10 +409,13 @@ func (vs *vSphereVMProvider) getOvfEnvelope(
 
 // GetItemFromLibraryByName get the library item from specified content library by its name.
 // Do not return error if the item doesn't exist in the content library.
-func (vs *vSphereVMProvider) GetItemFromLibraryByName(ctx context.Context,
-	contentLibrary, itemName string) (*library.Item, error) {
+func (vs *vSphereVMProvider) GetItemFromLibraryByName(
+	ctx context.Context,
+	contentLibrary, itemName string) (any, error) {
 
-	pkgutil.FromContextOrDefault(ctx).V(4).Info("Get item from ContentLibrary",
+	logger := pkgutil.FromContextOrDefault(ctx).WithName("GetItemFromLibraryByName")
+
+	logger.V(4).Info("Get item from ContentLibrary",
 		"UUID", contentLibrary, "item name", itemName)
 
 	client, err := vs.getVcClient(ctx)
@@ -421,12 +423,41 @@ func (vs *vSphereVMProvider) GetItemFromLibraryByName(ctx context.Context,
 		return nil, err
 	}
 
+	// TODO(akutz) Hack way to determine a folder-backed library. Will be
+	//             updated when Image Registry v1alpha2 is in place.
+	if strings.HasPrefix(contentLibrary, "group-") {
+		c := client.VimClient()
+
+		searchIndex := object.NewSearchIndex(c)
+
+		folderRef := vimtypes.ManagedObjectReference{
+			Type:  string(vimtypes.ManagedObjectTypesFolder),
+			Value: contentLibrary,
+		}
+
+		// Returns *object.VirtualMachine if VM is found, otherwise nil.
+		// Returns error only if there was an error trying to find the VM.
+		vm, err := searchIndex.FindChild(ctx, folderRef, itemName)
+		if err != nil {
+			return nil, fmt.Errorf("failed to find child vm: %w", err)
+		}
+
+		return vm, nil
+	}
+
 	contentLibraryProvider := contentlibrary.NewProvider(ctx, client.RestClient())
 	return contentLibraryProvider.GetLibraryItem(ctx, contentLibrary, itemName, false)
 }
 
 func (vs *vSphereVMProvider) UpdateContentLibraryItem(ctx context.Context, itemID, newName string, newDescription *string) error {
+
 	pkgutil.FromContextOrDefault(ctx).V(4).Info("Update Content Library Item", "itemID", itemID)
+
+	if strings.HasPrefix(itemID, "vm-") {
+		// TODO(akutz) Remove this hack once we update published vCD VM
+		//             descriptions.
+		return nil
+	}
 
 	client, err := vs.getVcClient(ctx)
 	if err != nil {

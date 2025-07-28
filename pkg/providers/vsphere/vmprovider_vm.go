@@ -337,12 +337,23 @@ func (vs *vSphereVMProvider) PublishVirtualMachine(
 		return "", fmt.Errorf("failed to get vCenter client: %w", err)
 	}
 
-	itemID, err := virtualmachine.CreateOVF(vmCtx, client.RestClient(), vmPub, cl, actID)
-	if err != nil {
-		return "", err
+	if strings.HasPrefix(string(cl.Spec.UUID), "group-") {
+		logger.V(4).Info("Publishing vm as cloned template")
+		return virtualmachine.CloneVM(
+			vmCtx,
+			client.VimClient(),
+			vmPub,
+			cl,
+			actID)
 	}
 
-	return itemID, nil
+	logger.V(4).Info("Publishing vm as ovf")
+	return virtualmachine.CreateOVF(
+		vmCtx,
+		client.RestClient(),
+		vmPub,
+		cl,
+		actID)
 }
 
 func (vs *vSphereVMProvider) GetVirtualMachineGuestHeartbeat(

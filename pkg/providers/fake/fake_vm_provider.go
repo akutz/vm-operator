@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/vmware/govmomi/vapi/library"
 	vimtypes "github.com/vmware/govmomi/vim25/types"
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -41,7 +40,7 @@ type funcs struct {
 	GetVirtualMachineHardwareVersionFn func(ctx context.Context, vm *vmopv1.VirtualMachine) (vimtypes.HardwareVersion, error)
 	PlaceVirtualMachineGroupFn         func(ctx context.Context, group *vmopv1.VirtualMachineGroup, groupPlacement []providers.VMGroupPlacement) error
 
-	GetItemFromLibraryByNameFn func(ctx context.Context, contentLibrary, itemName string) (*library.Item, error)
+	GetItemFromLibraryByNameFn func(ctx context.Context, contentLibrary, itemName string) (any, error)
 	UpdateContentLibraryItemFn func(ctx context.Context, itemID, newName string, newDescription *string) error
 	SyncVirtualMachineImageFn  func(ctx context.Context, cli, vmi client.Object) error
 
@@ -262,7 +261,7 @@ func (s *VMProvider) SyncVirtualMachineImage(ctx context.Context, cli, vmi clien
 }
 
 func (s *VMProvider) GetItemFromLibraryByName(ctx context.Context,
-	contentLibrary, itemName string) (*library.Item, error) {
+	contentLibrary, itemName string) (any, error) {
 
 	_ = pkgcfg.FromContext(ctx)
 
