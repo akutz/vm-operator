@@ -116,7 +116,9 @@ TEST_RESULTS_FILE := test-results
 # However, given this is not a cheap operation, only gather these packages if
 # the test-nocover target is one of the currenty active goals.
 ifeq (,$(filter-out test-nocover,$(MAKECMDGOALS)))
+ifeq (,$(strip $(COVERED_PKGS)))
 COVERED_PKGS := $(shell find . -name '*_test.go' -not -path './api/*' -print | awk -F'/' '{print "./"$$2}' | sort -u)
+endif
 endif
 
 # CRI_BIN is the path to the container runtime binary.
@@ -224,7 +226,7 @@ test-api: ## Run API tests
 
 .PHONY: test-nocover
 test-nocover: | $(GINKGO)
-test-nocover: | test-api
+#test-nocover: | test-api
 test-nocover: ## Run tests sans coverage
 	hack/test.sh $(COVERED_PKGS)
 
