@@ -11,6 +11,7 @@ import (
 	"maps"
 	"math/rand"
 	"path"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -18,6 +19,7 @@ import (
 	"time"
 
 	"github.com/go-logr/logr"
+	"github.com/vmware/govmomi/fault"
 	"github.com/vmware/govmomi/object"
 	"github.com/vmware/govmomi/ovf"
 	"github.com/vmware/govmomi/pbm"
@@ -752,6 +754,7 @@ var VMUpdatePropertiesSelector = []string{
 	"config",
 	"guest",
 	"layoutEx",
+	"recentTask",
 	"resourcePool",
 	"runtime",
 	"snapshot",
@@ -793,6 +796,15 @@ func (vs *vSphereVMProvider) updateVirtualMachine(
 
 		return fmt.Errorf("failed to fetch vm properties: %w", err)
 	}
+
+	//
+	// Get the recent tasks.
+	//
+	ctxWithRecentTaskInfo, err := vs.getRecentTaskInfo(vmCtx, vcClient)
+	if err != nil {
+		return fmt.Errorf("failed to fetch recent tasks: %w", err)
+	}
+	vmCtx.Context = ctxWithRecentTaskInfo
 
 	//
 	// Reconcile a snapshot restore operation.
@@ -905,6 +917,58 @@ func (vs *vSphereVMProvider) reconcileStatus(
 		vmlifecycle.ReconcileStatusData{
 			NetworkDeviceKeysToSpecIdx: networkDeviceKeysToSpecIdx,
 		})
+}
+
+func (vs *vSphereVMProvider) getRecentTaskInfo(
+	ctx pkgctx.VirtualMachineContext,
+	vcClient *vcclient.Client) (context.Context, error) {
+
+	pc := property.DefaultCollector(vcClient.VimClient())
+
+	// Check if the VM has any recent tasks.
+	var (
+		tasks    []mo.Task
+		taskRefs = slices.Clone(ctx.MoVM.RecentTask)
+	)
+
+	for {
+		tasks = make([]mo.Task, len(taskRefs))
+
+		err := pc.Retrieve(
+			ctx,
+			taskRefs,
+			[]string{"info"},
+			&tasks)
+
+		// If there was no error then jump out of the loop.
+		if err == nil {
+			break
+		}
+
+		// Check if the error was due to a task not being found since
+		// tasks go away after 10m of completion.
+		var f *vimtypes.ManagedObjectNotFound
+		if _, ok := fault.As(err, &f); !ok {
+			return nil, fmt.Errorf("failed to retrieve task info: %w", err)
+		}
+
+		// Remove the taskRef that was not found.
+		taskRefs = slices.DeleteFunc(
+			taskRefs,
+			func(n vimtypes.ManagedObjectReference) bool {
+				return n == f.Obj
+			})
+
+		// The loop will repeat, this time no longer searching for the
+		// task that was not found.
+	}
+
+	taskInfo := make([]vimtypes.TaskInfo, len(tasks))
+	for i := range tasks {
+		taskInfo[i] = tasks[i].Info
+	}
+
+	return pkgctx.WithVMRecentTasks(ctx.Context, taskInfo), nil
 }
 
 func (vs *vSphereVMProvider) reconcileSchemaUpgrade(
@@ -1050,7 +1114,7 @@ func (vs *vSphereVMProvider) reconcilePowerState(
 	if isVMPaused(vmCtx) {
 		return ErrIsPaused
 	}
-	if vmCtx.VM.Status.TaskID != "" {
+	if pkgctx.HasVMRunningTask(vmCtx) {
 		return ErrHasTask
 	}
 
