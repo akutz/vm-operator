@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	expcache "github.com/go-pkgz/expirable-cache/v3"
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"github.com/vmware/govmomi/object"
@@ -21,6 +22,81 @@ import (
 type nsxOpaqueBacking struct {
 	vimtypes.ManagedObjectReference // Won't be set.
 	logicalSwitchUID                string
+}
+
+const (
+	// dvpgCacheMaxKeys is the maximum number of CCR to DVPG mappings to cache.
+	dvpgCacheMaxKeys = 10000
+
+	// dvpgCacheTTL is the expiry time for items in the cache.
+	dvpgCacheTTL = time.Hour * 24
+
+	// stringSizeBytes is the number of bytes allocated for a string data
+	// structure.
+	stringSizeBytes = 16
+)
+
+var (
+	// DVPGCache is an LRU cache used to cache CCR-to-DVPG mappings.
+	DVPGCache expcache.Cache[string, map[string]vimtypes.ManagedObjectReference]
+)
+
+func init() {
+	DVPGCache = expcache.NewCache[string, map[string]vimtypes.ManagedObjectReference]().
+		WithLRU().
+		WithMaxKeys(dvpgCacheMaxKeys).
+		WithTTL(dvpgCacheTTL)
+
+	sync.OnceFunc(func() {
+		// Every 30m print the cache statistics.
+		ticker := time.NewTicker(30 * time.Minute)
+		logger := ctrl.Log.WithName("nsxt-dvpg-cache-stats")
+		go func() {
+			for range ticker.C {
+				kvp := DVGPCacheGetStats()
+				logger.Info("NSXT DVPG cache stats", kvp...)
+			}
+		}()
+	})
+}
+
+// DVGPCacheGetStats returns the key/value pairs required to log the cache's
+// stats.
+// This is an expensive operation as it locks the cache to get the base stats
+// and then again, per object in the cache, to calculate the total size of the
+// cache.
+func DVGPCacheGetStats() []any {
+	keyValPairs := []any{}
+
+	s := DVPGCache.Stat()
+	keyValPairs = append(
+		keyValPairs,
+		"added", s.Added,
+		"evicted", s.Evicted,
+		"hits", s.Hits,
+		"misses", s.Misses)
+
+	var (
+		size uint64
+		keys = DVPGCache.Keys()
+	)
+
+	keyValPairs = append(keyValPairs, "items", len(keys))
+
+	for _, k := range keys {
+		if v, ok := DVPGCache.Peek(k); ok {
+			size += stringSizeBytes + uint64(len(k))
+			for k, v := range v {
+				size += stringSizeBytes + uint64(len(k))
+				size += stringSizeBytes + uint64(len(v.ServerGUID))
+				size += stringSizeBytes + uint64(len(v.Type))
+				size += stringSizeBytes + uint64(len(v.Value))
+			}
+		}
+	}
+	keyValPairs = append(keyValPairs, "bytes", size)
+
+	return keyValPairs
 }
 
 // NSX-T/VPC provides us with the logical switch UID, not the opaque network
@@ -59,36 +135,16 @@ func (n nsxOpaqueBacking) Summary(_ context.Context) (*vimtypes.OpaqueNetworkSum
 	}, nil
 }
 
-var (
-	// uuidToDVPGCache contains the cache used look up the CCR's DPVG for a
-	// given LogicalSwitchUUID.
-	uuidToDVPGCache sync.Map
-
-	clearUUIDToDVPGCache sync.Once
-)
-
 func searchNsxtNetworkReference(
 	ctx context.Context,
 	ccr *object.ClusterComputeResource,
 	networkID string) (object.NetworkReference, error) {
 
-	clearUUIDToDVPGCache.Do(func() {
-		// Start goroutine to periodically clear the cache.
-		go func() {
-			logger := ctrl.Log.WithName("nsx-dvpg-cache-clearer")
-			ticker := time.NewTicker(time.Minute * 60)
-			for range ticker.C {
-				logger.Info("Clearing NSX LogicalSwitchUUID to DVPG cache")
-				uuidToDVPGCache.Clear()
-			}
-		}()
-	})
-
 	key := ccr.Reference().Value
 
-	if c, ok := uuidToDVPGCache.Load(key); ok {
-		cc := c.(map[string]vimtypes.ManagedObjectReference)
-		if dvpg, ok := cc[networkID]; ok {
+	//if c, ok := uuidToDVPGCache.Load(key); ok {
+	if c, ok := DVPGCache.Get(key); ok {
+		if dvpg, ok := c[networkID]; ok {
 			return object.NewDistributedVirtualPortgroup(ccr.Client(), dvpg), nil
 		}
 	}
@@ -100,7 +156,7 @@ func searchNsxtNetworkReference(
 	if err != nil {
 		return nil, err
 	}
-	uuidToDVPGCache.Store(key, uuidsToDPVG)
+	DVPGCache.Add(key, uuidsToDPVG)
 
 	if dvpg, ok := uuidsToDPVG[networkID]; ok {
 		return object.NewDistributedVirtualPortgroup(ccr.Client(), dvpg), nil

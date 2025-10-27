@@ -10,6 +10,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	"github.com/go-logr/logr"
 	vimtypes "github.com/vmware/govmomi/vim25/types"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -848,8 +849,13 @@ var _ = Describe("CreateAndWaitForNetworkInterfaces", Label(testlabels.VCSim), f
 		)
 
 		BeforeEach(func() {
+			network.DVPGCache.Purge()
 			network.RetryTimeout = 1 * time.Second
 			testConfig.WithNetworkEnv = builder.NetworkEnvVPC
+		})
+
+		AfterEach(func() {
+			logr.FromContextOrDiscard(ctx).Info("Cache stats", network.DVGPCacheGetStats()...)
 		})
 
 		Context("Simulate workflow", func() {
@@ -861,7 +867,7 @@ var _ = Describe("CreateAndWaitForNetworkInterfaces", Label(testlabels.VCSim), f
 							Name: networkName,
 							TypeMeta: metav1.TypeMeta{
 								Kind:       "SubnetSet",
-								APIVersion: "crd.nsx.vmware.com/v1alpha1",
+								APIVersion: "crd.g.vmware.com/v1alpha1",
 							},
 						},
 					},
