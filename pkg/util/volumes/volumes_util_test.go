@@ -34,7 +34,7 @@ var _ = Context("Context", func() {
 	})
 })
 
-var _ = Describe("GetVolumeInfoFrom", func() {
+var _ = Describe("GetVolumeInfo", func() {
 	var (
 		vm      *vmopv1.VirtualMachine
 		devices []vimtypes.BaseVirtualDevice

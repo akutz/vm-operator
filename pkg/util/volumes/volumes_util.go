@@ -11,8 +11,12 @@ import (
 
 	"github.com/vmware/govmomi/vim25/mo"
 	vimtypes "github.com/vmware/govmomi/vim25/types"
+	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
 
 	vmopv1 "github.com/vmware-tanzu/vm-operator/api/v1alpha5"
+	pkglog "github.com/vmware-tanzu/vm-operator/pkg/log"
 	pkgutil "github.com/vmware-tanzu/vm-operator/pkg/util"
 	vmopv1util "github.com/vmware-tanzu/vm-operator/pkg/util/vmopv1"
 )
@@ -38,6 +42,7 @@ type VirtualDiskInfo struct {
 	Snapshot           bool
 	LinkedClone        bool
 	FCD                bool
+	EncryptionClass    string
 }
 
 // VolumeInfo is information about a VM's volumes.
@@ -281,4 +286,62 @@ func FromContext(ctx context.Context) (VolumeInfo, bool) {
 	}
 	val, ok := obj.(VolumeInfo)
 	return val, ok
+}
+
+const (
+	// PVCEncryptionClassAnnotation is the name of the annotation set on PVCs to
+	// indicate the name of the EncryptionClass object used to encrypt the disk.
+	PVCEncryptionClassAnnotation = "csi.vsphere.encryption-class"
+)
+
+// FetchEncryptionClasses fetches the encryption classes for each volume that
+// has an associated PersistentVolumeClaim object.
+//
+// If the ignoreNotFound parameter is false, then an error will be returned if
+// a volume with a PVC results in a NotFound error when getting its PVC object.
+func FetchEncryptionClasses(
+	ctx context.Context,
+	k8sClient ctrlclient.Client,
+	namespace string,
+	info VolumeInfo,
+	ignoreNotFound bool) error {
+
+	logger := pkglog.FromContextOrDefault(ctx).WithName(
+		"fetchEncryptionClasses")
+
+	for i := range info.Disks {
+		targetID := info.Disks[i].Target
+		if volSpec := info.Volumes[targetID.String()]; volSpec != nil {
+			if pvcSpec := volSpec.PersistentVolumeClaim; pvcSpec != nil {
+				if claimName := pvcSpec.ClaimName; claimName != "" {
+					var (
+						obj corev1.PersistentVolumeClaim
+						key = ctrlclient.ObjectKey{
+							Namespace: namespace,
+							Name:      claimName,
+						}
+					)
+					if err := k8sClient.Get(ctx, key, &obj); err != nil {
+						if !apierrors.IsNotFound(err) || !ignoreNotFound {
+							return fmt.Errorf(
+								"failed to get pvc %s for volume %q: %w",
+								key, volSpec.Name, err)
+						}
+						logger.Error(err, "pvc not found for volume",
+							"volumeName", volSpec.Name,
+							"pvcName", key)
+					}
+					encClass := obj.Annotations[PVCEncryptionClassAnnotation]
+					info.Disks[i].EncryptionClass = encClass
+
+					logger.V(4).Info("Fetched encryption class for volume",
+						"volumeName", volSpec.Name,
+						"pvcName", key,
+						"encryptionClassName", encClass)
+				}
+			}
+		}
+	}
+
+	return nil
 }
