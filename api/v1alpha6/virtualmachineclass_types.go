@@ -169,8 +169,30 @@ type VirtualMachineClassSpec struct {
 	ReservedSlots int32 `json:"reservedSlots,omitempty"`
 }
 
+type VirtualMachineClassZoneStatus struct {
+	// +required
+
+	// Name is the name of the zone.
+	Name string `json:"name"`
+
+	// +optional
+
+	// Conditions describes the observed conditions of the VirtualMachineClass
+	// in the zone.
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
+}
+
 // VirtualMachineClassStatus defines the observed state of VirtualMachineClass.
 type VirtualMachineClassStatus struct {
+	// +optional
+
+	// Conditions describes the observed conditions of the VirtualMachineClass.
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
+
+	// +optional
+
+	// Zones describes the observed status of the class in one or more zones.
+	Zones []VirtualMachineClassZoneStatus `json:"zones,omitempty"`
 }
 
 // +kubebuilder:object:root=true
