@@ -118,6 +118,9 @@ nav:
   - start/README.md
   - Quickstart: start/quick.md
   - Talk to Us: start/help.md
+  - Compare:
+    - start/compare/README.md
+    - start/compare/kube-virt.md
   - Contribute:
     - start/contrib/README.md
     - Suggest a Change: start/contrib/suggest-change.md
