@@ -24,9 +24,18 @@ import (
 	"github.com/vmware-tanzu/vm-operator/pkg/providers/vsphere/constants"
 )
 
+// GetTemplateRenderFunc returns the render function used to evaluate Go
+// templates against the VM's network/hostname/etc. status.
+//
+// extraFuncMaps, if provided, are merged into the returned function's
+// template.FuncMap after every versioned function map, so their entries take
+// precedence. This lets a single caller (e.g. BootstrapISO) register a
+// function -- V1Alpha6_BootstrapService -- without making it available to
+// every other bootstrap provider's render calls.
 func GetTemplateRenderFunc(
 	vmCtx pkgctx.VirtualMachineContext,
 	bsArgs *BootstrapArgs,
+	extraFuncMaps ...template.FuncMap,
 ) TemplateRenderFunc {
 
 	// There is a lot of duplication here, especially since the "template" types are the same in v1a1
@@ -146,6 +155,11 @@ func GetTemplateRenderFunc(
 	}
 	for k, v := range v1a6FuncMap {
 		funcMap[k] = v
+	}
+	for _, extra := range extraFuncMaps {
+		for k, v := range extra {
+			funcMap[k] = v
+		}
 	}
 
 	// Skip parsing when encountering escape character('\{',"\}")

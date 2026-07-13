@@ -298,7 +298,7 @@ var _ = Describe("DoBootstrap", func() {
 	})
 
 	JustBeforeEach(func() {
-		bsErr = vmlifecycle.DoBootstrap(vmCtx, vcVM, configInfo, bsArgs)
+		bsErr = vmlifecycle.DoBootstrap(vmCtx, vcVM, ctx.Client, configInfo, bsArgs)
 	})
 
 	AfterEach(func() {
